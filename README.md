@@ -1,15 +1,11 @@
-# 2024-mimic-benchmarking
+# 
 
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/projects/miniconda/en/latest/)
 [![Snakemake](https://img.shields.io/badge/snakemake--green)](https://snakemake.readthedocs.io/en/stable/)
 
 ## Purpose
 
-This repository contains standardized datasets that we are using to evaluate protein structural alignment methods and how they impact our results. These datasets include the following:
-- Sets of structures for randomly selected human proteins (50,100,500,1000)
-- Sets of random selected viral protein structures (50,100,500,1000) predicted by Nomburg et al. or Viro3D
-- 'Target' protein pdbs for 4 proteins of interest (IL18BP, C4BP, IL10, EIF2A) from human, chimp, macaque, and mouse. These are considered positive controls.
-- 3 viral representative sequences for each of the 4 target proteins. These are considered positive controls.
+
 
 ## Installation and Setup
 
