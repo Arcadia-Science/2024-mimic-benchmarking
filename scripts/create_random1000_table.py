@@ -50,7 +50,7 @@ def main(args):
     with open(args.mapping_file, 'r') as map_file:
         for line in map_file:
             cols = line.strip().split("\t")
-            if len(cols) >= 2:  # Ensure there are at least two columns
+            if len(cols) >= 2:
                 refseq, genbank = cols[0], cols[1]
                 if genbank != "No Match Found":
                     mapping[refseq] = genbank
