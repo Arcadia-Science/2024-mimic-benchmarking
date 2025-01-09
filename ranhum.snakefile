@@ -8,6 +8,7 @@ INPUT_DIRPATH = Path("inputs")
 ### we are only retrieving human data in this implementation but I left the structure to retrieve for multiple organisms
 host_metadata = pd.read_csv("inputs/viral/host-information.csv", header=0).set_index("organism", drop=False)
 HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
+RANDOM_SUBSET = ["50", "100", "500", "1000"]
 
 ###########################################################
 ## Rules
@@ -19,9 +20,9 @@ rule all:
     """
     input:
         expand(
-            OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "{subset}_pdb_quality.tsv",
+            OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_pdb_quality.tsv",
             host_organism=HOST_ORGANISMS,
-            subset=["random50", "random100", "random500", "random1000"]
+            random_subset=RANDOM_SUBSET
         )
 
 rule download_proteincartography_scripts:
@@ -94,25 +95,31 @@ rule download_uniprot_proteome_canonical_sequence_ids:
             seqkit seq --only-id --name | cut -d'|' -f2 > {output.txt}
         """
 
-rule select_random_host:
+rule create_random_host_list:
     """
-    Generate progressively larger subsets (50, 100, 500, 1000) of protein IDs.
+    Create a list of random host proteins that will be used to create random subsets.
     """
     input:
         txt=rules.download_uniprot_proteome_canonical_sequence_ids.output.txt
     output:
-        random_50=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random50_proteins.txt",
-        random_100=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random100_proteins.txt",
-        random_500=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random500_proteins.txt",
-        random_1000=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random1000_proteins.txt"
+        txt=temp(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "temp_random.txt")
     shell:
         """
-        awk 'BEGIN {{srand()}} {{print rand() "\\t" $0}}' {input.txt} | sort -k1,1n | cut -f2- > temp_random.txt
-        head -n 50 temp_random.txt > {output.random_50}
-        head -n 100 temp_random.txt > {output.random_100}
-        head -n 500 temp_random.txt > {output.random_500}
-        head -n 1000 temp_random.txt > {output.random_1000}
-        rm temp_random.txt
+        awk 'BEGIN {{srand()}} {{print rand() "\\t" $0}}' {input.txt} | sort -k1,1n | cut -f2- > {output.txt}
+        """
+
+rule select_random_host:
+    """
+    Generate progressively larger subsets (50, 100, 500, 1000) of protein IDs.
+    Sets are inclusive, so all 50 proteins in the 50 subset occur in the 100 subset.
+    """
+    input:
+        txt=rules.create_random_host_list.output.txt
+    output:
+        txt=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_proteins.txt",
+    shell:
+        """
+        head -n {wildcards.random_subset} {input.txt} > {output.txt}
         """
 
 rule download_host_pdbs:
@@ -120,35 +127,17 @@ rule download_host_pdbs:
     Download PDB files for each subset of protein IDs into separate subfolders for each host organism.
     """
     input:
-        random_50=rules.select_random_host.output.random_50,
-        random_100=rules.select_random_host.output.random_100,
-        random_500=rules.select_random_host.output.random_500,
-        random_1000=rules.select_random_host.output.random_1000
+        txt=rules.select_random_host.output.txt
     output:
-        random_50_dir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random50_pdbs"),
-        random_100_dir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random100_pdbs"),
-        random_500_dir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random500_pdbs"),
-        random_1000_dir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random1000_pdbs")
+        outdir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_pdbs"),
     conda:
         "envs/web_apis.yml"
     shell:
         """
         python ProteinCartography/download_pdbs.py \
-            --input {input.random_50} \
-            --output {output.random_50_dir} \
-            --max-structures 50
-        python ProteinCartography/download_pdbs.py \
-            --input {input.random_100} \
-            --output {output.random_100_dir} \
-            --max-structures 100
-        python ProteinCartography/download_pdbs.py \
-            --input {input.random_500} \
-            --output {output.random_500_dir} \
-            --max-structures 500
-        python ProteinCartography/download_pdbs.py \
-            --input {input.random_1000} \
-            --output {output.random_1000_dir} \
-            --max-structures 1000
+            --input {input.txt} \
+            --output {output.outdir} \
+            --max-structures {wildcards.random_subset}
         """
 
 rule assess_pdbs:
@@ -156,15 +145,9 @@ rule assess_pdbs:
     Assess the quality of PDB files for each subset and each host organism.
     """
     input:
-        random_50_dir=rules.download_host_pdbs.output.random_50_dir,
-        random_100_dir=rules.download_host_pdbs.output.random_100_dir,
-        random_500_dir=rules.download_host_pdbs.output.random_500_dir,
-        random_1000_dir=rules.download_host_pdbs.output.random_1000_dir
+        outdir=rules.download_host_pdbs.output.outdir,
     output:
-        random_50_tsv=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random50_pdb_quality.tsv",
-        random_100_tsv=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random100_pdb_quality.tsv",
-        random_500_tsv=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random500_pdb_quality.tsv",
-        random_1000_tsv=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random1000_pdb_quality.tsv"
+        tsv=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_pdb_quality.tsv",
     conda:
         "envs/plotting.yml"
     shell:
@@ -172,13 +155,4 @@ rule assess_pdbs:
         python ProteinCartography/assess_pdbs.py \
             --input {input.random_50_dir} \
             --output {output.random_50_tsv}
-        python ProteinCartography/assess_pdbs.py \
-            --input {input.random_100_dir} \
-            --output {output.random_100_tsv}
-        python ProteinCartography/assess_pdbs.py \
-            --input {input.random_500_dir} \
-            --output {output.random_500_tsv}
-        python ProteinCartography/assess_pdbs.py \
-            --input {input.random_1000_dir} \
-            --output {output.random_1000_tsv}
         """
