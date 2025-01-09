@@ -88,7 +88,7 @@ rule download_uniprot_proteome_canonical_sequence_ids:
     cleaner analysis.
     """
     output:
-        txt=OUTPUT_DIRPATH / "viral" / "{host_organism}" / "host_proteome_canonical_protein_ids.txt",
+        txt=OUTPUT_DIRPATH  / "{host_organism}" / "host_proteome_canonical_protein_ids.txt",
     conda:
         "envs/seqkit.yml"
     params:
@@ -115,7 +115,7 @@ rule download_host_pdbs:
         txt=rules.download_uniprot_proteome_canonical_sequence_ids.output.txt,
     output:
         protein_structures_dir=directory(
-            OUTPUT_DIRPATH / "viral" / "{host_organism}" / "host_proteome_pdb_structures"
+            OUTPUT_DIRPATH / "{host_organism}" / "host_proteome_pdb_structures"
         ),
     conda:
         "envs/web_apis.yml"
@@ -140,13 +140,13 @@ EXHAUSTIVE_SEARCH = ["0", "1"] # 0: off, 1: on
 
 rule benchmark_foldseek_against_human_proteome:
     input:
-        protein_structures_dir= "benchmarking_data/positive_controls/{positive_control}/"
-        pdbs=rules.decompress_viral_structures.output.dest_dir,
+        pdbs="benchmarking_data/positive_controls/{positive_control}/",
+        protein_structures_dir=rules.download_host_pdbs.output.protein_structures_dir
     output:
-        tsv=OUTPUT_DIRPATH / "foldseek" / "{positive_control}" / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv",
+        tsv=OUTPUT_DIRPATH / "{host_organism}" / "foldseek" / "{positive_control}" / "raw" / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv",
     conda:
         "envs/foldseek.yml"
-    benchmark: "benchmarks/foldseek/{positive_control}/foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv"
+    benchmark: "benchmarks/{host_organism}/foldseek/{positive_control}/foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv"
     shell:
         """
         foldseek easy-search \
@@ -167,13 +167,13 @@ rule benchmark_foldseek_against_human_proteome:
 
 rule combine_foldseek_results_with_metadata:
     input:
-        foldseek_tsv=rules.compare_each_viral_pdb_against_all_host_pdbs.output.tsv,
+        foldseek_tsv=rules.benchmark_foldseek_against_human_proteome.output.tsv,
         human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv.gz",
-        host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv"
+        host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv",
         query_metadata_tsv=INPUT_DIRPATH / "viral" / "viral_structure_metadata.tsv",
-        query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv"
+        query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv",
     output:
-        tsv=OUTPUT_DIRPATH / "foldseek" / "{positive_control}" / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}_metadata.tsv", 
+        tsv=OUTPUT_DIRPATH / "{host_organism}" / "foldseek" / "{positive_control}" / "processed" / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv", 
     conda:
         "envs/tidyverse.yml"
     shell:
@@ -195,17 +195,19 @@ rule combine_foldseek_results_with_metadata:
 SPEED = ["0", "9"]
 
 rule benchmark_gtalign_against_human_proteome:
-    input: protein_structures_dir= "benchmarking_data/positive_controls/{positive_control}"
-    output: txt=OUTPUT_DIRPATH / "gtalign" / "{positive_control}" / "gtalign_speed{speed}.out"
+    input: 
+        pdbs="benchmarking_data/positive_controls/{positive_control}/",
+        protein_structures_dir=rules.download_host_pdbs.output.protein_structures_dir
+    output: txt=OUTPUT_DIRPATH /"{host_organism}" / "gtalign" / "{positive_control}" / "gtalign_speed{speed}.out"
     conda:
         "envs/gtalign.yml"
-    benchmark: "benchmarks/gtalign/{positive_control}/gtalign_speed{speed}.tsv"
+    benchmark: "benchmarks/gtalign/{host_organism}/{positive_control}/gtalign_speed{speed}.tsv"
     shell:
         """
         gtalign \
             -v \
-            --qrs=../../outputs/viral/human/viral_structures/BCRF1__YP_001129439__Human_herpesvirus_4_type_2__12509.pdb \
-            --rfs=../../outputs/viral/human/host_proteome_pdb_structures/ \
+            --qrs={input.pdbs} \
+            --rfs={input.protein_structures_dir} \
             -o exhaustive \
             --sfx pdb \
             -s 0 \
@@ -224,5 +226,5 @@ rule benchmark_gtalign_against_human_proteome:
 rule all:
     default_target: True
     input:
-        expand(rules.benchmark_gtalign_against_human_proteome.output.txt, speed = SPEED),
-        expand(rules.combine_foldseek_results_with_metadata.output.tsv, alignment_type = ALIGNMENT_TYPE, tmalign_fast = TMALIGN_FAST, exact_tmscore = EXACT_TMSCORE, tmscore_threshold = TMSCORE_THRESHOLD, exhaustive_search = EXHAUSTIVE_SEARCH) 
+        expand(rules.benchmark_gtalign_against_human_proteome.output.txt, host_organism = HOST_ORGANISMS, positive_control = POSITIVE_CONTROLS, speed = SPEED),
+        expand(rules.combine_foldseek_results_with_metadata.output.tsv, host_organism = HOST_ORGANISMS, positive_control = POSITIVE_CONTROLS, alignment_type = ALIGNMENT_TYPE, tmalign_fast = TMALIGN_FAST, exact_tmscore = EXACT_TMSCORE, tmscore_threshold = TMSCORE_THRESHOLD, exhaustive_search = EXHAUSTIVE_SEARCH) 
