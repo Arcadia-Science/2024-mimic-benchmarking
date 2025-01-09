@@ -168,7 +168,7 @@ rule benchmark_foldseek_against_human_proteome:
 rule combine_foldseek_results_with_metadata:
     input:
         foldseek_tsv=rules.compare_each_viral_pdb_against_all_host_pdbs.output.tsv,
-        human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv",
+        human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv.gz",
         host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv"
         query_metadata_tsv=INPUT_DIRPATH / "viral" / "viral_structure_metadata.tsv",
         query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv"
