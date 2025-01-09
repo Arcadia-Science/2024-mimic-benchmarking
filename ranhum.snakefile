@@ -129,14 +129,14 @@ rule download_host_pdbs:
     input:
         txt=rules.select_random_host.output.txt
     output:
-        outdir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_pdbs"),
+        randir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_pdbs"),
     conda:
         "envs/web_apis.yml"
     shell:
         """
         python ProteinCartography/download_pdbs.py \
             --input {input.txt} \
-            --output {output.outdir} \
+            --output {output.randir} \
             --max-structures {wildcards.random_subset}
         """
 
@@ -145,7 +145,7 @@ rule assess_pdbs:
     Assess the quality of PDB files for each subset and each host organism.
     """
     input:
-        outdir=rules.download_host_pdbs.output.outdir,
+        randir=rules.download_host_pdbs.output.randir,
     output:
         tsv=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_pdb_quality.tsv",
     conda:
@@ -153,6 +153,6 @@ rule assess_pdbs:
     shell:
         """
         python ProteinCartography/assess_pdbs.py \
-            --input {input.random_50_dir} \
-            --output {output.random_50_tsv}
+            --input {input.randir} \
+            --output {output.tsv}
         """
