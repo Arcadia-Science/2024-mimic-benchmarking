@@ -174,13 +174,13 @@ rule bind_length_info:
              {input.length_info} {input.viral_metadata} > {output.enriched_metadata}
         """
 
-#rule download_nomburg_eukaryotic_virus_structures:
- #   output:
- #       zipf=INPUT_DIRPATH / "viral" / "Nomburg_2023_structures.zip",
- #   shell:
- #       """
- #       curl -JLo {output} https://zenodo.org/records/10291581/files/Nomburg_2023_structures.zip?download=1
- #       """
+rule download_nomburg_eukaryotic_virus_structures:
+    output:
+        zipf=INPUT_DIRPATH / "viral" / "Nomburg_2023_structures.zip",
+    shell:
+        """
+        curl -JLo {output} https://zenodo.org/records/10291581/files/Nomburg_2023_structures.zip?download=1
+        """
 
 
 rule decompress_viral_structures:
