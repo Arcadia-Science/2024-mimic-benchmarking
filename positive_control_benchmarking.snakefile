@@ -15,7 +15,8 @@ host_metadata = host_metadata[host_metadata["organism"] == "human"]
 HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 
 
-POSITIVE_CONTROLS = ["c4bp", "eif2a", "il10", "il18bp"]
+#POSITIVE_CONTROLS = ["c4bp", "eif2a", "il10", "il18bp"]
+POSITIVE_CONTROLS = ["il10"]
 
 ###########################################################
 ## Download ProteinCartography scripts
@@ -147,6 +148,7 @@ rule benchmark_foldseek_against_human_proteome:
     conda:
         "envs/foldseek.yml"
     benchmark: "benchmarks/{host_organism}/foldseek/{positive_control}/foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv"
+    threads: 7
     shell:
         """
         foldseek easy-search \
@@ -156,13 +158,14 @@ rule benchmark_foldseek_against_human_proteome:
             tmp_foldseek \
             -e inf \
             --max-seqs 21000 \
-            --alignment-type {alignment_type} \
-            --tmalign-fast {tmalign_fast} \
-            --exact-tmscore {exact_tmscore} \
-            --exhaustive-search {exhaustive_search} \
-            --tmscore-threshold {tmscore_threshold} \
+            --alignment-type {wildcards.alignment_type} \
+            --tmalign-fast {wildcards.tmalign_fast} \
+            --exact-tmscore {wildcards.exact_tmscore} \
+            --exhaustive-search {wildcards.exhaustive_search} \
+            --tmscore-threshold {wildcards.tmscore_threshold} \
             --format-output query,target,qlen,tlen,alnlen,alntmscore,qtmscore,ttmscore,lddt,prob,qcov,tcov,pident,bits,evalue,qstart,qend,tstart,tend \
-            --format-mode 4
+            --format-mode 4 \
+            --threads {threads}
         """
 
 rule combine_foldseek_results_with_metadata:
