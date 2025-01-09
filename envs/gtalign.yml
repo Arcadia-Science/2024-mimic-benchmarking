@@ -1,0 +1,7 @@
+channels:
+   - minmarg
+   - conda-forge
+   - bioconda
+   - defaults
+dependencies:
+   - gtalign_gpu=0.15.0
