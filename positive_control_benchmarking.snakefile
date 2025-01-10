@@ -246,7 +246,7 @@ rule combine_gtalign_results_with_metadata:
         query_metadata_tsv=INPUT_DIRPATH / "viral" / "viral_structure_metadata.tsv",
         query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv",
     output:
-        tsv=OUTPUT_DIRPATH / "{host_organism}" / "gtalign" / "{positive_control}" / "gtalign_speed{speed}.tsv"
+        tsv=OUTPUT_DIRPATH / "{host_organism}" / "gtalign" / "{positive_control}" / "processed" / "gtalign_speed{speed}.tsv"
     conda:
         "envs/tidyverse.yml"
     shell:
@@ -263,5 +263,5 @@ rule combine_gtalign_results_with_metadata:
 rule all:
     default_target: True
     input:
-        expand(rules.combine_gtalign_results_with_metadata.output.txt, host_organism = HOST_ORGANISMS, positive_control = POSITIVE_CONTROLS, speed = SPEED),
+        expand(rules.combine_gtalign_results_with_metadata.output.tsv, host_organism = HOST_ORGANISMS, positive_control = POSITIVE_CONTROLS, speed = SPEED),
         expand(rules.combine_foldseek_results_with_metadata.output.tsv, host_organism = HOST_ORGANISMS, positive_control = POSITIVE_CONTROLS, alignment_type = ALIGNMENT_TYPE, tmalign_fast = TMALIGN_FAST, exact_tmscore = EXACT_TMSCORE, tmscore_threshold = TMSCORE_THRESHOLD, exhaustive_search = EXHAUSTIVE_SEARCH) 
