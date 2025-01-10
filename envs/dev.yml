@@ -9,3 +9,4 @@ dependencies:
   - ruff=0.1.6
   - snakefmt=0.8.5
   - snakemake-minimal=8.0.1
+  - pandas=2.2.3
