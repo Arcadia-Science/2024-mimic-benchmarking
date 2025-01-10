@@ -6,7 +6,9 @@ INPUT_DIRPATH = Path("inputs")
 
 # Read in host metadata
 ### we are only retrieving human data in this implementation but I left the structure to retrieve for multiple organisms
-host_metadata = pd.read_csv("inputs/viral/host-information.csv", header=0).set_index("organism", drop=False)
+host_metadata = pd.read_csv("inputs/viral/host-information.csv", header=0).set_index(
+    "organism", drop=False
+)
 HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 RANDOM_SUBSET = ["50", "100", "500", "1000"]
 
@@ -14,16 +16,21 @@ RANDOM_SUBSET = ["50", "100", "500", "1000"]
 ## Rules
 ###########################################################
 
+
 rule all:
     """
     Final rule that ensures all outputs are generated for all host organisms.
     """
     input:
         expand(
-            OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_pdb_quality.tsv",
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "{host_organism}"
+            / "random{random_subset}_pdb_quality.tsv",
             host_organism=HOST_ORGANISMS,
-            random_subset=RANDOM_SUBSET
-        )
+            random_subset=RANDOM_SUBSET,
+        ),
+
 
 rule download_proteincartography_scripts:
     """
@@ -73,6 +80,7 @@ rule download_proteincartography_scripts:
         curl -JLo {output.mocks} https://raw.githubusercontent.com/Arcadia-Science/ProteinCartography/{params.commit}/ProteinCartography/tests/mocks.py
         """
 
+
 rule download_uniprot_proteome_canonical_sequence_ids:
     """
     The following rule uses the UniProt FASTA file that records one protein per gene for each of our
@@ -81,7 +89,10 @@ rule download_uniprot_proteome_canonical_sequence_ids:
     cleaner analysis.
     """
     output:
-        txt=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "host_proteome_canonical_protein_ids.txt",
+        txt=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "{host_organism}"
+        / "host_proteome_canonical_protein_ids.txt",
     conda:
         "envs/seqkit.yml"
     params:
@@ -95,18 +106,20 @@ rule download_uniprot_proteome_canonical_sequence_ids:
             seqkit seq --only-id --name | cut -d'|' -f2 > {output.txt}
         """
 
+
 rule create_random_host_list:
     """
     Create a list of random host proteins that will be used to create random subsets.
     """
     input:
-        txt=rules.download_uniprot_proteome_canonical_sequence_ids.output.txt
+        txt=rules.download_uniprot_proteome_canonical_sequence_ids.output.txt,
     output:
-        txt=temp(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "temp_random.txt")
+        txt=temp(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "temp_random.txt"),
     shell:
         """
         awk 'BEGIN {{srand()}} {{print rand() "\\t" $0}}' {input.txt} | sort -k1,1n | cut -f2- > {output.txt}
         """
+
 
 rule select_random_host:
     """
@@ -114,22 +127,31 @@ rule select_random_host:
     Sets are inclusive, so all 50 proteins in the 50 subset occur in the 100 subset.
     """
     input:
-        txt=rules.create_random_host_list.output.txt
+        txt=rules.create_random_host_list.output.txt,
     output:
-        txt=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_proteins.txt",
+        txt=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "{host_organism}"
+        / "random{random_subset}_proteins.txt",
     shell:
         """
         head -n {wildcards.random_subset} {input.txt} > {output.txt}
         """
+
 
 rule download_host_pdbs:
     """
     Download PDB files for each subset of protein IDs into separate subfolders for each host organism.
     """
     input:
-        txt=rules.select_random_host.output.txt
+        txt=rules.select_random_host.output.txt,
     output:
-        randir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_pdbs"),
+        randir=directory(
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "{host_organism}"
+            / "random{random_subset}_pdbs"
+        ),
     conda:
         "envs/web_apis.yml"
     shell:
@@ -140,6 +162,7 @@ rule download_host_pdbs:
             --max-structures {wildcards.random_subset}
         """
 
+
 rule assess_pdbs:
     """
     Assess the quality of PDB files for each subset and each host organism.
@@ -147,7 +170,10 @@ rule assess_pdbs:
     input:
         randir=rules.download_host_pdbs.output.randir,
     output:
-        tsv=OUTPUT_DIRPATH / "random_protein_sets" / "{host_organism}" / "random{random_subset}_pdb_quality.tsv",
+        tsv=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "{host_organism}"
+        / "random{random_subset}_pdb_quality.tsv",
     conda:
         "envs/plotting.yml"
     shell:

@@ -10,17 +10,26 @@ INPUT_DIRPATH = Path("inputs")
 
 # Read in host metadata
 ### we are only retrieving human data in this implementation but I left the structure to retrieve for multiple organisms
-host_metadata = pd.read_csv("inputs/viral/host-information.csv", header=0).set_index("organism", drop=False)
+host_metadata = pd.read_csv("inputs/viral/host-information.csv", header=0).set_index(
+    "organism", drop=False
+)
 HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 
 ###########################################################
 ## Rules
 ###########################################################
 
+
 rule all:
     input:
-        expand(OUTPUT_DIRPATH / "random_protein_sets" / "viral" /"{host_organism}" / "random1000_table.tsv",
-               host_organism=HOST_ORGANISMS)
+        expand(
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "viral"
+            / "{host_organism}"
+            / "random1000_table.tsv",
+            host_organism=HOST_ORGANISMS,
+        ),
 
 
 rule download_proteincartography_scripts:
@@ -71,6 +80,7 @@ rule download_proteincartography_scripts:
         curl -JLo {output.mocks} https://raw.githubusercontent.com/Arcadia-Science/ProteinCartography/{params.commit}/ProteinCartography/tests/mocks.py
         """
 
+
 rule download_kegg_virushostdb:
     """
     Downloaded 2024-12-09 version
@@ -109,7 +119,7 @@ rule retrieve_ncbi_taxonomy_lineages_for_viral_taxids:
         tsv=rules.download_kegg_virushostdb.output.tsv,
         dmp=rules.download_ncbi_taxdump_information.output.dmp,
     output:
-        tsv=OUTPUT_DIRPATH / "random_protein_sets" / "viral" /  "viral_lineages.tsv",
+        tsv=OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "viral_lineages.tsv",
     conda:
         "envs/taxonkit.yml"
     params:
@@ -142,8 +152,16 @@ rule filter_nomburg_viruses_by_host:
         xlsx=rules.download_nomburg_supplementary_table.output.xlsx,
         tsv=rules.retrieve_ncbi_taxonomy_lineages_for_viral_taxids.output.tsv,
     output:
-        tsv=OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" /"viral_structure_metadata0.tsv",
-        txt=OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" /"viral_structure_paths.txt",
+        tsv=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viral_structure_metadata0.tsv",
+        txt=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viral_structure_paths.txt",
     conda:
         "envs/tidyverse.yml"
     shell:
@@ -157,12 +175,21 @@ rule filter_nomburg_viruses_by_host:
             --output_txt {output.txt}
         """
 
+
 rule bind_length_info:
     input:
-        viral_metadata=OUTPUT_DIRPATH / "random_protein_sets" / "viral" /"{host_organism}"/"viral_structure_metadata0.tsv",
-        length_info=INPUT_DIRPATH / "viral" / "human-viral-lengths.tsv" 
+        viral_metadata=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viral_structure_metadata0.tsv",
+        length_info=INPUT_DIRPATH / "viral" / "human-viral-lengths.tsv",
     output:
-        enriched_metadata=OUTPUT_DIRPATH / "random_protein_sets" / "viral" /"{host_organism}"/"viral_structure_metadata.tsv"
+        enriched_metadata=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viral_structure_metadata.tsv",
     shell:
         """
         query_col=$(head -1 {input.length_info} | awk -F'\t' '{{for (i=1; i<=NF; i++) if ($i == "query") print i}}')
@@ -173,6 +200,7 @@ rule bind_length_info:
              {{print $0, ($(nomburg_col) in lengths ? lengths[$(nomburg_col)] : "NA")}}' \
              {input.length_info} {input.viral_metadata} > {output.enriched_metadata}
         """
+
 
 rule download_nomburg_eukaryotic_virus_structures:
     output:
@@ -191,7 +219,13 @@ rule decompress_viral_structures:
         zipf=INPUT_DIRPATH / "viral" / "Nomburg_2023_structures.zip",
         txt=rules.filter_nomburg_viruses_by_host.output.txt,
     output:
-        dest_dir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" /"viral_structures"),
+        dest_dir=directory(
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "viral"
+            / "{host_organism}"
+            / "viral_structures"
+        ),
     shell:
         """
         python scripts/decompress_viral_structures.py \
@@ -209,7 +243,11 @@ rule assess_pdbs_viral:
         rules.download_proteincartography_scripts.output.txt,
         protein_structures_dir=rules.decompress_viral_structures.output.dest_dir,
     output:
-        tsv=OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" /"viral_structure_quality.tsv",
+        tsv=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viral_structure_quality.tsv",
     conda:
         "envs/plotting.yml"
     shell:
@@ -225,9 +263,17 @@ rule extract_unique_virus_names:
     Extract unique virus names from viral_structure_metadata.tsv.
     """
     input:
-        metadata_tsv=OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" /"viral_structure_metadata.tsv"
+        metadata_tsv=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viral_structure_metadata.tsv",
     output:
-        unique_viruses_txt=OUTPUT_DIRPATH / "random_protein_sets" / "viral" /  "{host_organism}" /"unique_virus_names.txt"
+        unique_viruses_txt=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "unique_virus_names.txt",
     shell:
         """
         python scripts/extract_unique_viruses.py {input.metadata_tsv} {output.unique_viruses_txt}
@@ -239,9 +285,15 @@ rule fetch_viro3d_structures_metadata:
     Fetch all viral structure metadata for filtered Nomburg unique viruses from the Viro3D API.
     """
     input:
-        unique_viruses=rules.extract_unique_virus_names.output.unique_viruses_txt
+        unique_viruses=rules.extract_unique_virus_names.output.unique_viruses_txt,
     output:
-        metadata_dir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "viral"  /"{host_organism}" / "viro3d_metadata")
+        metadata_dir=directory(
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "viral"
+            / "{host_organism}"
+            / "viro3d_metadata"
+        ),
     shell:
         """
         mkdir -p {output.metadata_dir}
@@ -272,41 +324,66 @@ rule fetch_viro3d_structures_metadata:
         done < {input.unique_viruses}
         """
 
+
 rule download_all_pdbs:
     """
     Download all PDB files for viruses listed in the Viro3D metadata.
     """
     input:
-        metadata_dir=rules.fetch_viro3d_structures_metadata.output.metadata_dir
+        metadata_dir=rules.fetch_viro3d_structures_metadata.output.metadata_dir,
     output:
-        pdb_dir=directory(OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" /"viro3d_all_pdbs")
+        pdb_dir=directory(
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "viral"
+            / "{host_organism}"
+            / "viro3d_all_pdbs"
+        ),
     shell:
         """
         python scripts/download_all_pdbs_viro3d.py {input.metadata_dir} {output.pdb_dir}
         """
+
 
 rule extract_nomburg_protein_names:
     """
     Extract nomburg_protein_name column from the viral_structure_metadata.tsv file.
     """
     input:
-        metadata_tsv=rules.filter_nomburg_viruses_by_host.output.tsv
+        metadata_tsv=rules.filter_nomburg_viruses_by_host.output.tsv,
     output:
-        nomburg_protein_names_txt=OUTPUT_DIRPATH / "random_protein_sets" / "viral"  / "{host_organism}" /"nomburg_protein_names.txt"
+        nomburg_protein_names_txt=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "nomburg_protein_names.txt",
     shell:
         """
         awk -F'\t' 'NR>1 {{print $1}}' {input.metadata_tsv} > {output.nomburg_protein_names_txt}
         """
+
 
 rule map_refseq_to_genbank:
     """
     Map RefSeq IDs from 'nomburg_protein_name' column to GenBank IDs using Viro3D metadata.
     """
     input:
-        metadata_tsv=OUTPUT_DIRPATH / "random_protein_sets" / "viral"  / "{host_organism}" /"viral_structure_metadata.tsv",
-        viro3d_metadata_dir=OUTPUT_DIRPATH / "random_protein_sets" / "viral"  / "{host_organism}" /"viro3d_metadata"
+        metadata_tsv=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viral_structure_metadata.tsv",
+        viro3d_metadata_dir=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viro3d_metadata",
     output:
-        mapping_file=OUTPUT_DIRPATH / "random_protein_sets" / "viral"  / "{host_organism}" /"refseq_to_genbank_mapping.tsv"
+        mapping_file=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "refseq_to_genbank_mapping.tsv",
     shell:
         """
         python scripts/map_refseq_to_genbank.py \
@@ -315,6 +392,7 @@ rule map_refseq_to_genbank:
             --output {output.mapping_file}
         """
 
+
 rule create_genbank_and_refseq_pdb_folders:
     """
     Create random sets of 50,100,500,1000 viral proteins from Viro3D and then pull out the corresponding Nomburg sets.
@@ -322,17 +400,47 @@ rule create_genbank_and_refseq_pdb_folders:
     input:
         mapping_file=rules.map_refseq_to_genbank.output.mapping_file,
         viro3d_dir=rules.download_all_pdbs.output.pdb_dir,
-        viral_structures_dir=rules.decompress_viral_structures.output.dest_dir
+        viral_structures_dir=rules.decompress_viral_structures.output.dest_dir,
     output:
-        genbank_lists=[OUTPUT_DIRPATH / "random_protein_sets" / "viral"  /"{host_organism}" / f"random{size}_genbank_ids.txt" for size in [50, 100, 500, 1000]],
-        genbank_subset_dirs=[directory(OUTPUT_DIRPATH / "random_protein_sets" / "viral" /"{host_organism}" / f"random{size}_viro3d_pdbs") for size in [50, 100, 500, 
-1000]],
-        refseq_subset_dirs=[directory(OUTPUT_DIRPATH / "random_protein_sets" / "viral" /"{host_organism}" / f"random{size}_refseq_pdbs") for size in [50, 100, 500, 
-1000]],
-        refseq_subsets=[OUTPUT_DIRPATH / "random_protein_sets" / "viral"  /"{host_organism}" / f"random{size}_refseq_ids.txt" for size in [50, 100, 500, 1000]]
+        genbank_lists=[
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "viral"
+            / "{host_organism}"
+            / f"random{size}_genbank_ids.txt"
+            for size in [50, 100, 500, 1000]
+        ],
+        genbank_subset_dirs=[
+            directory(
+                OUTPUT_DIRPATH
+                / "random_protein_sets"
+                / "viral"
+                / "{host_organism}"
+                / f"random{size}_viro3d_pdbs"
+            )
+            for size in [50, 100, 500, 1000]
+        ],
+        refseq_subset_dirs=[
+            directory(
+                OUTPUT_DIRPATH
+                / "random_protein_sets"
+                / "viral"
+                / "{host_organism}"
+                / f"random{size}_refseq_pdbs"
+            )
+            for size in [50, 100, 500, 1000]
+        ],
+        refseq_subsets=[
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "viral"
+            / "{host_organism}"
+            / f"random{size}_refseq_ids.txt"
+            for size in [50, 100, 500, 1000]
+        ],
     params:
         script="scripts/create_genbank_and_refseq_pdb_folders.py",
-        random_sizes=[50, 100, 500, 1000]
+        random_sizes=[50, 100, 500, 1000],
     shell:
         """
         python {params.script} \
@@ -346,19 +454,28 @@ rule create_genbank_and_refseq_pdb_folders:
             --random_sizes {params.random_sizes}
         """
 
+
 rule create_random1000_table:
     """
     Create a random1000 table with RefSeq_ID, GenBank_ID, RefSeq_PDB_Filename, and GenBank_Entry_Name. Since this is the largest superset, it should also have the info for the smaller sets.
     """
     input:
-        random1000_refseq_list=OUTPUT_DIRPATH / "random_protein_sets" / "viral" /"{host_organism}" / "random1000_refseq_ids.txt",
+        random1000_refseq_list=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "random1000_refseq_ids.txt",
         mapping_file=rules.map_refseq_to_genbank.output.mapping_file,
         viro3d_metadata_dir=rules.fetch_viro3d_structures_metadata.output.metadata_dir,
-        viral_structures_dir=rules.decompress_viral_structures.output.dest_dir
+        viral_structures_dir=rules.decompress_viral_structures.output.dest_dir,
     output:
-        output_table=OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" /"random1000_table.tsv"
+        output_table=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "random1000_table.tsv",
     params:
-        script="scripts/create_random1000_table.py"
+        script="scripts/create_random1000_table.py",
     shell:
         """
         python {params.script} \
