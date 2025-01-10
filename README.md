@@ -30,7 +30,7 @@ snakemake --software-deployment-method conda -j 8
 
 ## Data
 
-- Target protein pdbs were downloaded directly from [Alphafold](https://alphafold.ebi.ac.uk/).
+- We downloaded target protein pdbs directly from [Alphafold](https://alphafold.ebi.ac.uk/) using UniProt accessions.
 - We generated random viral protein datasets by running the [create_random_viral_sets.snakefile](create_random_viral_sets.snakefile).
 - We generated random human protein datasets by running the [create_random_human_sets.snakefile](create_random_human_sets.snakefile). Note that this file exists as documentation for how we generated these steps, but there is a non-deterministic step that produce different sets if the snakefile is re-run. As such, please **use the data in the [benchmarking_data](benchmarking_data) folder if you plan to use these datasets**.
 
