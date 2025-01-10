@@ -7,9 +7,9 @@
 This repository contains standardized datasets that we are using to evaluate protein structural alignment methods and how they impact our results. These datasets include the following:
 - Sets of structures for randomly selected human proteins (50,100,500,1000)
 - Sets of random selected viral protein structures (50,100,500,1000) predicted by Nomburg et al. or Viro3D
-- 'Target' protein pdbs for 4 proteins of interest (IL18BP, C4BP, IL10, EIF2A) from human, chimp, macaque, and mouse. These are considered positive controls.
-- 3 viral representative sequences for each of the 4 target proteins. These are considered positive controls.
-
+- 'Target' protein pdbs for 4 proteins of interest (IL18BP, C4BP, IL10, EIF2A) from human, chimp, macaque, and mouse. Viruses have been shown to mimic these four proteins.
+- 3 viral representative sequences for each of the 4 target proteins. At least one protein in each set is the exact viral protein that was confirmed via experimentation to mimic the human protein.
+  
 ## Installation and Setup
 
 This repository uses Snakemake to run the pipeline and conda to manage software environments and installations. You can find operating system-specific instructions for installing miniconda [here](https://docs.conda.io/projects/miniconda/en/latest/). After installing conda and [mamba](https://mamba.readthedocs.io/en/latest/), run the following command to create the pipeline run environment.
