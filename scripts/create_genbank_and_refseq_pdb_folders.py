@@ -51,7 +51,7 @@ def main(args):
         )
         cumulative_genbank_ids.update(additional_genbank_ids)
 
-        with open(genbank_list, 'w') as genbank_file:
+        with open(genbank_list, "w") as genbank_file:
             genbank_file.write("\n".join(cumulative_genbank_ids))
 
         # Copy unique PDB files for each GenBank ID
@@ -85,8 +85,7 @@ def main(args):
                 for file in files:
                     if f"{additional_genbank_id}_" in file:
                         shutil.copy(
-                            os.path.join(root, file),
-                            os.path.join(genbank_subset_dir, file)
+                            os.path.join(root, file), os.path.join(genbank_subset_dir, file)
                         )
                         break
 
@@ -99,7 +98,7 @@ def main(args):
 
         cumulative_refseq_ids.update(additional_refseq_ids)
 
-        with open(refseq_output, 'w') as refseq_file:
+        with open(refseq_output, "w") as refseq_file:
             refseq_file.write("\n".join(cumulative_refseq_ids))
 
         # Copy one matching PDB file for each RefSeq ID
@@ -138,13 +137,13 @@ if __name__ == "__main__":
         "--genbank_subset_dirs",
         nargs="+",
         required=True,
-        help="Paths to output GenBank PDB subset directories."
+        help="Paths to output GenBank PDB subset directories.",
     )
     parser.add_argument(
         "--refseq_subset_dirs",
         nargs="+",
         required=True,
-       help="Paths to output RefSeq PDB subset directories."
+        help="Paths to output RefSeq PDB subset directories.",
     )
     parser.add_argument(
         "--refseq_subsets", nargs="+", required=True, help="Paths to output RefSeq ID lists."
@@ -154,7 +153,7 @@ if __name__ == "__main__":
         nargs="+",
         type=int,
         required=True,
-        help="Subset sizes for random GenBank IDs."
+        help="Subset sizes for random GenBank IDs.",
     )
     parser.add_argument(
         "--mapping_file", required=True, help="Path to RefSeq-to-GenBank mapping file."
