@@ -19,7 +19,7 @@ option_list <- list(
 
 args <- parse_args(OptionParser(option_list=option_list))
 
-results <- read_tsv(args$input_foldseek_results, show_col_types = FALSE) %>%
+results <- read_tsv(args$input_results, show_col_types = FALSE) %>%
 #results <- read_tsv("~/Downloads/tmp.tsv", show_col_types = FALSE) %>%
   mutate(query = str_remove(string = query, pattern = "\\.pdb"),
          target = str_remove(string = target, pattern = "\\.pdb")) %>%
@@ -71,4 +71,4 @@ results <- results %>%
   distinct()
 
 
-write_tsv(foldseek_results, args$output)
+write_tsv(results, args$output)
