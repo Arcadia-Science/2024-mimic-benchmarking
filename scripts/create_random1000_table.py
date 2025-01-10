@@ -83,7 +83,7 @@ if __name__ == "__main__":
     import fnmatch
 
     parser = argparse.ArgumentParser(
-        description="Create a Random900 table with additional details."
+        description="Create a Random1000 table with additional details."
     )
     parser.add_argument(
         "--random1000_refseq_list", required=True, help="Path to the random1000 refseq list."
