@@ -201,7 +201,9 @@ rule benchmark_gtalign_against_human_proteome:
     input: 
         pdbs="benchmarking_data/positive_controls/{positive_control}/",
         protein_structures_dir=rules.download_host_pdbs.output.protein_structures_dir
-    output: txt=OUTPUT_DIRPATH /"{host_organism}" / "gtalign" / "{positive_control}" / "gtalign_speed{speed}.out"
+    output:
+        txt=OUTPUT_DIRPATH /"{host_organism}" / "gtalign" / "{positive_control}" / "gtalign_speed{speed}.out",
+        outdir=OUTPUT_DIRPATH /"{host_organism}" / "gtalign" / "{positive_control}" / "gtalign_speed{speed}"
     conda:
         "envs/gtalign.yml"
     benchmark: "benchmarks/gtalign/{host_organism}/{positive_control}/gtalign_speed{speed}.tsv"
@@ -211,7 +213,7 @@ rule benchmark_gtalign_against_human_proteome:
             -v \
             --qrs={input.pdbs} \
             --rfs={input.protein_structures_dir} \
-            -o exhaustive \
+            -o {output.outdir} \
             --sfx pdb \
             -s 0 \
             --sort=2 \
@@ -221,7 +223,7 @@ rule benchmark_gtalign_against_human_proteome:
             --nhits=21000 \
             --nalns=21000 \
             --pre-score=0 \
-            -c tmp_gtalign
+            -c tmp_gtalign && touch {output.txt}
         """
 
 #rule reformat_gtalign_output:
