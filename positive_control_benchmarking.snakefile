@@ -203,7 +203,7 @@ rule benchmark_gtalign_against_human_proteome:
         protein_structures_dir=rules.download_host_pdbs.output.protein_structures_dir
     output:
         txt=OUTPUT_DIRPATH /"{host_organism}" / "gtalign" / "{positive_control}" / "gtalign_speed{speed}.out",
-        outdir=OUTPUT_DIRPATH /"{host_organism}" / "gtalign" / "{positive_control}" / "gtalign_speed{speed}"
+        outdir=directory(OUTPUT_DIRPATH /"{host_organism}" / "gtalign" / "{positive_control}" / "gtalign_speed{speed}")
     conda:
         "envs/gtalign.yml"
     benchmark: "benchmarks/gtalign/{host_organism}/{positive_control}/gtalign_speed{speed}.tsv"
