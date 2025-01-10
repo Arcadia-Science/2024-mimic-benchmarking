@@ -1,12 +1,17 @@
-import os
-import json
-import pandas as pd
 import argparse
+import json
+import os
+
+import pandas as pd
 
 # Argument parsing
 parser = argparse.ArgumentParser(description="Map RefSeq IDs to GenBank IDs using Viro3D metadata.")
 parser.add_argument("--metadata", required=True, help="Path to viral_structure_metadata.tsv")
-parser.add_argument("--viro3d_metadata", required=True, help="Path to directory containing Viro3D JSON metadata files")
+parser.add_argument(
+    "--viro3d_metadata",
+    required=True,
+    help="Path to directory containing Viro3D JSON metadata files",
+)
 parser.add_argument("--output", required=True, help="Output path for the mapping file")
 args = parser.parse_args()
 
@@ -27,9 +32,10 @@ nomburg_entries = [
         "product_name": entry.split("__")[0],
         "refseq_id": entry.split("__")[1],
         "virus_name": entry.split("__")[2],
-        "length": metadata.loc[metadata["nomburg_protein_name"] == entry, "length"].values[0]
+        "length": metadata.loc[metadata["nomburg_protein_name"] == entry, "length"].values[0],
     }
-    for entry in nomburg_protein_names if isinstance(entry, str) and len(entry.split("__")) == 4
+    for entry in nomburg_protein_names
+    if isinstance(entry, str) and len(entry.split("__")) == 4
 ]
 
 # Initialize mapping results
@@ -50,7 +56,7 @@ for entry in nomburg_entries:
         continue
 
     # Load JSON metadata
-    with open(json_file_path, "r") as f:
+    with open(json_file_path) as f:
         viro3d_data = json.load(f)
 
     # Extract protein structures
@@ -101,17 +107,13 @@ for entry in nomburg_entries:
     # Save all matches for this RefSeq ID
     if filtered_matches:
         for match in filtered_matches:
-            mapping_results.append({
-                "RefSeq_ID": refseq_id,
-                "GenBank_ID": match[0],
-                "Match_Type": match[1]
-            })
+            mapping_results.append(
+                {"RefSeq_ID": refseq_id, "GenBank_ID": match[0], "Match_Type": match[1]}
+            )
     else:
-        mapping_results.append({
-            "RefSeq_ID": refseq_id,
-            "GenBank_ID": "No Match Found",
-            "Match_Type": "No Match"
-        })
+        mapping_results.append(
+            {"RefSeq_ID": refseq_id, "GenBank_ID": "No Match Found", "Match_Type": "No Match"}
+        )
 
 # Write results to output file
 with open(output_mapping_file, "w") as f:
