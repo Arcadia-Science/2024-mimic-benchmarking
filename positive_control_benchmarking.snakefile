@@ -181,8 +181,8 @@ rule combine_foldseek_results_with_metadata:
         "envs/tidyverse.yml"
     shell:
         """
-        Rscript scripts/combine_foldseek_results_with_metadata_viral2.R \
-            --input_foldseek_results {input.foldseek_tsv} \
+        Rscript scripts/combine_results_with_metadata.R \
+            --input_results {input.foldseek_tsv} \
             --input_human_metadata {input.human_metadata_csv} \
             --input_host_lddt {input.host_lddt_tsv} \
             --input_query_metadata {input.query_metadata_tsv} \
