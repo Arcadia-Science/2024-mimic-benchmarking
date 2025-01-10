@@ -226,10 +226,42 @@ rule benchmark_gtalign_against_human_proteome:
             -c tmp_gtalign && touch {output.txt}
         """
 
-#rule reformat_gtalign_output:
+rule reformat_gtalign_output:
+    input: outdir=rules.benchmark_gtalign_against_human_proteome.output.outdir
+    output: tsv=OUTPUT_DIRPATH / "{host_organism}" / "gtalign" / "{positive_control}" / "gtalign_speed{speed}.tsv"
+    conda:
+        "envs/web_apis.yml"
+    shell:
+        """
+        python scripts/parse_gtalign_to_tsv_many.py \
+            --input_dir {input.outdir} \
+            --output {output.tsv}
+        """
+
+rule combine_gtalign_results_with_metadata:
+    input:
+        gtalign_tsv=rules.reformat_gtalign_output.output.tsv,
+        human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv.gz",
+        host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv",
+        query_metadata_tsv=INPUT_DIRPATH / "viral" / "viral_structure_metadata.tsv",
+        query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv",
+    output:
+        tsv=OUTPUT_DIRPATH / "{host_organism}" / "gtalign" / "{positive_control}" / "gtalign_speed{speed}.tsv"
+    conda:
+        "envs/tidyverse.yml"
+    shell:
+        """
+        Rscript scripts/combine_results_with_metadata.R \
+            --input_results {input.gtalign_tsv} \
+            --input_human_metadata {input.human_metadata_csv} \
+            --input_host_lddt {input.host_lddt_tsv} \
+            --input_query_metadata {input.query_metadata_tsv} \
+            --input_query_lddt {input.query_lddt_tsv} \
+            --output {output.tsv}
+        """
 
 rule all:
     default_target: True
     input:
-        expand(rules.benchmark_gtalign_against_human_proteome.output.txt, host_organism = HOST_ORGANISMS, positive_control = POSITIVE_CONTROLS, speed = SPEED),
+        expand(rules.combine_gtalign_results_with_metadata.output.txt, host_organism = HOST_ORGANISMS, positive_control = POSITIVE_CONTROLS, speed = SPEED),
         expand(rules.combine_foldseek_results_with_metadata.output.tsv, host_organism = HOST_ORGANISMS, positive_control = POSITIVE_CONTROLS, alignment_type = ALIGNMENT_TYPE, tmalign_fast = TMALIGN_FAST, exact_tmscore = EXACT_TMSCORE, tmscore_threshold = TMSCORE_THRESHOLD, exhaustive_search = EXHAUSTIVE_SEARCH) 
