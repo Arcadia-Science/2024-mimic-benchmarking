@@ -1,12 +1,17 @@
-import os
-import json
-import pandas as pd
 import argparse
+import json
+import os
+
+import pandas as pd
 
 # Argument parsing
 parser = argparse.ArgumentParser(description="Map RefSeq IDs to GenBank IDs using Viro3D metadata.")
 parser.add_argument("--metadata", required=True, help="Path to viral_structure_metadata.tsv")
-parser.add_argument("--viro3d_metadata", required=True, help="Path to directory containing Viro3D JSON metadata files")
+parser.add_argument(
+    "--viro3d_metadata",
+    required=True,
+    help="Path to directory containing Viro3D JSON metadata files"
+)
 parser.add_argument("--output", required=True, help="Output path for the mapping file")
 args = parser.parse_args()
 
@@ -50,7 +55,7 @@ for entry in nomburg_entries:
         continue
 
     # Load JSON metadata
-    with open(json_file_path, "r") as f:
+    with open(json_file_path) as f:
         viro3d_data = json.load(f)
 
     # Extract protein structures
