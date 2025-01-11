@@ -1,0 +1,25 @@
+structure_file	database	target_gene	experimental_doc
+CF-AAC55181.1_12002_relaxed_mcon.pdb	Viro3D	IL18BP	
+CF-AAM13481.1_12007_relaxed_cowpox.pdb	Viro3D	C4BP	
+CF-AAO89304.1_12013_relaxed_Vacc.pdb	Viro3D	C4BP	
+CF-AAO89313.1_12013_relaxed_vaccinia.pdb	Viro3D	EIF2A	
+CF-AAR07371.1_12029_relaxed_yaba.pdb	Viro3D	EIF2A	
+CF-AAR07373.1_12029_relaxed_yaba.pdb	Viro3D	IL18BP	
+CF-AAR31656.1_100_relaxed_HHV-5.pdb	Viro3D	IL10	
+CF-AEV80459.1_99_relaxed_GMCMV.pdb	Viro3D	IL10	
+CF-AXN74850.1_12005_relaxed_akhmeta.pdb	Viro3D	EIF2A	
+CF-CAA48946.1_12014_relaxed_variola.pdb	Viro3D	IL18BP	
+CF-CAA48953.1_12014_relaxed_variola.pdb	Viro3D	C4BP	
+CF-CAD53385.1_127_relaxed_ebv.pdb	Viro3D	IL10	
+CPXV034__NP_619823__Cowpox_virus__10243.pdb	Nomburg	C4BP	
+EIF2a-like_PKR_inhibitor__NP_938270__Yaba_monkey_tumor_virus__38804.pdb	Nomburg	EIF2A	
+IL-18_binding_protein__NP_042049__Variola_virus__10255.pdb	Nomburg	IL18BP	
+IL-18_binding_protein__NP_938272__Yaba_monkey_tumor_virus__38804.pdb	Nomburg	IL18BP	
+interferon_resistance_protein__YP_232916__Vaccinia_virus__10245.pdb	Nomburg	EIF2A	https://doi.org/10.1128/jvi.66.4.1943-1950.1992
+"Interferon_resistance,_PKR_inhibitor__YP_010085513__Akhmeta_virus__2200830.pdb"	Nomburg	EIF2A	
+interleukin-10__YP_004936071__Cercopithecine_betaherpesvirus_5__50292.pdb	Nomburg	IL10	
+interleukin-10__YP_081552__Human_betaherpesvirus_5__10359.pdb	Nomburg	IL10	
+interleukin-10_BCRF1__YP_401634__Human_gammaherpesvirus_4__10376.pdb	Nomburg	IL10	https://doi.org/10.1006/jmbi.1997.0990;https://doi.org/10.1016/j.str.2005.01.016
+MC053L__NP_044004__Molluscum_contagiosum_virus_subtype_1__10280.pdb	Nomburg	IL18BP	https://doi.org/10.1073/pnas.96.20.11537
+secreted_complement_binding_C3b_C4b__YP_232907__Vaccinia_virus__10245.pdb	Nomburg	C4BP	https://doi.org/10.1073/pnas.89.2.628
+secreted_complement-binding_protein__NP_042056__Variola_virus__10255.pdb	Nomburg	C4BP	
