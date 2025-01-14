@@ -15,8 +15,8 @@ host_metadata = host_metadata[host_metadata["organism"] == "human"]
 HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 
 
-#POSITIVE_CONTROLS = ["c4bp", "eif2a", "il10", "il18bp"]
-POSITIVE_CONTROLS = ["il10"]
+POSITIVE_CONTROLS = ["c4bp", "eif2a", "il10", "il18bp"]
+#POSITIVE_CONTROLS = ["il10", "c4bp"]
 
 ###########################################################
 ## Download ProteinCartography scripts
@@ -207,6 +207,7 @@ rule benchmark_gtalign_against_human_proteome:
     conda:
         "envs/gtalign.yml"
     benchmark: "benchmarks/gtalign/{host_organism}/{positive_control}/gtalign_speed{speed}.tsv"
+    threads: 7 # this doesn't actually take 7 threads, it uses 1 gpu, but will fail if another gtalign runs so bounding here
     shell:
         """
         gtalign \
