@@ -229,8 +229,9 @@ rule benchmark_gtalign_against_human_proteome:
         ),
     conda:
         "envs/gtalign.yml"
-    benchmark: "benchmarks/gtalign/{host_organism}/{positive_control}/gtalign_speed{speed}.tsv"
-    threads: 7 # this doesn't actually take 7 threads, it uses 1 gpu, but will fail if another gtalign runs so bounding here
+    benchmark:
+        "benchmarks/gtalign/{host_organism}/{positive_control}/gtalign_speed{speed}.tsv"
+    threads: 7  # this doesn't actually take 7 threads, it uses 1 gpu, but will fail if another gtalign runs so bounding here
     shell:
         """
         gtalign \
