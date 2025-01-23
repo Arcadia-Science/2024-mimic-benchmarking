@@ -14,7 +14,8 @@ host_metadata = host_metadata[host_metadata["organism"] == "human"]
 HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 
 
-POSITIVE_CONTROLS = ["c4bp", "eif2a", "il10", "il18bp"]
+POSITIVE_CONTROLS = ["bcl2", "c4bp", "cd47", "chemokine" "eif2a", "ifnar", "ifngr", "il10",
+                     "il18bp", "kinase", "lfg4", "nsp16", "nsp5"]
 
 ###########################################################
 ## Download ProteinCartography scripts
@@ -135,7 +136,7 @@ rule download_host_pdbs:
 ALIGNMENT_TYPE = ["1", "2"]  # 1: TMAlign, 2: 3di + AA
 TMALIGN_FAST = ["0", "1"]  # 0: off, 1: on
 EXACT_TMSCORE = ["0", "1"]  # 0: off, 1: on
-TMSCORE_THRESHOLD = ["0", "0.25"]
+TMSCORE_THRESHOLD = ["0", "0.25", "0.5"]
 EXHAUSTIVE_SEARCH = ["0", "1"]  # 0: off, 1: on
 
 
