@@ -14,7 +14,7 @@ host_metadata = host_metadata[host_metadata["organism"] == "human"]
 HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 
 
-POSITIVE_CONTROLS = ["bcl2", "c4bp", "cd47", "chemokine" "eif2a", "ifnar", "ifngr", "il10",
+POSITIVE_CONTROLS = ["bcl2", "c4bp", "cd47", "chemokine", "eif2a", "ifnar", "ifngr", "il10",
                      "il18bp", "kinase", "lfg4", "nsp16", "nsp5"]
 
 ###########################################################
