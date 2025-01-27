@@ -68,9 +68,7 @@ def main(args):
             if genbank_id != "No Match"
             else "No Match"
         )
-        output_data.append(
-            [refseq_id, genbank_id, refseq_pdb_filename, genbank_entry_name]
-        )
+        output_data.append([refseq_id, genbank_id, refseq_pdb_filename, genbank_entry_name])
 
     # Save the output table
     output_df = pd.DataFrame(
@@ -110,8 +108,6 @@ if __name__ == "__main__":
         required=True,
         help="Path to the viral structures directory.",
     )
-    parser.add_argument(
-        "--output_table", required=True, help="Path to the output table."
-    )
+    parser.add_argument("--output_table", required=True, help="Path to the output table.")
     args = parser.parse_args()
     main(args)

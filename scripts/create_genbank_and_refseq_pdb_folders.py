@@ -45,9 +45,7 @@ def main(args):
                     break
 
         # Exclude already selected GenBank IDs and select additional ones
-        remaining_genbank_ids = list(
-            set(available_genbank_ids) - cumulative_genbank_ids
-        )
+        remaining_genbank_ids = list(set(available_genbank_ids) - cumulative_genbank_ids)
         additional_genbank_ids = random.sample(
             remaining_genbank_ids, max(0, random_size - len(cumulative_genbank_ids))
         )
@@ -78,9 +76,7 @@ def main(args):
 
         # Ensure the GenBank subset directory has the correct size
         while len(os.listdir(genbank_subset_dir)) < random_size:
-            remaining_genbank_ids = list(
-                set(available_genbank_ids) - cumulative_genbank_ids
-            )
+            remaining_genbank_ids = list(set(available_genbank_ids) - cumulative_genbank_ids)
             if not remaining_genbank_ids:
                 break  # No more GenBank IDs to add
             additional_genbank_id = random.choice(remaining_genbank_ids)
@@ -141,9 +137,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Subset GenBank IDs and corresponding PDBs."
-    )
+    parser = argparse.ArgumentParser(description="Subset GenBank IDs and corresponding PDBs.")
     parser.add_argument(
         "--genbank_lists", nargs="+", required=True, help="Paths to GenBank ID lists."
     )
@@ -175,9 +169,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--mapping_file", required=True, help="Path to RefSeq-to-GenBank mapping file."
     )
-    parser.add_argument(
-        "--viro3d_dir", required=True, help="Directory containing Viro3D PDBs."
-    )
+    parser.add_argument("--viro3d_dir", required=True, help="Directory containing Viro3D PDBs.")
     parser.add_argument(
         "--viral_structures_dir",
         required=True,

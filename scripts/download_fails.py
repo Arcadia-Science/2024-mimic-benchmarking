@@ -71,9 +71,7 @@ def find_metadata_in_jsons(record_id, metadata_dir):
 
                             # Debug: Confirm a match and the extracted values
                             print(f"Found Record ID {record_id} in {json_file}.")
-                            print(
-                                f"ESMFold pLDDT: {esm_pLDDT}, ColabFold pLDDT: {colab_pLDDT}"
-                            )
+                            print(f"ESMFold pLDDT: {esm_pLDDT}, ColabFold pLDDT: {colab_pLDDT}")
 
                             return virus_name, esm_pLDDT, colab_pLDDT
             except json.JSONDecodeError:
@@ -88,9 +86,7 @@ def find_metadata_in_jsons(record_id, metadata_dir):
 
 # Function to download a file and update the summary
 def download_and_update(api_url, virus_name, record_id, chosen_method):
-    filename = (
-        f"{virus_name.replace(' ', '_')}_{chosen_method[:2]}-{record_id}_relaxed.pdb"
-    )
+    filename = f"{virus_name.replace(' ', '_')}_{chosen_method[:2]}-{record_id}_relaxed.pdb"
     output_path = os.path.join(input_dir, filename)
 
     try:
@@ -108,9 +104,7 @@ def download_and_update(api_url, virus_name, record_id, chosen_method):
                 json_filename = f"{virus_name.replace('_', ' ')}.json"
                 json_path = os.path.join(metadata_dir, json_filename)
                 if os.path.exists(json_path):
-                    _, esm_pLDDT, colab_pLDDT = find_metadata_in_jsons(
-                        record_id, metadata_dir
-                    )
+                    _, esm_pLDDT, colab_pLDDT = find_metadata_in_jsons(record_id, metadata_dir)
 
                 # Add a new row to the summary file
                 summary_data.loc[len(summary_data)] = {
@@ -118,9 +112,7 @@ def download_and_update(api_url, virus_name, record_id, chosen_method):
                     "Record ID": record_id,
                     "ESMFold pLDDT": esm_pLDDT,
                     "ColabFold pLDDT": colab_pLDDT,
-                    "Chosen Method": (
-                        "ColabFold" if chosen_method == "CF" else "ESMFold"
-                    ),
+                    "Chosen Method": ("ColabFold" if chosen_method == "CF" else "ESMFold"),
                     "structure_file": filename,
                 }
                 print(f"Added {record_id} to summary.")
@@ -148,18 +140,14 @@ if os.path.exists(fails_file):
             record_id_match = re.search(r"(EF-|CF-)([A-Z0-9._]+)_relaxed", filename)
             if record_id_match:
                 record_id = record_id_match.group(2)
-                virus_name, esm_pLDDT, colab_pLDDT = find_metadata_in_jsons(
-                    record_id, metadata_dir
-                )
+                virus_name, esm_pLDDT, colab_pLDDT = find_metadata_in_jsons(record_id, metadata_dir)
                 if not virus_name:
                     print(f"Record ID {record_id} not found in metadata. Skipping.")
                     continue
         print(f"Retrying download for {url}...")
         if not download_and_update(url, virus_name, record_id, chosen_method):
             # Try the opposite prefix if the download fails
-            opposite_url = (
-                url.replace("CF-", "EF-") if "CF-" in url else url.replace("EF-", "CF-")
-            )
+            opposite_url = url.replace("CF-", "EF-") if "CF-" in url else url.replace("EF-", "CF-")
             opposite_method = "CF" if chosen_method == "EF" else "EF"
             print(f"Retrying with opposite prefix: {opposite_url}")
             download_and_update(opposite_url, virus_name, record_id, opposite_method)
@@ -179,9 +167,7 @@ for pdb_file in os.listdir(input_dir):
         record_id_match = re.search(r"(EF-|CF-)([A-Z0-9._]+)_relaxed", pdb_file)
         if record_id_match:
             record_id = record_id_match.group(2)
-            virus_name, esm_pLDDT, colab_pLDDT = find_metadata_in_jsons(
-                record_id, metadata_dir
-            )
+            virus_name, esm_pLDDT, colab_pLDDT = find_metadata_in_jsons(record_id, metadata_dir)
             if not virus_name:
                 print(f"Record ID {record_id} not found in metadata. Skipping.")
                 continue

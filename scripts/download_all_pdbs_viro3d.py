@@ -51,9 +51,7 @@ for response_file in os.listdir(response_dir):
 
                         print(f"Downloading {pdb_url} to {pdb_output_path}...")
                         # Download the file
-                        exit_code = os.system(
-                            f"curl -s -o '{pdb_output_path}' {pdb_url}"
-                        )
+                        exit_code = os.system(f"curl -s -o '{pdb_output_path}' {pdb_url}")
 
                         if (
                             exit_code == 0

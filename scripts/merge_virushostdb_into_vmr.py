@@ -22,15 +22,13 @@ vmr_metadata = pd.read_csv(vmr_metadata_path, sep="\t")
 virushostdb = pd.read_csv(virushostdb_path, sep="\t")
 
 # Clean and split REFSEQ IDs in both datasets
-vmr_metadata["Virus REFSEQ accession"] = clean_and_split_ids(
-    vmr_metadata["Virus REFSEQ accession"]
-)
+vmr_metadata["Virus REFSEQ accession"] = clean_and_split_ids(vmr_metadata["Virus REFSEQ accession"])
 virushostdb["refseq id"] = clean_and_split_ids(virushostdb["refseq id"])
 
 # Drop rows with empty or NaN `Virus REFSEQ accession` in vmr_metadata
-vmr_metadata = vmr_metadata[
-    vmr_metadata["Virus REFSEQ accession"].str.len() > 0
-].reset_index(drop=True)
+vmr_metadata = vmr_metadata[vmr_metadata["Virus REFSEQ accession"].str.len() > 0].reset_index(
+    drop=True
+)
 
 print(f"Filtered VMR Metadata: {len(vmr_metadata)} rows remain after removing blanks")
 
@@ -54,9 +52,7 @@ print(f"Merged Data: {len(merged_data)} rows")
 
 # Debugging: Check for rows with missing `host tax id`
 unmatched_rows = merged_data[merged_data["host tax id"].isna()]
-print(
-    f"Unmatched Rows: {len(unmatched_rows)} rows (These have no matching host tax id)"
-)
+print(f"Unmatched Rows: {len(unmatched_rows)} rows (These have no matching host tax id)")
 
 # Filter rows where host tax id is 9606 (humans)
 if "host tax id" in merged_data.columns:
