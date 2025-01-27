@@ -3,5 +3,5 @@ channels:
   - defaults
 dependencies:
   - python=3.9
-  - pip
-  - xlsx2csv
+  - pip=25.0
+  - xlsx2csv=0.8.4
