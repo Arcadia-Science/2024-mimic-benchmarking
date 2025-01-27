@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+
 import pandas as pd
 
 response_dir = sys.argv[1]
@@ -27,13 +28,13 @@ for response_file in os.listdir(response_dir):
                 data = json.load(f)
                 virus_name = data.get("virus_name", "unknown_virus").replace(" ", "_")
                 protein_structures = data.get("protein_structures", [])
-                
+
                 for protein in protein_structures:
                     # Extract record-level details
                     record_id = protein.get("record_id")
                     esm_pLDDT = float(protein.get("esmfold_log_pLDDT", 0))
                     colab_pLDDT = float(protein.get("colabfold_json_pLDDT", 0))
-                    
+
                     # Decide prefix based on the higher pLDDT score
                     if colab_pLDDT > esm_pLDDT:
                         prefix = "CF-"
@@ -41,7 +42,7 @@ for response_file in os.listdir(response_dir):
                     else:
                         prefix = "EF-"
                         chosen_method = "ESMFold"
-                    
+
                     if record_id:
                         pdb_url = f"{base_pdb_url}{prefix}{record_id}_relaxed.pdb"
                         pdb_output_path = os.path.join(
@@ -52,7 +53,11 @@ for response_file in os.listdir(response_dir):
                         # Download the file
                         exit_code = os.system(f"curl -s -o '{pdb_output_path}' {pdb_url}")
 
-                        if exit_code == 0 and os.path.exists(pdb_output_path) and os.path.getsize(pdb_output_path) > 22:
+                        if (
+                           exit_code == 0
+                           and os.path.exists(pdb_output_path)
+                           and os.path.getsize(pdb_output_path) > 22
+                        ):
                             # Log successful download
                             print(f"Successfully downloaded {pdb_url}")
                             # Append details to the summary data

@@ -1,6 +1,7 @@
-import pandas as pd
 import re
 import sys
+
+import pandas as pd
 
 # Input and output file paths
 vmr_metadata_path = sys.argv[1]
@@ -24,7 +25,10 @@ vmr_metadata["Virus REFSEQ accession"] = clean_and_split_ids(vmr_metadata["Virus
 virushostdb["refseq id"] = clean_and_split_ids(virushostdb["refseq id"])
 
 # Drop rows with empty or NaN `Virus REFSEQ accession` in vmr_metadata
-vmr_metadata = vmr_metadata[vmr_metadata["Virus REFSEQ accession"].str.len() > 0].reset_index(drop=True)
+vmr_metadata = vmr_metadata[
+    vmr_metadata["Virus REFSEQ accession"].str.len() > 0
+].reset_index(drop=True)
+
 print(f"Filtered VMR Metadata: {len(vmr_metadata)} rows remain after removing blanks")
 
 # Explode both datasets to normalize the REFSEQ IDs (one row per ID)

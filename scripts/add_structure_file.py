@@ -1,5 +1,6 @@
-import pandas as pd
 import sys
+
+import pandas as pd
 
 # Input and output paths
 summary_file_path = sys.argv[1]

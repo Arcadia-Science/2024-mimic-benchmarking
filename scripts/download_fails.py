@@ -1,9 +1,10 @@
-import os
-import sys
-import requests
-import pandas as pd
-import re
 import json
+import os
+import re
+import sys
+
+import pandas as pd
+import requests
 
 # Input and output paths
 input_dir = sys.argv[1]  # Directory containing PDB files
@@ -20,9 +21,16 @@ if os.path.exists(summary_file):
     summary_data.columns = summary_data.columns.str.strip()
 else:
     # Create an empty DataFrame with required columns if the summary file doesn't exist
-    summary_data = pd.DataFrame(columns=[
-        "Virus Name", "Record ID", "ESMFold pLDDT", "ColabFold pLDDT", "Chosen Method", "structure_file"
-    ])
+    summary_data = pd.DataFrame(
+        columns=[
+            "Virus Name",
+            "Record ID",
+            "ESMFold pLDDT",
+            "ColabFold pLDDT",
+            "Chosen Method",
+            "structure_file",
+        ]
+    )
 
 # Function to extract metadata from a filename
 def extract_metadata(filename):
@@ -43,7 +51,7 @@ def find_metadata_in_jsons(record_id, metadata_dir):
         if json_file.endswith(".json"):
             json_path = os.path.join(metadata_dir, json_file)
             try:
-                with open(json_path, "r") as f:
+                with open(json_path) as f:
                     metadata = json.load(f)
 
                     # Debug: Print the current JSON file being processed
@@ -115,7 +123,7 @@ def download_and_update(api_url, virus_name, record_id, chosen_method):
 
 # Step 1: Retry URLs in `fails_file`
 if os.path.exists(fails_file):
-    with open(fails_file, "r") as f:
+    with open(fails_file) as f:
         failed_urls = [line.strip() for line in f if line.strip()]
 
     for url in failed_urls:
