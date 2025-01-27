@@ -51,23 +51,27 @@ for response_file in os.listdir(response_dir):
 
                         print(f"Downloading {pdb_url} to {pdb_output_path}...")
                         # Download the file
-                        exit_code = os.system(f"curl -s -o '{pdb_output_path}' {pdb_url}")
+                        exit_code = os.system(
+                            f"curl -s -o '{pdb_output_path}' {pdb_url}"
+                        )
 
                         if (
-                           exit_code == 0
-                           and os.path.exists(pdb_output_path)
-                           and os.path.getsize(pdb_output_path) > 22
+                            exit_code == 0
+                            and os.path.exists(pdb_output_path)
+                            and os.path.getsize(pdb_output_path) > 22
                         ):
                             # Log successful download
                             print(f"Successfully downloaded {pdb_url}")
                             # Append details to the summary data
-                            summary_data.append({
-                                "Virus Name": virus_name,
-                                "Record ID": record_id,
-                                "ESMFold pLDDT": esm_pLDDT,
-                                "ColabFold pLDDT": colab_pLDDT,
-                                "Chosen Method": chosen_method
-                            })
+                            summary_data.append(
+                                {
+                                    "Virus Name": virus_name,
+                                    "Record ID": record_id,
+                                    "ESMFold pLDDT": esm_pLDDT,
+                                    "ColabFold pLDDT": colab_pLDDT,
+                                    "Chosen Method": chosen_method,
+                                }
+                            )
                         else:
                             # Log failed download
                             print(f"Failed to download {pdb_url}")

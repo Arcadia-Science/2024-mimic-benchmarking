@@ -9,6 +9,7 @@ output_file_path = sys.argv[2]
 # Load the summary file
 summary_data = pd.read_csv(summary_file_path, sep="\t")
 
+
 # Function to construct the structure_file
 def construct_structure_file(row):
     # Convert Chosen Method to string to avoid TypeError
@@ -26,6 +27,7 @@ def construct_structure_file(row):
 
     # Construct the structure file name
     return f"{row['Virus Name']}_{prefix}{row['Record ID']}_relaxed.pdb"
+
 
 # Apply the function to construct the structure_file column
 summary_data["structure_file"] = summary_data.apply(construct_structure_file, axis=1)

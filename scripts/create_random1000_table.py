@@ -68,12 +68,19 @@ def main(args):
             if genbank_id != "No Match"
             else "No Match"
         )
-        output_data.append([refseq_id, genbank_id, refseq_pdb_filename, genbank_entry_name])
+        output_data.append(
+            [refseq_id, genbank_id, refseq_pdb_filename, genbank_entry_name]
+        )
 
     # Save the output table
     output_df = pd.DataFrame(
         output_data,
-        columns=["RefSeq_ID", "GenBank_ID", "RefSeq_PDB_Filename", "GenBank_Entry_Name"],
+        columns=[
+            "RefSeq_ID",
+            "GenBank_ID",
+            "RefSeq_PDB_Filename",
+            "GenBank_Entry_Name",
+        ],
     )
     output_df.to_csv(args.output_table, sep="\t", index=False)
     print(f"Random1000 table saved to {args.output_table}")
@@ -86,17 +93,25 @@ if __name__ == "__main__":
         description="Create a Random1000 table with additional details."
     )
     parser.add_argument(
-        "--random1000_refseq_list", required=True, help="Path to the random1000 refseq list."
+        "--random1000_refseq_list",
+        required=True,
+        help="Path to the random1000 refseq list.",
     )
     parser.add_argument(
         "--mapping_file", required=True, help="Path to RefSeq-to-GenBank mapping file."
     )
     parser.add_argument(
-        "--viro3d_metadata_dir", required=True, help="Path to the Viro3D metadata directory."
+        "--viro3d_metadata_dir",
+        required=True,
+        help="Path to the Viro3D metadata directory.",
     )
     parser.add_argument(
-        "--viral_structures_dir", required=True, help="Path to the viral structures directory."
+        "--viral_structures_dir",
+        required=True,
+        help="Path to the viral structures directory.",
     )
-    parser.add_argument("--output_table", required=True, help="Path to the output table.")
+    parser.add_argument(
+        "--output_table", required=True, help="Path to the output table."
+    )
     args = parser.parse_args()
     main(args)

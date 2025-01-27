@@ -45,7 +45,9 @@ def main(args):
                     break
 
         # Exclude already selected GenBank IDs and select additional ones
-        remaining_genbank_ids = list(set(available_genbank_ids) - cumulative_genbank_ids)
+        remaining_genbank_ids = list(
+            set(available_genbank_ids) - cumulative_genbank_ids
+        )
         additional_genbank_ids = random.sample(
             remaining_genbank_ids, max(0, random_size - len(cumulative_genbank_ids))
         )
@@ -65,7 +67,8 @@ def main(args):
                 for file in files:
                     if f"{genbank_id}_" in file:
                         shutil.copy(
-                            os.path.join(root, file), os.path.join(genbank_subset_dir, file)
+                            os.path.join(root, file),
+                            os.path.join(genbank_subset_dir, file),
                         )
                         processed_genbank_ids.add(genbank_id)
                         found = True
@@ -75,7 +78,9 @@ def main(args):
 
         # Ensure the GenBank subset directory has the correct size
         while len(os.listdir(genbank_subset_dir)) < random_size:
-            remaining_genbank_ids = list(set(available_genbank_ids) - cumulative_genbank_ids)
+            remaining_genbank_ids = list(
+                set(available_genbank_ids) - cumulative_genbank_ids
+            )
             if not remaining_genbank_ids:
                 break  # No more GenBank IDs to add
             additional_genbank_id = random.choice(remaining_genbank_ids)
@@ -85,7 +90,8 @@ def main(args):
                 for file in files:
                     if f"{additional_genbank_id}_" in file:
                         shutil.copy(
-                            os.path.join(root, file), os.path.join(genbank_subset_dir, file)
+                            os.path.join(root, file),
+                            os.path.join(genbank_subset_dir, file),
                         )
                         break
 
@@ -107,7 +113,10 @@ def main(args):
             for root, _, files in os.walk(args.viral_structures_dir):
                 for file in files:
                     if f"__{refseq_id}__" in file:
-                        shutil.copy(os.path.join(root, file), os.path.join(refseq_subset_dir, file))
+                        shutil.copy(
+                            os.path.join(root, file),
+                            os.path.join(refseq_subset_dir, file),
+                        )
                         found = True
                         break
                 if found:
@@ -124,12 +133,17 @@ def main(args):
             for root, _, files in os.walk(args.viral_structures_dir):
                 for file in files:
                     if f"__{additional_refseq_id}__" in file:
-                        shutil.copy(os.path.join(root, file), os.path.join(refseq_subset_dir, file))
+                        shutil.copy(
+                            os.path.join(root, file),
+                            os.path.join(refseq_subset_dir, file),
+                        )
                         break
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Subset GenBank IDs and corresponding PDBs.")
+    parser = argparse.ArgumentParser(
+        description="Subset GenBank IDs and corresponding PDBs."
+    )
     parser.add_argument(
         "--genbank_lists", nargs="+", required=True, help="Paths to GenBank ID lists."
     )
@@ -146,7 +160,10 @@ if __name__ == "__main__":
         help="Paths to output RefSeq PDB subset directories.",
     )
     parser.add_argument(
-        "--refseq_subsets", nargs="+", required=True, help="Paths to output RefSeq ID lists."
+        "--refseq_subsets",
+        nargs="+",
+        required=True,
+        help="Paths to output RefSeq ID lists.",
     )
     parser.add_argument(
         "--random_sizes",
@@ -158,9 +175,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--mapping_file", required=True, help="Path to RefSeq-to-GenBank mapping file."
     )
-    parser.add_argument("--viro3d_dir", required=True, help="Directory containing Viro3D PDBs.")
     parser.add_argument(
-        "--viral_structures_dir", required=True, help="Directory containing viral structures."
+        "--viro3d_dir", required=True, help="Directory containing Viro3D PDBs."
+    )
+    parser.add_argument(
+        "--viral_structures_dir",
+        required=True,
+        help="Directory containing viral structures.",
     )
     args = parser.parse_args()
     main(args)

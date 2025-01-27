@@ -107,7 +107,9 @@ def parse_gtalign_output(input_file):
                     }
                 )
         elif "2TM-score" in line:
-            twotm_match = re.search(r"2TM-score \(Refn./Query\) = ([\d\.]+) / ([\d\.]+)", line)
+            twotm_match = re.search(
+                r"2TM-score \(Refn./Query\) = ([\d\.]+) / ([\d\.]+)", line
+            )
             if twotm_match:
                 if current_no not in alignment_info:
                     alignment_info[current_no] = {}
@@ -158,9 +160,13 @@ if __name__ == "__main__":
         description="Parse multiple gtalign output files in a directory into a single TSV format."
     )
     parser.add_argument(
-        "--input_dir", required=True, help="Path to the directory containing gtalign output files."
+        "--input_dir",
+        required=True,
+        help="Path to the directory containing gtalign output files.",
     )
-    parser.add_argument("--output", required=True, help="Path to the combined output TSV file.")
+    parser.add_argument(
+        "--output", required=True, help="Path to the combined output TSV file."
+    )
 
     args = parser.parse_args()
 

@@ -5,8 +5,12 @@ import os
 import pandas as pd
 
 # Argument parsing
-parser = argparse.ArgumentParser(description="Map RefSeq IDs to GenBank IDs using Viro3D metadata.")
-parser.add_argument("--metadata", required=True, help="Path to viral_structure_metadata.tsv")
+parser = argparse.ArgumentParser(
+    description="Map RefSeq IDs to GenBank IDs using Viro3D metadata."
+)
+parser.add_argument(
+    "--metadata", required=True, help="Path to viral_structure_metadata.tsv"
+)
 parser.add_argument(
     "--viro3d_metadata",
     required=True,
@@ -24,7 +28,9 @@ metadata = pd.read_csv(metadata_tsv, sep="\t")
 
 # Ensure the 'nomburg_protein_name' column exists
 if "nomburg_protein_name" not in metadata.columns:
-    raise ValueError("The column 'nomburg_protein_name' is missing from the metadata file.")
+    raise ValueError(
+        "The column 'nomburg_protein_name' is missing from the metadata file."
+    )
 
 nomburg_protein_names = metadata["nomburg_protein_name"]
 nomburg_entries = [
@@ -32,7 +38,9 @@ nomburg_entries = [
         "product_name": entry.split("__")[0],
         "refseq_id": entry.split("__")[1],
         "virus_name": entry.split("__")[2],
-        "length": metadata.loc[metadata["nomburg_protein_name"] == entry, "length"].values[0],
+        "length": metadata.loc[
+            metadata["nomburg_protein_name"] == entry, "length"
+        ].values[0],
     }
     for entry in nomburg_protein_names
     if isinstance(entry, str) and len(entry.split("__")) == 4
@@ -81,9 +89,14 @@ for entry in nomburg_entries:
         else:
             extracted_product = ""
 
-        if extracted_product and product_name.lower().replace("_", " ") in extracted_product:
+        if (
+            extracted_product
+            and product_name.lower().replace("_", " ") in extracted_product
+        ):
             if match_priority is None or match_priority != "Product":
-                matches.append((genbank_id, "GenBank Name Curated (Extracted Product)", protlen))
+                matches.append(
+                    (genbank_id, "GenBank Name Curated (Extracted Product)", protlen)
+                )
                 match_priority = "GenBank Name Curated (Extracted Product)"
 
         # Match by length (as a fallback)
@@ -94,7 +107,9 @@ for entry in nomburg_entries:
     filtered_matches = []
     if matches:
         # Keep only matches with the highest-priority type
-        filtered_by_priority = [match for match in matches if match[1] == match_priority]
+        filtered_by_priority = [
+            match for match in matches if match[1] == match_priority
+        ]
 
         # If multiple matches remain, filter by length
         if len(filtered_by_priority) > 1:
@@ -112,13 +127,19 @@ for entry in nomburg_entries:
             )
     else:
         mapping_results.append(
-            {"RefSeq_ID": refseq_id, "GenBank_ID": "No Match Found", "Match_Type": "No Match"}
+            {
+                "RefSeq_ID": refseq_id,
+                "GenBank_ID": "No Match Found",
+                "Match_Type": "No Match",
+            }
         )
 
 # Write results to output file
 with open(output_mapping_file, "w") as f:
     f.write("RefSeq_ID\tGenBank_ID\tMatch_Type\n")
     for result in mapping_results:
-        f.write(f"{result['RefSeq_ID']}\t{result['GenBank_ID']}\t{result['Match_Type']}\n")
+        f.write(
+            f"{result['RefSeq_ID']}\t{result['GenBank_ID']}\t{result['Match_Type']}\n"
+        )
 
 print(f"[INFO]: Mapping complete. Results saved to {output_mapping_file}")
