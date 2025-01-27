@@ -19,6 +19,7 @@ HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 ## Rules
 ###########################################################
 
+
 rule all:
     input:
         # KEGG VirusHostDB TSV
@@ -54,6 +55,7 @@ rule all:
             host_organism=HOST_ORGANISMS,
         ),
 
+
 rule download_kegg_virushostdb:
     """
     Downloaded 2024-12-09 version
@@ -65,6 +67,7 @@ rule download_kegg_virushostdb:
         """
         curl -JLo {output.tsv} https://www.genome.jp/ftp/db/virushostdb/virushostdb.tsv
         """
+
 
 rule download_vmr_metadata:
     """
@@ -81,6 +84,7 @@ rule download_vmr_metadata:
         xlsx2csv {output.xlsx} --delimiter '\t' > {output.tsv}
         """
 
+
 rule merge_virushostdb_into_vmr:
     """
     Merge all columns from virushostdb.tsv into vmr_metadata.tsv based on matching REFSEQ IDs.
@@ -95,14 +99,13 @@ rule merge_virushostdb_into_vmr:
         python scripts/merge_virushostdb_into_vmr.py {input.vmr_metadata} {input.virushostdb} {output.merged_vmr}
         """
 
+
 rule extract_unique_virus_names:
     """
     Extract unique virus names from vmr_metadata_with_virushostdb.tsv.
     """
-    input: 
-        metadata_tsv=INPUT_DIRPATH
-        / "viral"
-        / "vmr_metadata_with_virushostdb.tsv",
+    input:
+        metadata_tsv=INPUT_DIRPATH / "viral" / "vmr_metadata_with_virushostdb.tsv",
     output:
         unique_viruses_txt=OUTPUT_DIRPATH
         / "random_protein_sets"
@@ -113,6 +116,7 @@ rule extract_unique_virus_names:
         """
         python scripts/extract_unique_viruses.py {input.metadata_tsv} {output.unique_viruses_txt}
         """
+
 
 rule fetch_viro3d_structures_metadata:
     """
@@ -127,7 +131,7 @@ rule fetch_viro3d_structures_metadata:
             / "viral"
             / "{host_organism}"
             / "viro3d_metadata"
-        ), 
+        ),
     shell:
         """
         # Create the output directory if it doesn't exist
@@ -155,6 +159,7 @@ rule fetch_viro3d_structures_metadata:
         done < {input.unique_viruses}
         """
 
+
 rule download_all_pdbs:
     """
     Download all PDB files for viruses listed in the Viro3D metadata.
@@ -175,7 +180,7 @@ rule download_all_pdbs:
         / "{host_organism}"
         / "downloadedviro3d_pdbs.txt",
         fails=OUTPUT_DIRPATH
-        / "random_protein_sets"    
+        / "random_protein_sets"
         / "viral"
         / "{host_organism}"
         / "downloadedviro3d_pdbs_fails.txt",
@@ -184,39 +189,36 @@ rule download_all_pdbs:
         python scripts/download_all_pdbs_viro3d.py {input.metadata_dir} {output.pdb_dir} {output.summary} {output.fails}
         """
 
+
 rule download_fails:
     """
     Checks the failed downloads list and viro3d_all_pdbs folder for files with 22-byte sizes and redownloads them with the opposite prefix (CF or EF).
     Updates the summary file to add the new downloads.
     """
     input:
-        dir= OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "viro3d_all_pdbs",
-        summary= OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "downloadedviro3d_pdbs.txt",
+        dir=OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" / "viro3d_all_pdbs",
+        summary=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "downloadedviro3d_pdbs.txt",
         fails=OUTPUT_DIRPATH
-        / "random_protein_sets"  
+        / "random_protein_sets"
         / "viral"
         / "{host_organism}"
         / "downloadedviro3d_pdbs_fails.txt",
         metadata_dir=OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "viro3d_metadata",
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viro3d_metadata",
     output:
-        done_file= OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "viro3d_all_pdbs_logs"
-            / "check_and_replace_done.txt"
+        done_file=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viro3d_all_pdbs_logs"
+        / "check_and_replace_done.txt",
     shell:
         """
         mkdir -p $(dirname {output.done_file})
@@ -225,24 +227,24 @@ rule download_fails:
         echo "Check and replace completed on $(date)" > {output.done_file}
         """
 
+
 rule add_structure_file_column:
     """
     Adds a structure_file column to the summary file based on Virus Name, Chosen Method, and Record ID.
     """
     input:
-        summary_file= OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "downloadedviro3d_pdbs.txt",
+        summary_file=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "downloadedviro3d_pdbs.txt",
     output:
         updated_summary_file=OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "downloadedviro3d_pdbs_updated.txt"
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "downloadedviro3d_pdbs_updated.txt",
     shell:
         """
         python scripts/add_structure_file.py {input.summary_file} {output.updated_summary_file}
         """
-
