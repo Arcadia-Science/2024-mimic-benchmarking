@@ -155,7 +155,6 @@ for pdb_file in os.listdir(input_dir):
 
     virus_name, record_id = extract_metadata(pdb_file)
     if not virus_name or not record_id:
-        print(f"Could not extract metadata from {pdb_file}. Searching JSONs...")
         record_id_match = re.search(r"(EF-|CF-)([A-Z0-9._]+)_relaxed", pdb_file)
         if record_id_match:
             record_id = record_id_match.group(2)
