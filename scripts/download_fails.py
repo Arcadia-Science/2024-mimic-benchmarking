@@ -56,9 +56,6 @@ def find_metadata_in_jsons(record_id, metadata_dir):
                 with open(json_path) as f:
                     metadata = json.load(f)
 
-                    # Debug: Print the current JSON file being processed
-                    print(f"Searching in {json_file} for Record ID {record_id}...")
-
                     # Extract virus name
                     virus_name = metadata.get("virus_name", "").replace(" ", "_")
 
@@ -68,11 +65,6 @@ def find_metadata_in_jsons(record_id, metadata_dir):
                         if protein.get("record_id") == record_id:
                             esm_pLDDT = float(protein.get("esmfold_log_pLDDT", 0))
                             colab_pLDDT = float(protein.get("colabfold_json_pLDDT", 0))
-
-                            # Debug: Confirm a match and the extracted values
-                            print(f"Found Record ID {record_id} in {json_file}.")
-                            print(f"ESMFold pLDDT: {esm_pLDDT}, ColabFold pLDDT: {colab_pLDDT}")
-
                             return virus_name, esm_pLDDT, colab_pLDDT
             except json.JSONDecodeError:
                 print(f"Error: Failed to decode JSON file {json_file}. Skipping...")
