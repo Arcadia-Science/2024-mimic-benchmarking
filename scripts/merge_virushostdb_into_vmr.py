@@ -66,7 +66,7 @@ else:
 virus_names_to_keep = [
     "Thogoto virus", # https://doi.org/10.3201/eid2802.211270
     "Piry virus",  # https://doi.org/10.1007/bf01241673 
-    "Vesicular stomatitis New Jersey virus",
+    "Vesicular stomatitis New Jersey virus", # https://doi.org/10.1056/nejm196711092771901 
 ]
 
 # Filter rows matching these virus names
