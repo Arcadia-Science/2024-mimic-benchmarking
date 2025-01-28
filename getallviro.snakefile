@@ -75,7 +75,9 @@ rule download_kegg_virushostdb:
 
 rule download_vmr_metadata:
     """
-    VMR_MSL38_v2 version downloaded. This is what Viro3D works with.
+    VMR_MSL38_v2 version downloaded. This is what Viro3D works with. 
+    This is metadata from the International Committee on Taxonomy of Viruses. Entries include the virus name, isolate designation, 
+    suggested abbreviation, GenBank accession number, genome composition, and host source.
     """
     output:
         xlsx=INPUT_DIRPATH / "viral" / "vmr_metadata.xlsx",
