@@ -25,8 +25,6 @@ def construct_structure_file(row):
         prefix = "CF-"  # ColabFold
     elif "ESMFold" in chosen_method:
         prefix = "EF-"  # ESMFold
-    else:
-        prefix = ""
 
     # Construct the structure file name
     return f"{row['Virus Name']}_{prefix}{row['Record ID']}_relaxed.pdb"
