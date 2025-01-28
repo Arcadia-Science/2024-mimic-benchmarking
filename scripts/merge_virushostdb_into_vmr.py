@@ -65,7 +65,7 @@ else:
 # Always include these specific virus names, regardless of host tax id
 virus_names_to_keep = [
     "Thogoto virus", # https://doi.org/10.3201/eid2802.211270
-    "Piry virus",
+    "Piry virus",  # https://doi.org/10.1007/bf01241673 
     "Vesicular stomatitis New Jersey virus",
 ]
 
