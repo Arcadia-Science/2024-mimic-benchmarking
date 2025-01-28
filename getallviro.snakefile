@@ -25,8 +25,6 @@ HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 
 rule all:
     input:
-        # KEGG VirusHostDB TSV
-        INPUT_DIRPATH / "viral" / "virushostdb.tsv",
         # Updated VMR with VirusHostDB merged data
         INPUT_DIRPATH / "viral" / "vmr_metadata_with_virushostdb.tsv",
         # Metadata directory fetched from Viro3D API
