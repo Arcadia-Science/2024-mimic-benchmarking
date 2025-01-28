@@ -181,7 +181,7 @@ rule combine_foldseek_results_with_metadata:
         foldseek_tsv=rules.benchmark_foldseek_against_human_proteome.output.tsv,
         human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv.gz",
         host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv",
-        query_metadata_tsv=INPUT_DIRPATH / "viral" / "viral_structure_metadata.tsv",
+        query_metadata_tsv="benchmarking_data/downloadedviro3d_pdbs_updated.txt",
         query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv",
     output:
         tsv=OUTPUT_DIRPATH
@@ -277,7 +277,7 @@ rule combine_gtalign_results_with_metadata:
         gtalign_tsv=rules.reformat_gtalign_output.output.tsv,
         human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv.gz",
         host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv",
-        query_metadata_tsv=INPUT_DIRPATH / "viral" / "viral_structure_metadata.tsv",
+        query_metadata_tsv="benchmarking_data/downloadedviro3d_pdbs_updated.txt",
         query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv",
     output:
         tsv=OUTPUT_DIRPATH
