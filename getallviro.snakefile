@@ -139,10 +139,7 @@ rule fetch_viro3d_structures_metadata:
             / "viro3d_metadata"
         ),
     shell:
-        """
-        # Create the output directory if it doesn't exist
-        mkdir -p {output.metadata_dir}
-    
+        """    
         # Read each virus name directly from the input file
         while read virus; do
             # Define the response file using the raw virus name
@@ -227,7 +224,6 @@ rule download_fails:
         / "check_and_replace_done.txt",
     shell:
         """
-        mkdir -p $(dirname {output.done_file})
         python scripts/download_fails.py {input.dir} {input.summary} {input.metadata_dir} {input.fails}
         find {input.dir} -type f -size 22c -exec rm -f {{}} +
         echo "Check and replace completed on $(date)" > {output.done_file}
