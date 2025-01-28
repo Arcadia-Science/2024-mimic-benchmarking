@@ -13,7 +13,7 @@ summary_data = pd.read_csv(summary_file_path, sep="\t")
 # Function to construct the structure_file
 def construct_structure_file(row):
     # Convert Chosen Method to string to avoid TypeError
-    chosen_method = str(row["Chosen Method"])  # Ensure it's a string
+    chosen_method = str(row["Chosen Method"])
 
     # Determine the prefix based on the Chosen Method
     if "x" in chosen_method:
