@@ -63,6 +63,9 @@ rule download_kegg_virushostdb:
     """
     Downloaded 2024-12-09 version
     MD5sum 19ddaac3ffafc290793a69d367739b88
+    This file includes information about which viruses (species, lineage, taxid) infect humans.
+    We use the information in this file to determine which subsets of viro3d structures are
+    from viruses that infect humans.
     """
     output:
         tsv=INPUT_DIRPATH / "viral" / "virushostdb.tsv",
