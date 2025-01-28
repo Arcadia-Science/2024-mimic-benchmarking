@@ -1,5 +1,8 @@
 """
 This snakefile creates standardized datasets of viral protein structures from Viro3D.
+It identifies viral structures from viruses that infect humans and downloads them.
+Then, it selects random subsets of those viruses. Each larger subset is inclusive of the smaller
+subset.
 """
 
 from pathlib import Path
