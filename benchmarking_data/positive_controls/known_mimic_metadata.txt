@@ -33,16 +33,13 @@ AF-A0A5F7ZZ15-F1-model_v4_mmul.pdb	AF-A0A5F7ZZ15-F1-model_v4_mmul	macaque	BCL2	P
 AF-H2QEM8-F1-model_v4_ptro.pdb	AF-H2QEM8-F1-model_v4_ptro	chimp	BCL2	P10415		single_mimic
 AF-P10415-F1-model_v4_hsap.pdb	AF-P10415-F1-model_v4_hsap	human	BCL2	P10415		single_mimic
 AF-P10417-F1-model_v4._mmus.pdb	AF-P10417-F1-model_v4._mmus	mouse	BCL2	P10415		single_mimic
-CF-AAL40480.1_12009_relaxed.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3		dual_mimic
-CF-AAL40480.1_12009_relaxed.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	P10415		dual_mimic
+CF-AAL40480.1_12009_relaxed.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3; P10415		dual_mimic
 CF-AAL40480.1_12009_relaxed_pt1.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3		single_mimic
 CF-AAL40480.1_12009_relaxed_pt2.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	P10415		single_mimic
-CF-AAM13483.1_12007_relaxed.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3		dual_mimic
-CF-AAM13483.1_12007_relaxed.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	P10415		dual_mimic
+CF-AAM13483.1_12007_relaxed.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3; P10415		dual_mimic
 CF-AAM13483.1_12007_relaxed_pt1.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3		single_mimic
 CF-AAM13483.1_12007_relaxed_pt2.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	P10415		single_mimic
-CF-AAO89306.1_12013_relaxed.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3	https://doi.org/10.1016/j.celrep.2023.112878	dual_mimic
-CF-AAO89306.1_12013_relaxed.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	P10415	https://doi.org/10.1016/j.celrep.2023.112878	dual_mimic
+CF-AAO89306.1_12013_relaxed.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3; P10415	https://doi.org/10.1016/j.celrep.2023.112878	dual_mimic
 CF-AAO89306.1_12013_relaxed_pt1.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3	https://doi.org/10.1016/j.celrep.2023.112878	single_mimic
 CF-AAO89306.1_12013_relaxed_pt2.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	P10415	https://doi.org/10.1016/j.celrep.2023.112878	single_mimic
 AF-A0A5F7ZZ15-F1-model_v4_mmul_bcl2.pdb	AF-A0A5F7ZZ15-F1-model_v4_mmul_bcl2	macaque	C1L	P10415		single_mimic

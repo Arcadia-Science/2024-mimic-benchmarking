@@ -300,22 +300,42 @@ rule combine_gtalign_results_with_metadata:
         """
 
 
-rule all:
-    default_target: True
+#####################################################################
+## Evaluate performance
+#####################################################################
+
+
+rule perform_parameter_sensitivity_specificity_analysis:
     input:
-        expand(
-            rules.combine_gtalign_results_with_metadata.output.tsv,
-            host_organism=HOST_ORGANISMS,
-            positive_control=POSITIVE_CONTROLS,
-            speed=SPEED,
-        ),
-        expand(
+        pc_metadata_txt="benchmarking_data/positive_controls/known_mimic_metadata.tsv",
+        foldseek_tsv=expand(
             rules.combine_foldseek_results_with_metadata.output.tsv,
-            host_organism=HOST_ORGANISMS,
-            positive_control=POSITIVE_CONTROLS,
             alignment_type=ALIGNMENT_TYPE,
             tmalign_fast=TMALIGN_FAST,
             exact_tmscore=EXACT_TMSCORE,
             tmscore_threshold=TMSCORE_THRESHOLD,
             exhaustive_search=EXHAUSTIVE_SEARCH,
         ),
+        gtalign_tsv=expand(rules.combine_foldseek_results_with_metadata.output.tsv, speed=SPEED),
+    output:
+        full_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_all_results.tsv",
+        best_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_best_results.tsv",
+    conda:
+        "envs/tidyverse.yml"
+    shell:
+        """
+        Rscript scripts/perform_parameter_sensitivity_specificity_analysis.R \
+            --input_pc_metadata {input.pc_metadata_txt} \
+            --positive_control {wildcards.positive_control} \
+            --output_full {output.full_tsv} \
+            --output_best {output.best_tsv}
+        """
+        
+rule all:
+    default_target: True
+    input:
+        expand(
+            rules.perform_parameter_sensitivity_specificity_analysis.output.full_tsv,
+            host_organism=HOST_ORGANISMS,
+            positive_control=POSITIVE_CONTROLS,
+        )
