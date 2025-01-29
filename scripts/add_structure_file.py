@@ -14,6 +14,8 @@ summary_data = pd.read_csv(summary_file_path, sep="\t")
 This function uses the information in the summary data table to construct the name of the associated pdb file
 so that this name can be added to a new column in the table.
 """
+
+
 def construct_structure_file(row):
     # Convert Chosen Method to string to avoid TypeError
     chosen_method = str(row["Chosen Method"])
