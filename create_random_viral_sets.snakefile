@@ -34,17 +34,49 @@ rule all:
 
 rule select_random_files:
     input:
-        files = OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" / "viro3d_{host_organism}_pdbs"
+        files=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viro3d_{host_organism}_pdbs",
     output:
-        dir_50 = directory(OUTPUT_DIRPATH/"random_protein_sets"/"viral"/"{host_organism}"/"selected_files_{host_organism}_50"),
-        dir_100 = directory(OUTPUT_DIRPATH/"random_protein_sets"/"viral"/"{host_organism}"/"selected_files_{host_organism}_100"),
-        dir_500 = directory(OUTPUT_DIRPATH/"random_protein_sets"/"viral"/"{host_organism}"/"selected_files_{host_organism}_500"),
-        dir_1000 = directory(OUTPUT_DIRPATH/"random_protein_sets"/"viral"/"{host_organism}"/"selected_files_{host_organism}_1000"),
-        summary = OUTPUT_DIRPATH/"random_protein_sets"/"viral"/"{host_organism}"/"{host_organism}_summary_1000.tsv"
+        dir_50=directory(
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "viral"
+            / "{host_organism}"
+            / "selected_files_{host_organism}_50"
+        ),
+        dir_100=directory(
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "viral"
+            / "{host_organism}"
+            / "selected_files_{host_organism}_100"
+        ),
+        dir_500=directory(
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "viral"
+            / "{host_organism}"
+            / "selected_files_{host_organism}_500"
+        ),
+        dir_1000=directory(
+            OUTPUT_DIRPATH
+            / "random_protein_sets"
+            / "viral"
+            / "{host_organism}"
+            / "selected_files_{host_organism}_1000"
+        ),
+        summary=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "{host_organism}_summary_1000.tsv",
     params:
-        seed = 42,
-        sizes = [50, 100, 500, 1000],
-        script = "scripts/select_random_files.py"
+        seed=42,
+        sizes=[50, 100, 500, 1000],
+        script="scripts/select_random_files.py",
     shell:
         "python {params.script} "
         "--input-folder '{input.files}/*' "
