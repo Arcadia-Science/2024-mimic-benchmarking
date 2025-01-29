@@ -158,7 +158,9 @@ if __name__ == "__main__":
         description="Parse multiple gtalign output files in a directory into a single TSV format."
     )
     parser.add_argument(
-        "--input_dir", required=True, help="Path to the directory containing gtalign output files."
+        "--input_dir",
+        required=True,
+        help="Path to the directory containing gtalign output files.",
     )
     parser.add_argument("--output", required=True, help="Path to the combined output TSV file.")
 

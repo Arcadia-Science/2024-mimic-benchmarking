@@ -65,7 +65,8 @@ def main(args):
                 for file in files:
                     if f"{genbank_id}_" in file:
                         shutil.copy(
-                            os.path.join(root, file), os.path.join(genbank_subset_dir, file)
+                            os.path.join(root, file),
+                            os.path.join(genbank_subset_dir, file),
                         )
                         processed_genbank_ids.add(genbank_id)
                         found = True
@@ -85,7 +86,8 @@ def main(args):
                 for file in files:
                     if f"{additional_genbank_id}_" in file:
                         shutil.copy(
-                            os.path.join(root, file), os.path.join(genbank_subset_dir, file)
+                            os.path.join(root, file),
+                            os.path.join(genbank_subset_dir, file),
                         )
                         break
 
@@ -107,7 +109,10 @@ def main(args):
             for root, _, files in os.walk(args.viral_structures_dir):
                 for file in files:
                     if f"__{refseq_id}__" in file:
-                        shutil.copy(os.path.join(root, file), os.path.join(refseq_subset_dir, file))
+                        shutil.copy(
+                            os.path.join(root, file),
+                            os.path.join(refseq_subset_dir, file),
+                        )
                         found = True
                         break
                 if found:
@@ -124,7 +129,10 @@ def main(args):
             for root, _, files in os.walk(args.viral_structures_dir):
                 for file in files:
                     if f"__{additional_refseq_id}__" in file:
-                        shutil.copy(os.path.join(root, file), os.path.join(refseq_subset_dir, file))
+                        shutil.copy(
+                            os.path.join(root, file),
+                            os.path.join(refseq_subset_dir, file),
+                        )
                         break
 
 
@@ -146,7 +154,10 @@ if __name__ == "__main__":
         help="Paths to output RefSeq PDB subset directories.",
     )
     parser.add_argument(
-        "--refseq_subsets", nargs="+", required=True, help="Paths to output RefSeq ID lists."
+        "--refseq_subsets",
+        nargs="+",
+        required=True,
+        help="Paths to output RefSeq ID lists.",
     )
     parser.add_argument(
         "--random_sizes",
@@ -160,7 +171,9 @@ if __name__ == "__main__":
     )
     parser.add_argument("--viro3d_dir", required=True, help="Directory containing Viro3D PDBs.")
     parser.add_argument(
-        "--viral_structures_dir", required=True, help="Directory containing viral structures."
+        "--viral_structures_dir",
+        required=True,
+        help="Directory containing viral structures.",
     )
     args = parser.parse_args()
     main(args)
