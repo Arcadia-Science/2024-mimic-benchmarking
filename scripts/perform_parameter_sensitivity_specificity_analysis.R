@@ -129,7 +129,7 @@ mimic_type <- structure_metadata %>%
   mutate(target_gene = tolower(target_gene)) %>%
   distinct() %>%
   filter(target_gene == args$positive_control) %>%
-  pull(single_mimic)
+  pull(mimic_type)
 
 # single mimic analysis ---------------------------------------------------
 
@@ -194,7 +194,7 @@ if(mimic_type == "single_mimic"){
     filter(youden_index == max(youden_index, na.rm = TRUE))
   
   write_tsv(all_results, args$output_full)
-  write_tsv(best_results, args$output_best)
+  write_tsv(best_result, args$output_best)
 } else {
   file.create(args$output_full)
   file.create(args$output_best)
