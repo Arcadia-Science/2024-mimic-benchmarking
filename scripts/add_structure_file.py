@@ -19,9 +19,7 @@ def construct_structure_file(row):
     chosen_method = str(row["Chosen Method"])
 
     # Determine the prefix based on the Chosen Method
-    if "x" in chosen_method:
-        prefix = "CF-"  # ColabFoldx
-    elif "ColabFold" in chosen_method:
+    if "ColabFold" in chosen_method:
         prefix = "CF-"  # ColabFold
     elif "ESMFold" in chosen_method:
         prefix = "EF-"  # ESMFold
