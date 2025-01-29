@@ -82,3 +82,11 @@ venv/
 # Nextflow related folders and files
 .nextflow*
 work/
+
+# workflow
+tmp_foldseek/
+tmp_gtalign/
+benchmarks
+outputs
+ProteinCartography/
+scripts/ProteinCartography_scripts_downloaded.txt
