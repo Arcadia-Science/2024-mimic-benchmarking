@@ -199,7 +199,11 @@ rule download_fails:
     Updates the summary file to add the new downloads.
     """
     input:
-        dir=OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" / "viro3d_{host_organism}_pdbs",
+        dir=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viro3d_{host_organism}_pdbs",
         summary=OUTPUT_DIRPATH
         / "random_protein_sets"
         / "viral"
