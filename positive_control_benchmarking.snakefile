@@ -15,7 +15,8 @@ HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 
 
 POSITIVE_CONTROLS = ["bcl2", "c4bp", "cd47", "chemokine", "eif2a", "ifnar", "ifngr", "il10",
-                     "il18bp", "kinase", "lfg4", "nsp16", "nsp5", "ccr1", "ccr2", "helicase"]
+                     "il18bp", "kinase", "lfg4", "nsp16", "nsp5"]
+# "ccr1", "ccr2", "helicase"]
 
 ###########################################################
 ## Download ProteinCartography scripts
@@ -307,16 +308,19 @@ rule combine_gtalign_results_with_metadata:
 
 rule perform_parameter_sensitivity_specificity_analysis:
     input:
-        pc_metadata_txt="benchmarking_data/positive_controls/known_mimic_metadata.tsv",
+        pc_metadata_txt="benchmarking_data/positive_controls/known_mimic_metadata.txt",
         foldseek_tsv=expand(
-            rules.combine_foldseek_results_with_metadata.output.tsv,
+            OUTPUT_DIRPATH / "{{host_organism}}" / "foldseek" / "{{positive_control}}" / "processed" / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv",
             alignment_type=ALIGNMENT_TYPE,
             tmalign_fast=TMALIGN_FAST,
             exact_tmscore=EXACT_TMSCORE,
             tmscore_threshold=TMSCORE_THRESHOLD,
             exhaustive_search=EXHAUSTIVE_SEARCH,
         ),
-        gtalign_tsv=expand(rules.combine_foldseek_results_with_metadata.output.tsv, speed=SPEED),
+        gtalign_tsv=expand(
+            OUTPUT_DIRPATH / "{{host_organism}}" / "gtalign" / "{{positive_control}}" / "processed" / "gtalign_speed{speed}.tsv", 
+            speed=SPEED
+        ),
     output:
         full_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_all_results.tsv",
         best_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_best_results.tsv",

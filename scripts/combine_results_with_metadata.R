@@ -61,7 +61,7 @@ host_metadata <- read_csv(args$input_human_metadata, show_col_types = FALSE) %>%
 results <- results %>%
   left_join(host_metadata, by = c("target" = "host_protid")) %>%
   left_join(query_metadata, by = c("query" = "query_protid")) %>%
-  dplyr::relocate(query_species) %>%
+  dplyr::relocate(query_virus_name) %>%
   dplyr::relocate(all_of(c("host_gene_names_primary", "host_function_cc",
                            "host_tissue_specificity", "host_subcellular_location_cc")),
                   .after = ttmscore) %>%
