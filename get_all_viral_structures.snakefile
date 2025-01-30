@@ -36,15 +36,8 @@ rule all:
             / "viro3d_metadata",
             host_organism=HOST_ORGANISMS,
         ),
-        # Updated summary file with structure_file column
-        expand(
-            OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "downloadedviro3d_pdbs_updated.txt",
-            host_organism=HOST_ORGANISMS,
-        ),
+        # Final merged metadata
+        OUTPUT_DIRPATH / "merged_viral_metadata.tsv",
         # Final logs for checking and replacing failed downloads
         expand(
             OUTPUT_DIRPATH
@@ -253,4 +246,27 @@ rule add_structure_file_column:
     shell:
         """
         python scripts/add_structure_file.py {input.summary_file} {output.updated_summary_file}
+        """
+
+
+rule merge_metadata:
+    """
+    Merges the summary file with columns from the vmr_metadata_with_virushostdb.tsv
+    """
+    input:
+        updated_summary_file=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "downloadedviro3d_pdbs_updated.txt",
+        merged_vmr=INPUT_DIRPATH / "viral" / "vmr_metadata_with_virushostdb.tsv",
+    output:
+        merged_metadata=OUTPUT_DIRPATH
+        / "merged_viral_metadata.tsv",
+    shell:
+        """
+        python scripts/merge_metadata.py \
+            --summary-file {input.updated_summary_file} \
+            --metadata-file {input.merged_vmr} \
+            --output-file {output.merged_metadata}
         """
