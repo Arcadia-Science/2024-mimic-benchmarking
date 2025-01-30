@@ -43,10 +43,6 @@ read_gtalign <- function(gtalign_path){
 # the default. For E-values, the direction should be < (less than).
 
 
-df <- all_results
-tp_metadata <- single_mimic_tp_count_all
-threshold <- 0.7
-score_column <- "alntmscore"
 label_classification_outcomes_by_threshold <- function(df, tp_metadata, threshold, score_column, direction = ">") {
   # join to metadata that reports the number of true positives we actually have
   df <- df %>% left_join(tp_metadata, by = "target_gene")
