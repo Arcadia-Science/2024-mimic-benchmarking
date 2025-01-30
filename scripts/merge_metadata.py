@@ -51,11 +51,13 @@ def find_metadata_in_json(record_id, json_dir):
             try:
                 with open(json_path) as f:
                     metadata = json.load(f)
+
                 # Check if this JSON file contains the record_id
                 for protein in metadata.get("protein_structures", []):
                     if protein.get("record_id") == record_id:
                         return {
-                            field: protein.get(field, None) for field in metadata_fields
+                            field: protein.get(field, None)
+                            for field in metadata_fields
                         }
             except json.JSONDecodeError:
                 print(f"Error: Could not decode {json_file}. Skipping.")
@@ -71,7 +73,7 @@ def main():
     # Load summary file
     print(f"Loading summary file: {args.summary_file}")
     summary_data = pd.read_csv(args.summary_file, sep="\t")
-    print(f"Loaded {len(summary_data)} rows from summary file")
+    print(f"Loaded {len(summary_data)} rows from summary file.")
 
     # Initialize new columns
     metadata_fields = [
@@ -91,7 +93,7 @@ def main():
 
     # Count JSON files
     json_files = [f for f in os.listdir(args.json_dir) if f.endswith(".json")]
-    print(f"Found {len(json_files)} JSON files in metadata directory")
+    print(f"Found {len(json_files)} JSON files in metadata directory.")
 
     # Process records
     records_found = 0
