@@ -1,8 +1,9 @@
 import argparse
 import json
 import os
-from tqdm import tqdm
+
 import pandas as pd
+from tqdm import tqdm
 
 
 def parse_args():
@@ -48,7 +49,7 @@ def find_metadata_in_json(record_id, json_dir):
         if json_file.endswith(".json"):
             json_path = os.path.join(json_dir, json_file)
             try:
-                with open(json_path, "r") as f:
+                with open(json_path) as f:
                     metadata = json.load(f)
                 # Check if this JSON file contains the record_id
                 for protein in metadata.get("protein_structures", []):
