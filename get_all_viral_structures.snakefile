@@ -251,22 +251,17 @@ rule add_structure_file_column:
 
 rule merge_metadata:
     """
-    Merges the summary file with columns from the vmr_metadata_with_virushostdb.tsv
+    Merges summary file with metadata from JSON files.
     """
     input:
-        updated_summary_file=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
-        / "downloadedviro3d_pdbs_updated.txt",
-        merged_vmr=INPUT_DIRPATH / "viral" / "vmr_metadata_with_virushostdb.tsv",
+        summary_file = OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" / "downloadedviro3d_pdbs_updated.txt",
+        json_dir = rules.fetch_viro3d_structures_metadata.output.metadata_dir,
     output:
-        merged_metadata=OUTPUT_DIRPATH
-        / "merged_viral_metadata.tsv",
+        merged_metadata = OUTPUT_DIRPATH / "merged_viral_metadata.tsv"
     shell:
         """
         python scripts/merge_metadata.py \
-            --summary-file {input.updated_summary_file} \
-            --metadata-file {input.merged_vmr} \
+            --summary-file {input.summary_file} \
+            --json-dir {input.json_dir} \
             --output-file {output.merged_metadata}
         """
