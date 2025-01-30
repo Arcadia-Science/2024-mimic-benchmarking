@@ -55,10 +55,7 @@ def find_metadata_in_json(record_id, json_dir):
                 # Check if this JSON file contains the record_id
                 for protein in metadata.get("protein_structures", []):
                     if protein.get("record_id") == record_id:
-                        return {
-                            field: protein.get(field, None)
-                            for field in metadata_fields
-                        }
+                        return {field: protein.get(field, None) for field in metadata_fields}
             except json.JSONDecodeError:
                 print(f"Error: Could not decode {json_file}. Skipping.")
             except Exception as e:
