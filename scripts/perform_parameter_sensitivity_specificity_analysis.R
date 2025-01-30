@@ -40,24 +40,36 @@ read_gtalign <- function(gtalign_path){
 # the measurement space within which we assess performance. Note that direction
 # indication the direction in which to decide whether something is classified as
 # a match or not at a given threshold. For TM-scores, the direction should by >,
-# the default. For E-values, the direction should be < (less than). 
-label_classification_outcomes_by_threshold <- function(df, threshold, score_column, direction = ">") {
+# the default. For E-values, the direction should be < (less than).
+
+
+df <- all_results
+tp_metadata <- single_mimic_tp_count_all
+threshold <- 0.7
+score_column <- "alntmscore"
+label_classification_outcomes_by_threshold <- function(df, tp_metadata, threshold, score_column, direction = ">") {
+  # join to metadata that reports the number of true positives we actually have
+  df <- df %>% left_join(tp_metadata, by = "target_gene")
   if(direction == ">"){
-    # for TM-score, where bigger values indication better matches
+    # for *TM-score, where bigger values indication better matches
     df <- df %>%
-      mutate(predicted_label = ifelse(.data[[score_column]] >= threshold, "Positive", "Negative"))
+      mutate(predicted_label = ifelse(.data[[score_column]] >= threshold, "Positive", "Negative")) 
   } else {
     # For evalue, where smaller values indicate better matches
     df <- df %>%
       mutate(predicted_label = ifelse(.data[[score_column]] <= threshold, "Positive", "Negative"))
   }
   
-  
+  # false negative needs to be tp
   df %>%
     group_by(comparison) %>%
     summarize(tp = sum(positive_control == "Positive" & predicted_label == "Positive", na.rm = TRUE),
               fp = sum(positive_control == "Negative" & predicted_label == "Positive", na.rm = TRUE),
-              fn = sum(positive_control == "Positive" & predicted_label == "Negative", na.rm = TRUE),
+              # This was dropping some comparisons if they weren't returned by foldseek.
+              # Therefore, we report the number of positive controls we started with
+              # in a metadata table and use this number, minus the number of positive
+              # controls we detect, to calculate the number of false negatives
+              fn = num_positive_controls - sum(positive_control == "Positive", na.rm = TRUE),
               # Foldseek isn't always exhaustive. Set this to the maximum number
               # of comparisons by counting comparisons not returned as true 
               # negatives.
@@ -80,7 +92,7 @@ floor_dec <- function(x, level=1) {
 # at different thresholds. The goal is to determine the parameter, measurement,
 # and threshold combination that leads to the highest sensitivity and
 # specificity (youden index) for each positive control structure (ex. IL10).
-run_sensitivity_specificity_analysis <- function(df, score_column) {
+run_sensitivity_specificity_analysis <- function(df, tp_metadata, score_column) {
   min_positive_control_score <- df %>%
     filter(positive_control == "Positive") %>%
     summarize(min_score = min(.data[[score_column]], na.rm = TRUE)) %>%
@@ -94,14 +106,17 @@ run_sensitivity_specificity_analysis <- function(df, score_column) {
   
   df_metrics <- map_dfr(
     all_thresholds, 
-    ~ label_classification_outcomes_by_threshold(df, .x, score_column)
+    ~ label_classification_outcomes_by_threshold(df = df,
+                                                 tp_metadata = tp_metadata,
+                                                 threshold = .x,
+                                                 score_column = score_column)
   ) %>%
     arrange(desc(youden_index))
   
   return(df_metrics)
 }
 
-run_sensitivity_specificity_analysis_evalue <- function(df, score_column) {
+run_sensitivity_specificity_analysis_evalue <- function(df, tp_metadata, score_column) {
   max_positive_control_evalue <- df %>%
     filter(positive_control == "Positive") %>%
     summarize(max_evalue = max(.data[[score_column]], na.rm = TRUE)) %>%
@@ -113,17 +128,23 @@ run_sensitivity_specificity_analysis_evalue <- function(df, score_column) {
   
   df_metrics <- map_dfr(
     all_thresholds, 
-    ~ label_classification_outcomes_by_threshold(df, .x, score_column, direction = "<")
+    ~ label_classification_outcomes_by_threshold(df = df, 
+                                                 tp_metadata = tp_metadata,
+                                                 threshold = .x,
+                                                 score_column = score_column,
+                                                 direction = "<")
   ) %>%
     arrange(desc(youden_index))
   
   return(df_metrics)
 }
 
-run_full_analysis <- function(df) {
+run_full_analysis <- function(df, tp_metadata) {
   # Assess alntmscore, qtmscore, and ttmscore for both foldseek and gtalign results
   score_columns <- c("alntmscore", "qtmscore", "ttmscore")
-  tmscore_results <- map(score_columns, ~run_sensitivity_specificity_analysis(df, .x))
+  tmscore_results <- map(score_columns, ~run_sensitivity_specificity_analysis(df = df, 
+                                                                              tp_metadata = tp_metadata,
+                                                                              score_column = .x))
   names(tmscore_results) <- score_columns
   
   # Filter to foldseek alignment type 2 and evaluate accuracy at different evalue thresholds
@@ -131,7 +152,9 @@ run_full_analysis <- function(df) {
     filter(str_detect(string = comparison, pattern = "alignmenttype2"))
   
   score_columns <- c("evalue")
-  evalue_results <- map(score_columns, ~run_sensitivity_specificity_analysis_evalue(alignmenttype2_results, .x))
+  evalue_results <- map(score_columns, ~run_sensitivity_specificity_analysis_evalue(df = alignmenttype2_results, 
+                                                                                    tp_metadata = tp_metadata,
+                                                                                    score_column = .x))
   names(evalue_results) <- score_columns
   
   # Evaluate q2tmscore and t2tmscore for gtalign results
@@ -139,7 +162,9 @@ run_full_analysis <- function(df) {
     filter(str_detect(string = comparison, pattern = "gtalign"))
   
   score_columns <- c("q2tmscore", "t2tmscore")
-  twotmscore_results <- map(score_columns, ~run_sensitivity_specificity_analysis(gtalign_results, .x))
+  twotmscore_results <- map(score_columns, ~run_sensitivity_specificity_analysis(df = gtalign_results,
+                                                                                 tp_metadata = tp_metadata,
+                                                                                 score_column = .x))
   names(twotmscore_results) <- score_columns
   
   # Pull out results and select the best ones
@@ -164,10 +189,22 @@ structure_metadata <- read_tsv(args$input_pc_metadata, show_col_types=FALSE) %>%
   mutate(query = str_remove(string = structure_file, pattern = "\\.pdb"), .after = structure_file) %>%
   select(-structure_file)
 
+single_mimic_tp_count_all <- structure_metadata %>%
+  filter(mimic_type == "single_mimic") %>%
+  group_by(target_gene) %>%
+  tally() %>%
+  select(target_gene, num_positive_controls = n)
+
+single_mimic_tp_count_viral <- structure_metadata %>%
+  filter(!structure_species %in% c("chimp", "human", "mouse", "macaque")) %>%
+  filter(mimic_type == "single_mimic") %>%
+  group_by(target_gene) %>%
+  tally() %>%
+  select(target_gene, num_positive_controls = n)
+
 # Identify the type of mimic being analyzed
 mimic_type <- structure_metadata %>%
   select(target_gene, mimic_type) %>%
-  mutate(target_gene = tolower(target_gene)) %>%
   distinct() %>%
   filter(target_gene == args$positive_control) %>%
   pull(mimic_type)
@@ -199,12 +236,14 @@ if(mimic_type == "single_mimic"){
   
   # Run analysis on viral and euk results
   
-  viral_and_euk_results <- run_full_analysis(all_results)
+  viral_and_euk_results <- run_full_analysis(df = all_results,
+                                             tp_metadata = single_mimic_tp_count_all)
   write_tsv(viral_and_euk_results$all_results, args$output_full)
   write_tsv(viral_and_euk_results$best_result, args$output_best)
   
   # Run the analysis on only the viral results
-  viral_results <- run_full_analysis(all_results %>% filter(!structure_species %in% c("chimp", "human", "mouse", "macaque")))
+  viral_results <- run_full_analysis(df = all_results %>% filter(!structure_species %in% c("chimp", "human", "mouse", "macaque")),
+                                     tp_metadata = single_mimic_tp_count_viral)
   write_tsv(viral_results$all_results, args$output_full_viral)
   write_tsv(viral_results$best_result, args$output_best_viral)
 
