@@ -254,10 +254,14 @@ rule merge_metadata:
     Merges summary file with metadata from JSON files.
     """
     input:
-        summary_file = OUTPUT_DIRPATH / "random_protein_sets" / "viral" / "{host_organism}" / "downloadedviro3d_pdbs_updated.txt",
-        json_dir = rules.fetch_viro3d_structures_metadata.output.metadata_dir,
+        summary_file=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "downloadedviro3d_pdbs_updated.txt",
+        json_dir=rules.fetch_viro3d_structures_metadata.output.metadata_dir,
     output:
-        merged_metadata = OUTPUT_DIRPATH / "merged_viral_metadata.tsv"
+        merged_metadata=OUTPUT_DIRPATH / "merged_viral_metadata.tsv",
     shell:
         """
         python scripts/merge_metadata.py \
