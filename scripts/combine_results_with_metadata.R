@@ -19,7 +19,10 @@ option_list <- list(
 
 args <- parse_args(OptionParser(option_list=option_list))
 
-results <- read_tsv(args$input_results, show_col_types = FALSE) %>%
+results <- read_tsv(args$input_results, show_col_types = FALSE)
+
+if(nrow(results)  > 0){
+results <- results %>%
   mutate(query = str_remove(string = query, pattern = "\\.pdb"),
          target = str_remove(string = target, pattern = "\\.pdb")) %>%
   # Calculate the alntmscore (alignment TM-score). 
@@ -70,3 +73,6 @@ results <- results %>%
 
 
 write_tsv(results, args$output)
+} else {
+file.create(args$output)
+}
