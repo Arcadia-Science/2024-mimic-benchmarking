@@ -6,9 +6,9 @@
 ## Purpose
 This repository contains standardized datasets that we are using to evaluate protein structural alignment methods and how they impact our results. These datasets include the following:
 - Sets of structures for randomly selected human proteins (50, 100, 500, 1000)
-- Sets of random selected viral protein structures (50, 100, 500, 1000) predicted by Nomburg et al. or Viro3D
-- 'Target' protein pdbs for 4 proteins of interest (IL18BP, C4BP, IL10, EIF2A) from human, chimp, macaque, and mouse. Viruses have been shown to mimic these four proteins.
-- 3 viral representative sequences for each of the 4 target proteins. At least one protein in each set is the exact viral protein that was confirmed via experimentation to mimic the human protein.
+- Sets of random selected viral protein structures (50, 100, 500, 1000) predicted by [Viro3D](https://viro3d.cvr.gla.ac.uk)
+- 'Target' protein pdbs for proteins of interest from human, chimp, macaque, and mouse. Viruses have been shown to mimic these proteins.
+- Viral representative sequences for each of the 4 target proteins. At least one protein in each set is the exact viral protein that was confirmed via experimentation to mimic the human protein.
   
 ## Installation and Setup
 
@@ -31,6 +31,7 @@ snakemake --software-deployment-method conda -j 8
 ## Benchmarking data
 
 - We downloaded target protein pdbs directly from [Alphafold](https://alphafold.ebi.ac.uk/) using UniProt accessions.
+- We downloaded viral protein structures from human-infecting viruses from [Viro3D](https://viro3d.cvr.gla.ac.uk) by the running the [get_all_viral_structures.snakefile](get_all_viral_structures.snakefile).
 - We generated random viral protein datasets by running the [create_random_viral_sets.snakefile](create_random_viral_sets.snakefile).
 - We generated random human protein datasets by running the [create_random_human_sets.snakefile](create_random_human_sets.snakefile). Note that this file exists as documentation for how we generated these steps, but there is a non-deterministic step that produce different sets if the snakefile is re-run. As such, please **use the data in the [benchmarking_data](benchmarking_data) folder if you plan to use these datasets**.
 
