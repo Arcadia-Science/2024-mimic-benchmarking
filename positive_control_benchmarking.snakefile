@@ -323,6 +323,8 @@ rule perform_parameter_sensitivity_specificity_analysis:
     output:
         full_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_all_results.tsv",
         best_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_best_results.tsv",
+        full_viral_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_all_results_viral.tsv",
+        best_viral_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_best_results_viral.tsv",
     conda:
         "envs/tidyverse.yml"
     shell:
@@ -331,7 +333,9 @@ rule perform_parameter_sensitivity_specificity_analysis:
             --input_pc_metadata {input.pc_metadata_txt} \
             --positive_control {wildcards.positive_control} \
             --output_full {output.full_tsv} \
-            --output_best {output.best_tsv}
+            --output_best {output.best_tsv} \
+            --output_full_viral {output.full_viral_tsv} \
+            --output_best_viral {output.best_viral_tsv} 
         """
         
 rule all:

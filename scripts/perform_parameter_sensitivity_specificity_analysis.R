@@ -9,7 +9,11 @@ option_list <- list(
   make_option(c("--output_full"), type="character",
               help="Path to output TSV file containing all results."),
   make_option(c("--output_best"), type="character",
-              help="Path to output TSV file containing the parameters with highest youden index.")
+              help="Path to output TSV file containing the parameters with highest youden index."),
+  make_option(c("--output_full_viral"), type="character",
+              help="Path to output TSV file containing results for viruses only."),
+  make_option(c("--output_best_viral"), type="character",
+              help="Path to output TSV file containing the parameters with highest youden index for viruses only.")
 )
 
 args <- parse_args(OptionParser(option_list=option_list))
@@ -116,6 +120,43 @@ run_sensitivity_specificity_analysis_evalue <- function(df, score_column) {
   return(df_metrics)
 }
 
+run_full_analysis <- function(df) {
+  # Assess alntmscore, qtmscore, and ttmscore for both foldseek and gtalign results
+  score_columns <- c("alntmscore", "qtmscore", "ttmscore")
+  tmscore_results <- map(score_columns, ~run_sensitivity_specificity_analysis(df, .x))
+  names(tmscore_results) <- score_columns
+  
+  # Filter to foldseek alignment type 2 and evaluate accuracy at different evalue thresholds
+  alignmenttype2_results <- df %>%
+    filter(str_detect(string = comparison, pattern = "alignmenttype2"))
+  
+  score_columns <- c("evalue")
+  evalue_results <- map(score_columns, ~run_sensitivity_specificity_analysis_evalue(alignmenttype2_results, .x))
+  names(evalue_results) <- score_columns
+  
+  # Evaluate q2tmscore and t2tmscore for gtalign results
+  gtalign_results <- df %>%
+    filter(str_detect(string = comparison, pattern = "gtalign"))
+  
+  score_columns <- c("q2tmscore", "t2tmscore")
+  twotmscore_results <- map(score_columns, ~run_sensitivity_specificity_analysis(gtalign_results, .x))
+  names(twotmscore_results) <- score_columns
+  
+  # Pull out results and select the best ones
+  all_results <- bind_rows(tmscore_results[["alntmscore"]],
+                           tmscore_results[["qtmscore"]],
+                           tmscore_results[["ttmscore"]],
+                           evalue_results[["evalue"]],
+                           twotmscore_results[['q2tmscore']],
+                           twotmscore_results[['t2tmscore']]) %>%
+    arrange(desc(youden_index))
+  
+  best_result <- all_results %>%
+    filter(youden_index == max(youden_index, na.rm = TRUE))
+  
+  return(list(all_results = all_results, best_result = best_result))
+}
+
 # read in and format metadata and results ---------------------------------
 
 # Read in metadata about structures
@@ -134,7 +175,7 @@ mimic_type <- structure_metadata %>%
 # single mimic analysis ---------------------------------------------------
 
 if(mimic_type == "single_mimic"){
-  # Constmimic_type# Construct path strings from positive control input value
+  # Construct path strings from positive control input value
   foldseek_glob <- paste0("outputs/human/foldseek/", args$positive_control, "/processed/*tsv")
   gtalign_glob <- paste0("outputs/human/gtalign/", args$positive_control, "/processed/*tsv")
   
@@ -156,46 +197,21 @@ if(mimic_type == "single_mimic"){
   all_results <- left_join(all_results, structure_metadata, by = "query") %>%
     mutate(positive_control = ifelse(target_uniprot == target, "Positive", "Negative"))
   
-  # run analysis on different measurements  ---------------------------------
+  # Run analysis on viral and euk results
   
-  # assess alntmscore, qtmscore, and ttmscore for both foldseek and gtalign results
-  score_columns <- c("alntmscore", "qtmscore", "ttmscore")
-  tmscore_results <- map(score_columns, ~ run_sensitivity_specificity_analysis(all_results, .x))
-  names(tmscore_results) <- score_columns
+  viral_and_euk_results <- run_full_analysis(all_results)
+  write_tsv(viral_and_euk_results$all_results, args$output_full)
+  write_tsv(viral_and_euk_results$best_result, args$output_best)
   
-  # Filter to foldseek alignment type 2 (the only type that has evalues) and
-  # evaluate accuracy at different evalue thresholds.
-  alignmenttype2_results <- all_results %>% 
-    filter(str_detect(string = comparison, pattern = "alignmenttype2"))
-  
-  score_columns <- c("evalue")
-  evalue_results <- map(score_columns, ~ run_sensitivity_specificity_analysis_evalue(alignmenttype2_results, .x))
-  names(evalue_results) <- score_columns
-  
-  # evaluate q2tmscore and t2tmscore for gtalign results
-  gtalign_results <- all_results %>%
-    filter(str_detect(string = comparison, pattern = "gtalign"))
-  
-  score_columns <- c("q2tmscore", "t2tmscore")
-  twotmscore_results <- map(score_columns, ~ run_sensitivity_specificity_analysis(gtalign_results, .x))
-  names(twotmscore_results) <- score_columns
-  
-  # pull out results and select the best ones -------------------------------
-  
-  all_results <- bind_rows(tmscore_results[["alntmscore"]],
-                           tmscore_results[["qtmscore"]],
-                           tmscore_results[["ttmscore"]],
-                           evalue_results[["evalue"]],
-                           twotmscore_results[['q2tmscore']],
-                           twotmscore_results[['t2tmscore']]) %>%
-    arrange(desc(youden_index))
-  
-  best_result <- all_results %>%
-    filter(youden_index == max(youden_index, na.rm = TRUE))
-  
-  write_tsv(all_results, args$output_full)
-  write_tsv(best_result, args$output_best)
+  # Run the analysis on only the viral results
+  viral_results <- run_full_analysis(all_results %>% filter(!structure_species %in% c("chimp", "human", "mouse", "macaque")))
+  write_tsv(viral_results$all_results, args$output_full_viral)
+  write_tsv(viral_results$best_result, args$output_best_viral)
+
 } else {
   file.create(args$output_full)
   file.create(args$output_best)
+  
+  file.create(args$output_full_viral)
+  file.create(args$output_best_viral)
 }
