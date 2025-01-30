@@ -14,8 +14,24 @@ host_metadata = host_metadata[host_metadata["organism"] == "human"]
 HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 
 
-POSITIVE_CONTROLS = ["bcl2", "c4bp", "cd47", "chemokine", "eif2a", "ifnar", "ifngr", "il10",
-                     "il18bp", "kinase", "lfg4", "nsp16", "nsp5", "ccr1", "ccr2", "helicase"]
+POSITIVE_CONTROLS = [
+    "bcl2",
+    "c4bp",
+    "cd47",
+    "chemokine",
+    "eif2a",
+    "ifnar",
+    "ifngr",
+    "il10",
+    "il18bp",
+    "kinase",
+    "lfg4",
+    "nsp16",
+    "nsp5",
+    "ccr1",
+    "ccr2",
+    "helicase",
+]
 
 ###########################################################
 ## Download ProteinCartography scripts
@@ -309,7 +325,12 @@ rule perform_parameter_sensitivity_specificity_analysis:
     input:
         pc_metadata_txt="benchmarking_data/positive_controls/known_mimic_metadata.txt",
         foldseek_tsv=expand(
-            OUTPUT_DIRPATH / "{{host_organism}}" / "foldseek" / "{{positive_control}}" / "processed" / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv",
+            OUTPUT_DIRPATH
+            / "{{host_organism}}"
+            / "foldseek"
+            / "{{positive_control}}"
+            / "processed"
+            / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv",
             alignment_type=ALIGNMENT_TYPE,
             tmalign_fast=TMALIGN_FAST,
             exact_tmscore=EXACT_TMSCORE,
@@ -317,14 +338,31 @@ rule perform_parameter_sensitivity_specificity_analysis:
             exhaustive_search=EXHAUSTIVE_SEARCH,
         ),
         gtalign_tsv=expand(
-            OUTPUT_DIRPATH / "{{host_organism}}" / "gtalign" / "{{positive_control}}" / "processed" / "gtalign_speed{speed}.tsv", 
-            speed=SPEED
+            OUTPUT_DIRPATH
+            / "{{host_organism}}"
+            / "gtalign"
+            / "{{positive_control}}"
+            / "processed"
+            / "gtalign_speed{speed}.tsv",
+            speed=SPEED,
         ),
     output:
-        full_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_all_results.tsv",
-        best_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_best_results.tsv",
-        full_viral_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_all_results_viral.tsv",
-        best_viral_tsv=OUTPUT_DIRPATH / "{host_organism}" / "benchmarking_results" / "{positive_control}_best_results_viral.tsv",
+        full_tsv=OUTPUT_DIRPATH
+        / "{host_organism}"
+        / "benchmarking_results"
+        / "{positive_control}_all_results.tsv",
+        best_tsv=OUTPUT_DIRPATH
+        / "{host_organism}"
+        / "benchmarking_results"
+        / "{positive_control}_best_results.tsv",
+        full_viral_tsv=OUTPUT_DIRPATH
+        / "{host_organism}"
+        / "benchmarking_results"
+        / "{positive_control}_all_results_viral.tsv",
+        best_viral_tsv=OUTPUT_DIRPATH
+        / "{host_organism}"
+        / "benchmarking_results"
+        / "{positive_control}_best_results_viral.tsv",
     conda:
         "envs/tidyverse.yml"
     shell:
@@ -337,7 +375,8 @@ rule perform_parameter_sensitivity_specificity_analysis:
             --output_full_viral {output.full_viral_tsv} \
             --output_best_viral {output.best_viral_tsv} 
         """
-        
+
+
 rule all:
     default_target: True
     input:
@@ -345,4 +384,4 @@ rule all:
             rules.perform_parameter_sensitivity_specificity_analysis.output.full_tsv,
             host_organism=HOST_ORGANISMS,
             positive_control=POSITIVE_CONTROLS,
-        )
+        ),
