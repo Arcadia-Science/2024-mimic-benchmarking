@@ -41,8 +41,6 @@ read_gtalign <- function(gtalign_path){
 # indication the direction in which to decide whether something is classified as
 # a match or not at a given threshold. For TM-scores, the direction should by >,
 # the default. For E-values, the direction should be < (less than).
-
-
 label_classification_outcomes_by_threshold <- function(df, tp_metadata, threshold, score_column, direction = ">") {
   # join to metadata that reports the number of true positives we actually have
   df <- df %>% left_join(tp_metadata, by = "target_gene")
@@ -185,6 +183,14 @@ structure_metadata <- read_tsv(args$input_pc_metadata, show_col_types=FALSE) %>%
   mutate(query = str_remove(string = structure_file, pattern = "\\.pdb"), .after = structure_file) %>%
   select(-structure_file)
 
+# Identify the type of mimic being analyzed
+mimic_type <- structure_metadata %>%
+  select(target_gene, mimic_type) %>%
+  distinct() %>%
+  mutate(target_gene = tolower(target_gene)) %>%
+  filter(target_gene == args$positive_control) %>%
+  pull(mimic_type)
+
 single_mimic_tp_count_all <- structure_metadata %>%
   filter(mimic_type == "single_mimic") %>%
   group_by(target_gene) %>%
@@ -197,13 +203,6 @@ single_mimic_tp_count_viral <- structure_metadata %>%
   group_by(target_gene) %>%
   tally() %>%
   select(target_gene, num_positive_controls = n)
-
-# Identify the type of mimic being analyzed
-mimic_type <- structure_metadata %>%
-  select(target_gene, mimic_type) %>%
-  distinct() %>%
-  filter(target_gene == args$positive_control) %>%
-  pull(mimic_type)
 
 # single mimic analysis ---------------------------------------------------
 
@@ -231,7 +230,6 @@ if(mimic_type == "single_mimic"){
     mutate(positive_control = ifelse(target_uniprot == target, "Positive", "Negative"))
   
   # Run analysis on viral and euk results
-  
   viral_and_euk_results <- run_full_analysis(df = all_results,
                                              tp_metadata = single_mimic_tp_count_all)
   write_tsv(viral_and_euk_results$all_results, args$output_full)
