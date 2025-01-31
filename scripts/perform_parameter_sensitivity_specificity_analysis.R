@@ -41,9 +41,17 @@ read_gtalign <- function(gtalign_path){
 # indication the direction in which to decide whether something is classified as
 # a match or not at a given threshold. For TM-scores, the direction should by >,
 # the default. For E-values, the direction should be < (less than).
+# df <- all_results
+# tp_metadata <- single_mimic_tp_count_all
+# threshold <- 0.7
+# score_column <- "alntmscore"
+
 label_classification_outcomes_by_threshold <- function(df, tp_metadata, threshold, score_column, direction = ">") {
-  # join to metadata that reports the number of true positives we actually have
-  df <- df %>% left_join(tp_metadata, by = "target_gene")
+  
+  df <- df %>%
+    # join to metadata that reports the number of true positives we actually have
+    left_join(tp_metadata, by = "target_gene")
+    
   if(direction == ">"){
     # for *TM-score, where bigger values indication better matches
     df <- df %>%
@@ -54,25 +62,31 @@ label_classification_outcomes_by_threshold <- function(df, tp_metadata, threshol
       mutate(predicted_label = ifelse(.data[[score_column]] <= threshold, "Positive", "Negative"))
   }
   
-  # false negative needs to be tp
-  df %>%
+  df_summary <- df %>%
+    ungroup() %>%
     group_by(comparison) %>%
     summarize(tp = sum(positive_control == "Positive" & predicted_label == "Positive", na.rm = TRUE),
               fp = sum(positive_control == "Negative" & predicted_label == "Positive", na.rm = TRUE),
-              # This was dropping some comparisons if they weren't returned by foldseek.
-              # Therefore, we report the number of positive controls we started with
-              # in a metadata table and use this number, minus the number of positive
-              # controls we detect, to calculate the number of false negatives
-              fn = num_positive_controls - sum(positive_control == "Positive", na.rm = TRUE),
-              # Foldseek isn't always exhaustive. Set this to the maximum number
-              # of comparisons by counting comparisons not returned as true 
-              # negatives.
-              tn = 201920 - tp - fp - fn) %>%
-    mutate(sensitivity  = tp / (tp + fn),
-           specificity  = tn / (tn + fp),
-           youden_index = sensitivity + specificity - 1,
-           threshold    = threshold,
-           score_column = score_column)
+              # Hack to keep the number of positive controls column. 
+              # In this case, should always return only one number.
+              num_positive_controls = unique(num_positive_controls)) %>%
+    mutate(
+      # This was dropping some comparisons if they weren't returned by foldseek.
+      # Therefore, we report the number of positive controls we started with
+      # in a metadata table and use this number, minus the number of positive
+      # controls we detect, to calculate the number of false negatives
+      fn = num_positive_controls - tp,
+      # Foldseek isn't always exhaustive. Set this to the maximum number
+      # of comparisons by counting comparisons not returned as true 
+      # negatives.
+      tn = 201920 - tp - fp - fn,
+      sensitivity  = tp / (tp + fn),
+      specificity  = tn / (tn + fp),
+      youden_index = sensitivity + specificity - 1,
+      threshold    = threshold,
+      score_column = score_column) %>%
+    select(-num_positive_controls)
+  return(df_summary)
 }
 
 # Create a function to always round down, to the number of digits specified.
