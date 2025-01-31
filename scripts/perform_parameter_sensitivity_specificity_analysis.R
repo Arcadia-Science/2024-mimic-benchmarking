@@ -41,10 +41,6 @@ read_gtalign <- function(gtalign_path){
 # indication the direction in which to decide whether something is classified as
 # a match or not at a given threshold. For TM-scores, the direction should by >,
 # the default. For E-values, the direction should be < (less than).
-# df <- all_results
-# tp_metadata <- single_mimic_tp_count_all
-# threshold <- 0.7
-# score_column <- "alntmscore"
 
 label_classification_outcomes_by_threshold <- function(df, tp_metadata, threshold, score_column, direction = ">") {
   
