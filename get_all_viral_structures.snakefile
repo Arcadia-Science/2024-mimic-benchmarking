@@ -36,15 +36,8 @@ rule all:
             / "viro3d_metadata",
             host_organism=HOST_ORGANISMS,
         ),
-        # Updated summary file with structure_file column
-        expand(
-            OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "downloadedviro3d_pdbs_updated.txt",
-            host_organism=HOST_ORGANISMS,
-        ),
+        # Final merged metadata
+        OUTPUT_DIRPATH / "merged_viral_metadata.tsv",
         # Final logs for checking and replacing failed downloads
         expand(
             OUTPUT_DIRPATH
@@ -253,4 +246,26 @@ rule add_structure_file_column:
     shell:
         """
         python scripts/add_structure_file.py {input.summary_file} {output.updated_summary_file}
+        """
+
+
+rule merge_metadata:
+    """
+    Merges summary file with metadata from JSON files.
+    """
+    input:
+        summary_file=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "downloadedviro3d_pdbs_updated.txt",
+        json_dir=rules.fetch_viro3d_structures_metadata.output.metadata_dir,
+    output:
+        merged_metadata=OUTPUT_DIRPATH / "merged_viral_metadata.tsv",
+    shell:
+        """
+        python scripts/merge_metadata.py \
+            --summary-file {input.summary_file} \
+            --json-dir {input.json_dir} \
+            --output-file {output.merged_metadata}
         """
