@@ -216,7 +216,7 @@ single_mimic_tp_count_viral <- structure_metadata %>%
 
 # single mimic analysis ---------------------------------------------------
 
-if(mimic_type == "single_mimic"){
+if("single_mimic" %in% mimic_type){
   # Construct path strings from positive control input value
   foldseek_glob <- paste0("outputs/human/foldseek/", args$positive_control, "/processed/*tsv")
   gtalign_glob <- paste0("outputs/human/gtalign/", args$positive_control, "/processed/*tsv")
