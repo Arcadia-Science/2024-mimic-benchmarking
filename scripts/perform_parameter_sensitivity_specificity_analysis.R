@@ -239,6 +239,19 @@ if(mimic_type == "single_mimic"){
   all_results <- left_join(all_results, structure_metadata, by = "query") %>%
     mutate(positive_control = ifelse(target_uniprot == target, "Positive", "Negative"))
   
+  # Deal with dual mimics. We represent dual mimics both as dual mimics and as
+  # single mimics. When the protein is labelled as a "dual mimic" in the
+  # metadata table, it is the full viral protein. When the protein is labelled
+  # as a "single mimic" in the metadata table, we have cut the viral protein
+  # into parts, where each part represents a single domain mimic. For this
+  # analysis, we only want to assess the accuracy of results for the "single
+  # mimic" pieces, because this analysis was only meant to analyze single mimics
+  # and cannot work on proteins that have two/multiple targets that are correct.
+  if("dual_mimic" %in% mimic_type){
+    all_results <- all_results %>%
+      filter(mimic_type == "single_mimic")
+  }
+  
   # Run analysis on viral and euk results
   viral_and_euk_results <- run_full_analysis(df = all_results,
                                              tp_metadata = single_mimic_tp_count_all)
