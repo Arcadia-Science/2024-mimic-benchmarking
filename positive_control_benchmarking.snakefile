@@ -20,7 +20,6 @@ POSITIVE_CONTROLS = [
     "cd47",
     "chemokine",
     "eif2a",
-    "ifnar",
     "ifngr",
     "il10",
     "il18bp",
