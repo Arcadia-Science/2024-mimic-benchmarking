@@ -76,9 +76,8 @@ AF-H2R6X1-F1-model_v4_ptro.pdb	AF-H2R6X1-F1-model_v4_ptro	chimp	IFNgR	P15260		si
 AF-P15260-F1-model_v4_hsap.pdb	AF-P15260-F1-model_v4_hsap	human	IFNgR	P15260		single_mimic
 AF-P15261-F1-model_v4_mmus.pdb	AF-P15261-F1-model_v4_mmus	mouse	IFNgR	P15260		single_mimic
 CF-CAD53438.2_127_relaxed.pdb	CF-CAD53438.2_127_relaxed	ebv	kinase	NA	https://doi.org/10.1128/jvi.01099-08	common_domain
-CF-AAR07368.1_12029_relaxed.pdb	CF-AAR07368.1_12029_relaxed	yaba	LFG4	Q9HC24		single_mimic
-CF-CAC21244.1_12027_relaxed.pdb	CF-CAC21244.1_12027_relaxed	yaba	LFG4	Q9HC24		single_mimic
 EF-AAL73713.1_12006_relaxed.pdb	EF-AAL73713.1_12006_relaxed	camelpox	LFG4	Q9HC24	https://doi.org/10.1371/journal.ppat.0030017	single_mimic
+EF-AAR31710.1_100_relaxed.pdb	EF-AAR31710.1_100_relaxed	cmv	LFG4	Q9HC24		single_mimic
 AF-F6TQD4-F1-model_v4_mmul.pdb	AF-F6TQD4-F1-model_v4_mmul	macaque	LFG4	Q9HC24		single_mimic
 AF-K6ZBP7-F1-model_v4_ptro.pdb	AF-K6ZBP7-F1-model_v4_ptro	chimp	LFG4	Q9HC24		single_mimic
 AF-Q9DA39-F1-model_v4_mmus.pdb	AF-Q9DA39-F1-model_v4_mmus	mouse	LFG4	Q9HC24		single_mimic
