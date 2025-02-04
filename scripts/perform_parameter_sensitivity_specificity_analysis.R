@@ -72,12 +72,19 @@ label_classification_outcomes_by_threshold <- function(df, tp_metadata, threshol
       # in a metadata table and use this number, minus the number of positive
       # controls we detect, to calculate the number of false negatives
       fn = num_positive_controls - tp,
-      # Foldseek isn't always exhaustive. Set this to the maximum number
+      # Foldseek/gtalign aren't always exhaustive. Set this to the maximum number
       # of comparisons by counting comparisons not returned as true 
-      # negatives.
-      tn = 201920 - tp - fp - fn,
+      # negatives. Because we have a varying number of positive controls for 
+      # different proteins (ex ccr1 has 4 euks and 1 viral), multiple the number
+      # of posible hits for each query against the number of queries made
+      # (num_positive_controls). Note that foldseek returns 20,192 matches for 
+      # exhaustive searches while gtalign returns 20,174. We use foldseeks
+      # number because it is larger.
+      tn = (20192*num_positive_controls) - tp - fp - fn,
       sensitivity  = tp / (tp + fn),
       specificity  = tn / (tn + fp),
+      fdr = fp / (fp + tp),
+      ppv = tp / (tp + fp),
       youden_index = sensitivity + specificity - 1,
       threshold    = threshold,
       score_column = score_column) %>%
@@ -128,7 +135,7 @@ run_sensitivity_specificity_analysis_evalue <- function(df, tp_metadata, score_c
   
   # Generate a range of thresholds from 0 to the maximum positive control evalue
   # plus a buffer
-  all_thresholds <- seq(from = 0, to = max_positive_control_evalue * 10, length.out = 50)
+  all_thresholds <- seq(from = 0, to = max_positive_control_evalue, length.out = 1000)
   
   df_metrics <- map_dfr(
     all_thresholds, 
@@ -178,10 +185,10 @@ run_full_analysis <- function(df, tp_metadata) {
                            evalue_results[["evalue"]],
                            twotmscore_results[['q2tmscore']],
                            twotmscore_results[['t2tmscore']]) %>%
-    arrange(desc(youden_index))
+    arrange(desc(fdr))
   
   best_result <- all_results %>%
-    filter(youden_index == max(youden_index, na.rm = TRUE))
+    filter(fdr == min(fdr, na.rm = TRUE))
   
   return(list(all_results = all_results, best_result = best_result))
 }
