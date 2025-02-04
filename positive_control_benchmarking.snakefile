@@ -226,6 +226,7 @@ rule combine_foldseek_results_with_metadata:
 #####################################################################
 
 SPEED = ["0", "9"]
+PRESCORE = ["0", "0.3", "0.5"] # Minimum tmscore for structure pairs to be further processed.
 
 
 rule benchmark_gtalign_against_human_proteome:
@@ -237,18 +238,18 @@ rule benchmark_gtalign_against_human_proteome:
         / "{host_organism}"
         / "gtalign"
         / "{positive_control}"
-        / "gtalign_speed{speed}.out",
+        / "gtalign_speed{speed}_prescore{prescore}.out",
         outdir=directory(
             OUTPUT_DIRPATH
             / "{host_organism}"
             / "gtalign"
             / "{positive_control}"
-            / "gtalign_speed{speed}"
+            / "gtalign_speed{speed}_prescore{prescore}"
         ),
     conda:
         "envs/gtalign.yml"
     benchmark:
-        "benchmarks/gtalign/{host_organism}/{positive_control}/gtalign_speed{speed}.tsv"
+        "benchmarks/gtalign/{host_organism}/{positive_control}/gtalign_speed{speed}_prescore{prescore}.tsv"
     threads: 7  # this doesn't actually take 7 threads, it uses 1 gpu, but will fail if another gtalign runs so bounding here
     shell:
         """
@@ -265,7 +266,7 @@ rule benchmark_gtalign_against_human_proteome:
             --speed={wildcards.speed} \
             --nhits=21000 \
             --nalns=21000 \
-            --pre-score=0 \
+            --pre-score={wildcards.prescore} \
             -c tmp_gtalign && touch {output.txt}
         """
 
@@ -278,7 +279,7 @@ rule reformat_gtalign_output:
         / "{host_organism}"
         / "gtalign"
         / "{positive_control}"
-        / "gtalign_speed{speed}.tsv",
+        / "gtalign_speed{speed}_prescore{prescore}.tsv",
     conda:
         "envs/web_apis.yml"
     shell:
@@ -302,7 +303,7 @@ rule combine_gtalign_results_with_metadata:
         / "gtalign"
         / "{positive_control}"
         / "processed"
-        / "gtalign_speed{speed}.tsv",
+        / "gtalign_speed{speed}_prescore{prescore}.tsv",
     conda:
         "envs/tidyverse.yml"
     shell:
@@ -344,8 +345,8 @@ rule perform_parameter_sensitivity_specificity_analysis:
             / "gtalign"
             / "{{positive_control}}"
             / "processed"
-            / "gtalign_speed{speed}.tsv",
-            speed=SPEED,
+            / "gtalign_speed{speed}_prescore{prescore}.tsv",
+            speed=SPEED, prescore=PRESCORE,
         ),
     output:
         full_tsv=OUTPUT_DIRPATH
