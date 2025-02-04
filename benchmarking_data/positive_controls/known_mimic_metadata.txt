@@ -69,13 +69,6 @@ AF-Q08722-F1-model_v4_hsap.pdb	AF-Q08722-F1-model_v4_hsap	human	CD47	Q08722		sin
 AF-Q61735-F1-model_v4_mmus.pdb	AF-Q61735-F1-model_v4_mmus	mouse	CD47	Q08722		single_mimic
 EF-AAC55276.1_12002_relaxed.pdb	EF-AAC55276.1_12002_relaxed	molluscum_contagiosum	chemokine	NA	https://doi.org/10.1073/pnas.95.11.6403	general_mimic
 CF-AAO42519.1.1.4_7222_relaxed.pdb	CF-AAO42519.1.1.4_7222_relaxed	pegivirus	helicase	NA		common_domain
-CF-AAM13651.1_12007_relaxed.pdb	CF-AAM13651.1_12007_relaxed	cowpox	IFNaR	P17181		single_mimic
-CF-AAO89479.1_12013_relaxed.pdb	CF-AAO89479.1_12013_relaxed	vaccinia	IFNaR	P17181	https://doi.org/10.1128/jvi.74.23.11230-11239.2000	single_mimic
-CF-AXN74992.1_12005_relaxed.pdb	CF-AXN74992.1_12005_relaxed	akhmeta	IFNaR	P17181		single_mimic
-AF-A0A6D2XMH4-F1-model_v4_ptro.pdb	AF-A0A6D2XMH4-F1-model_v4_ptro	chimp	IFNaR	P17181		single_mimic
-AF-H9Z8H4-F1-model_v4_mmul.pdb	AF-H9Z8H4-F1-model_v4_mmul	macaque	IFNaR	P17181		single_mimic
-AF-P17181-F1-model_v4_hsap.pdb	AF-P17181-F1-model_v4_hsap	human	IFNaR	P17181		single_mimic
-AF-P33896-F1-model_v4_mmus.pdb	AF-P33896-F1-model_v4_mmus	mouse	IFNaR	P17181		single_mimic
 CF-AAL40628.1_12009_relaxed.pdb	CF-AAL40628.1_12009_relaxed	monkeypox	IFNgR	P15260		single_mimic
 CF-AAO89469.1_12013_relaxed.pdb	CF-AAO89469.1_12013_relaxed	vaccinia	IFNgR	P15260	https://doi.org/10.1128/jvi.69.8.4633-4639.1995	single_mimic
 CF-AXN74982.1_12005_relaxed.pdb	CF-AXN74982.1_12005_relaxed	akhmeta	IFNgR	P15260		single_mimic
