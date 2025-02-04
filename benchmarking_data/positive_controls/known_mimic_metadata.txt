@@ -4,7 +4,6 @@ EF-AAO89304.1_12013_relaxed.pdb	EF-AAO89304.1_12013_relaxed	vaccinia	C4BP	P04003
 EF-CAA48953.1_12014_relaxed.pdb	EF-CAA48953.1_12014_relaxed	variola	C4BP	P04003		single_mimic
 CF-AAO89313.1_12013_relaxed_vaccinia.pdb	CF-AAO89313.1_12013_relaxed	vaccinia	EIF2A	P05198	https://doi.org/10.1128/jvi.66.4.1943-1950.1992	single_mimic
 CF-AAR07371.1_12029_relaxed_yaba.pdb	CF-AAR07371.1_12029_relaxed	yaba	EIF2A	P05198		single_mimic
-CF-AXN74850.1_12005_relaxed_akhmeta.pdb	CF-AXN74850.1_12005_relaxed	akhmeta	EIF2A	P05198		single_mimic
 EF-AAR31656.1_100_relaxed.pdb	EF-AAR31656.1_100_relaxed	hhv5	IL10	P22301		single_mimic
 CF-AEV80459.1_99_relaxed_GMCMV.pdb	CF-AEV80459.1_99_relaxed	gmcmv	IL10	P22301		single_mimic
 CF-CAD53385.1_127_relaxed_ebv.pdb	CF-CAD53385.1_127_relaxed	ebv	IL10	P22301	https://doi.org/10.1006/jmbi.1997.0990;https://doi.org/10.1016/j.str.2005.01.016	single_mimic

@@ -35,7 +35,6 @@ CF-AAT98578.1.1.21_10182_relaxed	CF-AAT98578.1.1.21_10182_relaxed	Other	92.57899
 AF-P51683-F1-model_v4	AF-P51683-F1-model_v4	AlphaFold	81.50313225	['A']
 AF-Q54AA2-F1-model_v4_mmus_pycard	AF-Q54AA2-F1-model_v4_mmus_pycard	Other	65.53089431	['A']
 AF-K6ZBP7-F1-model_v4_ptro	AF-K6ZBP7-F1-model_v4_ptro	AlphaFold	90.90519644	['A']
-CF-AXN74850.1_12005_relaxed_akhmeta	CF-AXN74850.1_12005_relaxed	Other	80.15739376	['A']
 AF-Q9Z0M9-il18bpMmus	AF-Q9Z0M9-il18bpMmus	AlphaFold	77.81014667	['A']
 CF-CAA48946.1_12014_relaxed_variola	CF-CAA48946.1_12014_relaxed	Other	87.35989609	['A']
 AF-A0A6D2WDS4-F1-model_v4	AF-A0A6D2WDS4-F1-model_v4	AlphaFold	76.11169526	['A']
