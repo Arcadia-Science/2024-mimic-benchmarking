@@ -225,7 +225,7 @@ rule combine_foldseek_results_with_metadata:
 #####################################################################
 
 SPEED = ["0", "9"]
-PRESCORE = ["0", "0.3", "0.5"] # Minimum tmscore for structure pairs to be further processed.
+PRESCORE = ["0", "0.3", "0.5"]  # Minimum tmscore for structure pairs to be further processed.
 
 
 rule benchmark_gtalign_against_human_proteome:
@@ -345,7 +345,8 @@ rule perform_parameter_sensitivity_specificity_analysis:
             / "{{positive_control}}"
             / "processed"
             / "gtalign_speed{speed}_prescore{prescore}.tsv",
-            speed=SPEED, prescore=PRESCORE,
+            speed=SPEED,
+            prescore=PRESCORE,
         ),
     output:
         full_tsv=OUTPUT_DIRPATH
