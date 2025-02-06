@@ -49,16 +49,16 @@ AF-P10415-F1-model_v4_hsap_bcl2.pdb	AF-P10415-F1-model_v4_hsap_bcl2	human	C1L	P1
 AF-P10417-F1-model_v4_mmus_bcl2.pdb	AF-P10417-F1-model_v4_mmus_bcl2	mouse	C1L	P10415		single_mimic
 AF-Q54AA2-F1-model_v4_mmus_pycard.pdb	AF-Q54AA2-F1-model_v4_mmus_pycard	mouse	C1L	Q8WXC3		single_mimic
 AF-Q8WXC3-F1-model_v4_hsap_pydc.pdb	AF-Q8WXC3-F1-model_v4_hsap_pydc	human	C1L	Q8WXC3		single_mimic
-EF-AAR31716.1_100_relaxed.pdb	EF-AAR31716.1_100_relaxed	hcmv	CCR1	P32246	https://doi.org/10.3390/v4112448	single_mimic
-AF-A0A6D2WDS4-F1-model_v4.pdb	AF-A0A6D2WDS4-F1-model_v4	chimp	CCR1	P32246		single_mimic
-AF-P32246-F1-model_v4.pdb	AF-P32246-F1-model_v4	human	CCR1	P32246		single_mimic
-AF-P51675-F1-model_v4.pdb	AF-P51675-F1-model_v4	mouse	CCR1	P32246		single_mimic
-AF-P56482-F1-model_v4.pdb	AF-P56482-F1-model_v4	macaque	CCR1	P32246		single_mimic
-EF-AAD46503.1_158_relaxed.pdb	EF-AAD46503.1_158_relaxed	kshv	CCR2	P41597	https://doi.org/10.1073/pnas.2403217121	single_mimic
-AF-A0A6D2W375-F1-model_v4.pdb	AF-A0A6D2W375-F1-model_v4	chimp	CCR2	P41597		single_mimic
-AF-O18793-F1-model_v4.pdb	AF-O18793-F1-model_v4	macaque	CCR2	P41597		single_mimic
-AF-P41597-F1-model_v4.pdb	AF-P41597-F1-model_v4	human	CCR2	P41597		single_mimic
-AF-P51683-F1-model_v4.pdb	AF-P51683-F1-model_v4	mouse	CCR2	P41597		single_mimic
+EF-AAR31716.1_100_relaxed.pdb	EF-AAR31716.1_100_relaxed	hcmv	CCR1	P32246	https://doi.org/10.3390/v4112448	general_mimic
+AF-A0A6D2WDS4-F1-model_v4.pdb	AF-A0A6D2WDS4-F1-model_v4	chimp	CCR1	P32246		general_mimic
+AF-P32246-F1-model_v4.pdb	AF-P32246-F1-model_v4	human	CCR1	P32246		general_mimic
+AF-P51675-F1-model_v4.pdb	AF-P51675-F1-model_v4	mouse	CCR1	P32246		general_mimic
+AF-P56482-F1-model_v4.pdb	AF-P56482-F1-model_v4	macaque	CCR1	P32246		general_mimic
+EF-AAD46503.1_158_relaxed.pdb	EF-AAD46503.1_158_relaxed	kshv	CCR2	P41597	https://doi.org/10.1073/pnas.2403217121	general_mimic
+AF-A0A6D2W375-F1-model_v4.pdb	AF-A0A6D2W375-F1-model_v4	chimp	CCR2	P41597		general_mimic
+AF-O18793-F1-model_v4.pdb	AF-O18793-F1-model_v4	macaque	CCR2	P41597		general_mimic
+AF-P41597-F1-model_v4.pdb	AF-P41597-F1-model_v4	human	CCR2	P41597		general_mimic
+AF-P51683-F1-model_v4.pdb	AF-P51683-F1-model_v4	mouse	CCR2	P41597		general_mimic
 CF-AAO89441.1_12013_relaxed.pdb	CF-AAO89441.1_12013_relaxed	vaccinia	CD47	Q08722	https://doi.org/10.1128/jvi.70.2.905-914.1996; https://doi.org/10.1006/viro.1995.9942	single_mimic
 CF-AAR07485.1_12029_relaxed.pdb	CF-AAR07485.1_12029_relaxed	yaba	CD47	Q08722		single_mimic
 CF-AST09350.1_11992_relaxed.pdb	CF-AST09350.1_11992_relaxed	murmansk	CD47	Q08722		single_mimic
