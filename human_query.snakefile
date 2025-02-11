@@ -28,7 +28,7 @@ rule benchmark_foldseek_against_viral_proteins:
     input:
         pdbs="benchmarking_data/human_query/",
         # downloaded by get_all_viral_structures.snakefile 
-        protein_structures_dir="benchmarking_data/random_protein_sets/viral/{host_organism}/viro3d_{host_organism}_pdbs"
+        protein_structures_dir="benchmarking_data/random_protein_sets/viral/{host_organism}/viro3d_{host_organism}_pdbs",
     output:
         tsv=OUTPUT_DIRPATH
         / "{host_organism}"
@@ -91,11 +91,12 @@ rule combine_foldseek_results_with_metadata:
 rule all:
     default_target: True
     input:
-        expand(rules.combine_foldseek_results_with_metadata.output.tsv,
-               host_organism = HOST_ORGANISMS,
-               alignment_type=ALIGNMENT_TYPE,
-               tmalign_fast=TMALIGN_FAST,
-               exact_tmscore=EXACT_TMSCORE,
-               tmscore_threshold=TMSCORE_THRESHOLD,
-               exhaustive_search=EXHAUSTIVE_SEARCH,
-           )
+        expand(
+            rules.combine_foldseek_results_with_metadata.output.tsv,
+            host_organism=HOST_ORGANISMS,
+            alignment_type=ALIGNMENT_TYPE,
+            tmalign_fast=TMALIGN_FAST,
+            exact_tmscore=EXACT_TMSCORE,
+            tmscore_threshold=TMSCORE_THRESHOLD,
+            exhaustive_search=EXHAUSTIVE_SEARCH,
+        ),
