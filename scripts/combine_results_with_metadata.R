@@ -5,14 +5,14 @@ library(optparse)
 option_list <- list(
   make_option(c("--input_results"), type="character",
               help="Path to TSV file from foldseek or gtalign (parsed)."),
+  make_option(c("--target"), type="character",
+              help="Database used for search. Either human or viral."),
   make_option(c("--input_human_metadata"), type="character",
               help="Path to human metadata CSV file."),
   make_option(c("--input_host_lddt"), type="character",
               help="Path to host structure quality measurement TSV file."),
-  make_option(c("--input_query_metadata"), type="character",
+  make_option(c("--input_viral_metadata"), type="character",
               help="Path to query metadata TSV file."),
-  make_option(c("--input_query_lddt"), type="character",
-              help="Path to query structure quality measurement TSV file."),
   make_option(c("--output"), type="character",
               help="Path to output TSV file.")
 )
@@ -37,21 +37,14 @@ if(nrow(results)  > 0){
   host_pdb_lddt <- read_tsv(args$input_host_lddt, show_col_types = FALSE) %>%
     select(protid, pdb_plddt = pdb_confidence) %>%
     distinct()
-  
-  query_pdb_lddt <- read_tsv(args$input_query_lddt, show_col_types = FALSE) %>%
-    select(protid, viro3d_filename, pdb_plddt = pdb_confidence) %>%
-    distinct()
-  
-  query_metadata <- read_tsv(args$input_query_metadata, show_col_types = FALSE) %>%
+
+  viral_metadata <- read_tsv(args$input_viral_metadata, show_col_types = FALSE) %>%
     clean_names() %>%
     # names might not match, so edit to original file names
-    mutate(viro3d_filename = str_remove(string = structure_file, pattern = ".*(?=[CE]F)"),
-           viro3d_filename = str_remove(string = viro3d_filename, pattern = "(?<=_relaxed).*")) %>%
-    left_join(query_pdb_lddt, by = "viro3d_filename") %>%
-    rename_with(.cols = everything(), function(x){paste0("query_", x)}) %>%
-    select(-query_viro3d_filename) %>%
-    distinct()
-  
+    mutate(protid = str_remove(string = structure_file, pattern = "\\.pdb$")) %>%
+    rename_with(.cols = everything(), function(x){paste0("viral_", x)}) %>%
+    distinct() 
+ 
   host_metadata <- read_csv(args$input_human_metadata, show_col_types = FALSE) %>% 
     rename(protid = uniprot) %>%
     left_join(host_pdb_lddt, by = c("protid")) %>%
@@ -61,17 +54,23 @@ if(nrow(results)  > 0){
     slice_head(n = 1) %>%
     distinct()
   
+  if(args$target == "human"){
+    results <- results %>%
+      left_join(host_metadata, by = c("target" = "host_protid")) %>%
+      left_join(viral_metadata, by = c("query" = "viral_protid"))
+  } else { 
+    results <- results %>%
+      left_join(host_metadata, by = c("query" = "host_protid")) %>%
+      left_join(viral_metadata, by = c("target" = "viral_protid"))
+  }
   results <- results %>%
-    left_join(host_metadata, by = c("target" = "host_protid")) %>%
-    left_join(query_metadata, by = c("query" = "query_protid")) %>%
-    dplyr::relocate(query_virus_name) %>%
-    dplyr::relocate(all_of(c("host_gene_names_primary", "host_function_cc",
-                             "host_tissue_specificity", "host_subcellular_location_cc")),
-                    .after = ttmscore) %>%
-    arrange(desc(alntmscore)) %>%
-    distinct()
-  
-  
+      dplyr::relocate(viral_virus_name) %>%
+      dplyr::relocate(all_of(c("host_gene_names_primary", "host_function_cc",
+                               "host_tissue_specificity", "host_subcellular_location_cc")),
+                      .after = ttmscore) %>%
+      arrange(desc(alntmscore)) %>%
+      distinct()
+
   write_tsv(results, args$output)
 } else {
   file.create(args$output)

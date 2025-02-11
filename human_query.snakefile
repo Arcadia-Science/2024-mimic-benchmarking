@@ -24,15 +24,11 @@ TMSCORE_THRESHOLD = ["0", "0.25", "0.5"]
 EXHAUSTIVE_SEARCH = ["0"]  # 0: off
 
 
-rule benchmark_foldseek_against_human_proteome:
+rule benchmark_foldseek_against_viral_proteins:
     input:
         pdbs="benchmarking_data/human_query/",
         # downloaded by get_all_viral_structures.snakefile 
-        protein_structures_dir="benchmarking_data"
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "viro3d_{host_organism}_pdbs/",
+        protein_structures_dir="benchmarking_data/random_protein_sets/viral/{host_organism}/viro3d_{host_organism}_pdbs"
     output:
         tsv=OUTPUT_DIRPATH
         / "{host_organism}"
@@ -67,10 +63,10 @@ rule benchmark_foldseek_against_human_proteome:
 
 rule combine_foldseek_results_with_metadata:
     input:
-        foldseek_tsv=rules.benchmark_foldseek_against_human_proteome.output.tsv,
+        foldseek_tsv=rules.benchmark_foldseek_against_viral_proteins.output.tsv,
         human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv.gz",
         host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv",
-        query_metadata_tsv="benchmarking_data/merged_viral_metadata.tsv",
+        viral_metadata_tsv="benchmarking_data/merged_viral_metadata.tsv",
     output:
         tsv=OUTPUT_DIRPATH
         / "{host_organism}"
@@ -84,9 +80,10 @@ rule combine_foldseek_results_with_metadata:
         """
         Rscript scripts/combine_results_with_metadata.R \
             --input_results {input.foldseek_tsv} \
+            --target viral \
             --input_human_metadata {input.human_metadata_csv} \
             --input_host_lddt {input.host_lddt_tsv} \
-            --input_query_metadata {input.query_metadata_tsv} \
+            --input_viral_metadata {input.viral_metadata_tsv} \
             --output {output.tsv}
         """
 
@@ -95,6 +92,7 @@ rule all:
     default_target: True
     input:
         expand(rules.combine_foldseek_results_with_metadata.output.tsv,
+               host_organism = HOST_ORGANISMS,
                alignment_type=ALIGNMENT_TYPE,
                tmalign_fast=TMALIGN_FAST,
                exact_tmscore=EXACT_TMSCORE,

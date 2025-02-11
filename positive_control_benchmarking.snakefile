@@ -197,8 +197,7 @@ rule combine_foldseek_results_with_metadata:
         foldseek_tsv=rules.benchmark_foldseek_against_human_proteome.output.tsv,
         human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv.gz",
         host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv",
-        query_metadata_tsv="benchmarking_data/merged_viral_metadata.tsv",
-        query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv",
+        viral_metadata_tsv="benchmarking_data/merged_viral_metadata.tsv",
     output:
         tsv=OUTPUT_DIRPATH
         / "{host_organism}"
@@ -212,10 +211,10 @@ rule combine_foldseek_results_with_metadata:
         """
         Rscript scripts/combine_results_with_metadata.R \
             --input_results {input.foldseek_tsv} \
+            --target human \
             --input_human_metadata {input.human_metadata_csv} \
             --input_host_lddt {input.host_lddt_tsv} \
-            --input_query_metadata {input.query_metadata_tsv} \
-            --input_query_lddt {input.query_lddt_tsv} \
+            --input_viral_metadata {input.viral_metadata_tsv} \
             --output {output.tsv}
         """
 
@@ -294,8 +293,7 @@ rule combine_gtalign_results_with_metadata:
         gtalign_tsv=rules.reformat_gtalign_output.output.tsv,
         human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv.gz",
         host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv",
-        query_metadata_tsv="benchmarking_data/merged_viral_metadata.tsv",
-        query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv",
+        viral_metadata_tsv="benchmarking_data/merged_viral_metadata.tsv",
     output:
         tsv=OUTPUT_DIRPATH
         / "{host_organism}"
@@ -309,10 +307,10 @@ rule combine_gtalign_results_with_metadata:
         """
         Rscript scripts/combine_results_with_metadata.R \
             --input_results {input.gtalign_tsv} \
+            --target human \
             --input_human_metadata {input.human_metadata_csv} \
             --input_host_lddt {input.host_lddt_tsv} \
-            --input_query_metadata {input.query_metadata_tsv} \
-            --input_query_lddt {input.query_lddt_tsv} \
+            --input_viral_metadata {input.viral_metadata_tsv} \
             --output {output.tsv}
         """
 
