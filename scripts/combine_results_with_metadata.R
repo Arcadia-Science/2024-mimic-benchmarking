@@ -23,10 +23,6 @@ results <- read_tsv(args$input_results, show_col_types = FALSE)
 
 if(nrow(results)  > 0){
   results <- results %>%
-    mutate(query = str_remove(string = query, pattern = "\\.pdb"),
-           query = str_remove(string = query, pattern = "\\-F1-model_v4"),
-           query = str_remove(string = query, pattern = "^AF-"),
-           target = str_remove(string = target, pattern = "\\.pdb")) %>%
     # Calculate the alntmscore (alignment TM-score). 
     # Foldseek outputs the incorrect alntmscore in some fraction of results, and
     # gtalign does not output the alntmscore
@@ -35,7 +31,12 @@ if(nrow(results)  > 0){
            tmraw = (tmraw1 + tmraw2) / 2,
            alntmscore = tmraw/alnlen) %>%
     select(-tmraw1, -tmraw2, -tmraw)
-  
+  if(args$target == "human") {
+    results <- results %>% 
+      mutate(query = str_remove(string = query, pattern = "\\-F1-model_v4$"),
+             query = str_remove(string = query, pattern = "^AF-"))
+  }
+
   host_pdb_lddt <- read_tsv(args$input_host_lddt, show_col_types = FALSE) %>%
     select(protid, pdb_plddt = pdb_confidence) %>%
     distinct()
