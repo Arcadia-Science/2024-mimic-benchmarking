@@ -27,7 +27,7 @@ rule all:
         INPUT_DIRPATH / "viral" / "vmr_metadata_with_virushostdb.tsv",
         # Metadata directory fetched from Viro3D API
         expand(
-            OUTPUT_DIRPATH/ "viro3d_{host_organism}_metadata",
+            OUTPUT_DIRPATH / "viro3d_{host_organism}_metadata",
             host_organism=HOST_ORGANISMS,
         ),
         # Final merged metadata
@@ -97,9 +97,7 @@ rule extract_unique_virus_names:
     input:
         metadata_tsv=INPUT_DIRPATH / "viral" / "vmr_metadata_with_virushostdb.tsv",
     output:
-        unique_viruses_txt=OUTPUT_DIRPATH
-        / "{host_organism}"
-        / "unique_virus_names.txt",
+        unique_viruses_txt=OUTPUT_DIRPATH / "{host_organism}" / "unique_virus_names.txt",
     shell:
         """
         python scripts/extract_unique_viruses.py {input.metadata_tsv} {output.unique_viruses_txt}
@@ -113,10 +111,7 @@ rule fetch_viro3d_structures_metadata:
     input:
         unique_viruses=rules.extract_unique_virus_names.output.unique_viruses_txt,
     output:
-        metadata_dir=directory(
-            OUTPUT_DIRPATH
-            / "viro3d_{host_organism}_metadata"
-        ),
+        metadata_dir=directory(OUTPUT_DIRPATH / "viro3d_{host_organism}_metadata"),
     shell:
         """    
         mkdir -p {output.metadata_dir}
@@ -153,14 +148,9 @@ rule download_all_pdbs:
     input:
         metadata_dir=rules.fetch_viro3d_structures_metadata.output.metadata_dir,
     output:
-        pdb_dir=directory(
-            OUTPUT_DIRPATH
-            / "viro3d_{host_organism}_pdbs"
-        ),
-        summary=OUTPUT_DIRPATH
-        / "downloadedviro3d_{host_organism}_pdbs.txt",
-        fails=OUTPUT_DIRPATH
-        / "downloadedviro3d_{host_organism}_pdbs_fails.txt",
+        pdb_dir=directory(OUTPUT_DIRPATH / "viro3d_{host_organism}_pdbs"),
+        summary=OUTPUT_DIRPATH / "downloadedviro3d_{host_organism}_pdbs.txt",
+        fails=OUTPUT_DIRPATH / "downloadedviro3d_{host_organism}_pdbs_fails.txt",
     shell:
         """
         python scripts/download_all_pdbs_viro3d.py {input.metadata_dir} {output.pdb_dir} {output.summary} {output.fails}
@@ -173,17 +163,12 @@ rule download_fails:
     Updates the summary file to add the new downloads.
     """
     input:
-        dir=OUTPUT_DIRPATH
-        / "viro3d_{host_organism}_pdbs",
-        summary=OUTPUT_DIRPATH
-        / "downloadedviro3d_{host_organism}_pdbs.txt",
-        fails=OUTPUT_DIRPATH
-        / "downloadedviro3d_{host_organism}_pdbs_fails.txt",
-        metadata_dir=OUTPUT_DIRPATH
-        / "viro3d_{host_organism}_metadata",
+        dir=OUTPUT_DIRPATH / "viro3d_{host_organism}_pdbs",
+        summary=OUTPUT_DIRPATH / "downloadedviro3d_{host_organism}_pdbs.txt",
+        fails=OUTPUT_DIRPATH / "downloadedviro3d_{host_organism}_pdbs_fails.txt",
+        metadata_dir=OUTPUT_DIRPATH / "viro3d_{host_organism}_metadata",
     output:
-        newsummary=OUTPUT_DIRPATH
-        / "downloadedviro3d_{host_organism}_pdbs_withfails.txt",
+        newsummary=OUTPUT_DIRPATH / "downloadedviro3d_{host_organism}_pdbs_withfails.txt",
     shell:
         """
         python scripts/download_fails.py {input.dir} {input.summary} {input.metadata_dir} {input.fails} {output.newsummary}
@@ -195,11 +180,9 @@ rule add_structure_file_column:
     Adds a structure_file column to the summary file based on Virus Name, Chosen Method, and Record ID.
     """
     input:
-        summary_file=OUTPUT_DIRPATH
-        / "downloadedviro3d_{host_organism}_pdbs_withfails.txt",
+        summary_file=OUTPUT_DIRPATH / "downloadedviro3d_{host_organism}_pdbs_withfails.txt",
     output:
-        updated_summary_file=OUTPUT_DIRPATH
-        / "downloadedviro3d_{host_organism}_pdbs_updated.txt",
+        updated_summary_file=OUTPUT_DIRPATH / "downloadedviro3d_{host_organism}_pdbs_updated.txt",
     shell:
         """
         python scripts/add_structure_file.py {input.summary_file} {output.updated_summary_file}
@@ -211,8 +194,7 @@ rule merge_metadata:
     Merges summary file with metadata from JSON files.
     """
     input:
-        summary_file=OUTPUT_DIRPATH
-        / "downloadedviro3d_{host_organism}_pdbs_updated.txt",
+        summary_file=OUTPUT_DIRPATH / "downloadedviro3d_{host_organism}_pdbs_updated.txt",
         json_dir=rules.fetch_viro3d_structures_metadata.output.metadata_dir,
     output:
         merged_metadata=OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv",
@@ -230,8 +212,7 @@ rule check_downloads:
     Makes sure we have the same number of pdbs as record ids in the metadata.
     """
     input:
-        pdbfolder=OUTPUT_DIRPATH
-        / "viro3d_{host_organism}_pdbs",
+        pdbfolder=OUTPUT_DIRPATH / "viro3d_{host_organism}_pdbs",
         metadata=OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv",
     output:
         done="logs/{host_organism}_compare_counts_done.txt",
