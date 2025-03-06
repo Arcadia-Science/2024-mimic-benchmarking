@@ -1,8 +1,6 @@
 """
 This snakefile creates standardized datasets of viral protein structures from Viro3D.
 It identifies viral structures from viruses that infect humans and downloads them.
-Then, it selects random subsets of those viruses. Each larger subset is inclusive of the smaller
-subset.
 """
 
 from pathlib import Path
@@ -29,11 +27,7 @@ rule all:
         INPUT_DIRPATH / "viral" / "vmr_metadata_with_virushostdb.tsv",
         # Metadata directory fetched from Viro3D API
         expand(
-            OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "viro3d_metadata",
+            OUTPUT_DIRPATH/ "viro3d_{host_organism}_metadata",
             host_organism=HOST_ORGANISMS,
         ),
         # Final merged metadata
@@ -104,8 +98,6 @@ rule extract_unique_virus_names:
         metadata_tsv=INPUT_DIRPATH / "viral" / "vmr_metadata_with_virushostdb.tsv",
     output:
         unique_viruses_txt=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
         / "{host_organism}"
         / "unique_virus_names.txt",
     shell:
@@ -123,10 +115,7 @@ rule fetch_viro3d_structures_metadata:
     output:
         metadata_dir=directory(
             OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "viro3d_metadata"
+            / "viro3d_{host_organism}_metadata"
         ),
     shell:
         """    
@@ -166,21 +155,12 @@ rule download_all_pdbs:
     output:
         pdb_dir=directory(
             OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
             / "viro3d_{host_organism}_pdbs"
         ),
         summary=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
-        / "downloadedviro3d_pdbs.txt",
+        / "downloadedviro3d_{host_organism}_pdbs.txt",
         fails=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
-        / "downloadedviro3d_pdbs_fails.txt",
+        / "downloadedviro3d_{host_organism}_pdbs_fails.txt",
     shell:
         """
         python scripts/download_all_pdbs_viro3d.py {input.metadata_dir} {output.pdb_dir} {output.summary} {output.fails}
@@ -194,31 +174,16 @@ rule download_fails:
     """
     input:
         dir=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
         / "viro3d_{host_organism}_pdbs",
         summary=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
-        / "downloadedviro3d_pdbs.txt",
+        / "downloadedviro3d_{host_organism}_pdbs.txt",
         fails=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
-        / "downloadedviro3d_pdbs_fails.txt",
+        / "downloadedviro3d_{host_organism}_pdbs_fails.txt",
         metadata_dir=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
-        / "viro3d_metadata",
+        / "viro3d_{host_organism}_metadata",
     output:
         newsummary=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
-        / "downloadedviro3d_pdbs_withfails.txt",
+        / "downloadedviro3d_{host_organism}_pdbs_withfails.txt",
     shell:
         """
         python scripts/download_fails.py {input.dir} {input.summary} {input.metadata_dir} {input.fails} {output.newsummary}
@@ -231,16 +196,10 @@ rule add_structure_file_column:
     """
     input:
         summary_file=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
-        / "downloadedviro3d_pdbs_withfails.txt",
+        / "downloadedviro3d_{host_organism}_pdbs_withfails.txt",
     output:
         updated_summary_file=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
-        / "downloadedviro3d_pdbs_updated.txt",
+        / "downloadedviro3d_{host_organism}_pdbs_updated.txt",
     shell:
         """
         python scripts/add_structure_file.py {input.summary_file} {output.updated_summary_file}
@@ -253,10 +212,7 @@ rule merge_metadata:
     """
     input:
         summary_file=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
-        / "downloadedviro3d_pdbs_updated.txt",
+        / "downloadedviro3d_{host_organism}_pdbs_updated.txt",
         json_dir=rules.fetch_viro3d_structures_metadata.output.metadata_dir,
     output:
         merged_metadata=OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv",
@@ -275,9 +231,6 @@ rule check_downloads:
     """
     input:
         pdbfolder=OUTPUT_DIRPATH
-        / "random_protein_sets"
-        / "viral"
-        / "{host_organism}"
         / "viro3d_{host_organism}_pdbs",
         metadata=OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv",
     output:
