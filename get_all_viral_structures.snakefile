@@ -41,6 +41,10 @@ rule all:
             OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv",
             host_organism=HOST_ORGANISMS,
         ),
+        expand(
+            "logs/{host_organism}_compare_counts_done.txt",
+            host_organism=HOST_ORGANISMS,
+        ),
 
 
 rule download_kegg_virushostdb:
@@ -262,4 +266,23 @@ rule merge_metadata:
             --summary-file {input.summary_file} \
             --json-dir {input.json_dir} \
             --output-file {output.merged_metadata}
+        """
+
+rule check_downloads:
+    """
+    Makes sure we have the same number of pdbs as record ids in the metadata.
+    """
+    input:
+        pdbfolder=OUTPUT_DIRPATH     
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viro3d_{host_organism}_pdbs",
+        metadata=OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv", 
+    output:
+        done="logs/{host_organism}_compare_counts_done.txt"
+    shell:
+        """
+        python scripts/check_download_number.py {input.metadata} {input.pdbfolder}
+        touch {output.done}
         """
