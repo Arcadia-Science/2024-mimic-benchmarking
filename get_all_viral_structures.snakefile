@@ -268,19 +268,20 @@ rule merge_metadata:
             --output-file {output.merged_metadata}
         """
 
+
 rule check_downloads:
     """
     Makes sure we have the same number of pdbs as record ids in the metadata.
     """
     input:
-        pdbfolder=OUTPUT_DIRPATH     
+        pdbfolder=OUTPUT_DIRPATH
         / "random_protein_sets"
         / "viral"
         / "{host_organism}"
         / "viro3d_{host_organism}_pdbs",
-        metadata=OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv", 
+        metadata=OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv",
     output:
-        done="logs/{host_organism}_compare_counts_done.txt"
+        done="logs/{host_organism}_compare_counts_done.txt",
     shell:
         """
         python scripts/check_download_number.py {input.metadata} {input.pdbfolder}
