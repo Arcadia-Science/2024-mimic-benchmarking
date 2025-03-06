@@ -37,15 +37,12 @@ rule all:
             host_organism=HOST_ORGANISMS,
         ),
         # Final merged metadata
-        OUTPUT_DIRPATH / "merged_viral_metadata.tsv",
-        # Final logs for checking and replacing failed downloads
         expand(
-            OUTPUT_DIRPATH
-            / "random_protein_sets"
-            / "viral"
-            / "{host_organism}"
-            / "viro3d_all_pdbs_logs"
-            / "check_and_replace_done.txt",
+            OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv",
+            host_organism=HOST_ORGANISMS,
+        ),
+        expand(
+            "logs/{host_organism}_compare_counts_done.txt",
             host_organism=HOST_ORGANISMS,
         ),
 
@@ -133,10 +130,14 @@ rule fetch_viro3d_structures_metadata:
         ),
     shell:
         """    
+        mkdir -p {output.metadata_dir}
         # Read each virus name directly from the input file
         while read virus; do
-            # Define the response file using the raw virus name
-            response_file={output.metadata_dir}/"${{virus}}.json"
+            # Ensure safe filename (replace spaces & special characters)
+            safe_virus=$(echo "$virus" | tr -cs '[:alnum:]_' '_')
+
+            # Define the response file using the sanitized virus name
+            response_file={output.metadata_dir}/"${{safe_virus}}.json"
         
             # Encode the virus name for the API call
             encoded_virus=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$virus'''))")
@@ -213,17 +214,14 @@ rule download_fails:
         / "{host_organism}"
         / "viro3d_metadata",
     output:
-        done_file=OUTPUT_DIRPATH
+        newsummary=OUTPUT_DIRPATH
         / "random_protein_sets"
         / "viral"
         / "{host_organism}"
-        / "viro3d_all_pdbs_logs"
-        / "check_and_replace_done.txt",
+        / "downloadedviro3d_pdbs_withfails.txt",
     shell:
         """
-        python scripts/download_fails.py {input.dir} {input.summary} {input.metadata_dir} {input.fails}
-        find {input.dir} -type f -size 22c -exec rm -f {{}} +
-        echo "Check and replace completed on $(date)" > {output.done_file}
+        python scripts/download_fails.py {input.dir} {input.summary} {input.metadata_dir} {input.fails} {output.newsummary}
         """
 
 
@@ -236,7 +234,7 @@ rule add_structure_file_column:
         / "random_protein_sets"
         / "viral"
         / "{host_organism}"
-        / "downloadedviro3d_pdbs.txt",
+        / "downloadedviro3d_pdbs_withfails.txt",
     output:
         updated_summary_file=OUTPUT_DIRPATH
         / "random_protein_sets"
@@ -261,11 +259,31 @@ rule merge_metadata:
         / "downloadedviro3d_pdbs_updated.txt",
         json_dir=rules.fetch_viro3d_structures_metadata.output.metadata_dir,
     output:
-        merged_metadata=OUTPUT_DIRPATH / "merged_viral_metadata.tsv",
+        merged_metadata=OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv",
     shell:
         """
         python scripts/merge_metadata.py \
             --summary-file {input.summary_file} \
             --json-dir {input.json_dir} \
             --output-file {output.merged_metadata}
+        """
+
+
+rule check_downloads:
+    """
+    Makes sure we have the same number of pdbs as record ids in the metadata.
+    """
+    input:
+        pdbfolder=OUTPUT_DIRPATH
+        / "random_protein_sets"
+        / "viral"
+        / "{host_organism}"
+        / "viro3d_{host_organism}_pdbs",
+        metadata=OUTPUT_DIRPATH / "merged_viral_metadata_{host_organism}.tsv",
+    output:
+        done="logs/{host_organism}_compare_counts_done.txt",
+    shell:
+        """
+        python scripts/check_download_number.py {input.metadata} {input.pdbfolder}
+        touch {output.done}
         """
