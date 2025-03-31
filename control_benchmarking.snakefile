@@ -15,21 +15,21 @@ HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 
 
 POSITIVE_CONTROLS = [
-    "bcl2",
-    "c4bp",
-    "cd47",
-    "chemokine",
-    "eif2a",
-    "ifngr",
-    "il10",
-    "il18bp",
-    "kinase",
-    "lfg4",
-    "nsp16",
-    "nsp5",
-    "ccr1",
-    "ccr2",
-    "helicase",
+#    "bcl2",
+#    "c4bp",
+#    "cd47",
+#    "chemokine",
+#    "eif2a",
+#    "ifngr",
+#    "il10",
+#    "il18bp",
+#    "kinase",
+#    "lfg4",
+#    "nsp16",
+#    "nsp5",
+#    "ccr1",
+#    "ccr2",
+#    "helicase",
     "c1l",
     "c1lpt1",
     "c1lpt2",
@@ -152,9 +152,9 @@ rule download_host_pdbs:
 #####################################################################
 
 ALIGNMENT_TYPE = ["1", "2"]  # 1: TMAlign, 2: 3di + AA
-TMALIGN_FAST = ["0", "1"]  # 0: off, 1: on
-EXACT_TMSCORE = ["0", "1"]  # 0: off, 1: on
-TMSCORE_THRESHOLD = ["0", "0.25", "0.5"]
+TMALIGN_FAST = ["0"]  # 0: off, 1: on
+EXACT_TMSCORE = ["1"]  # 0: off, 1: on
+TMSCORE_THRESHOLD = ["0", "0.5"]
 EXHAUSTIVE_SEARCH = ["0", "1"]  # 0: off, 1: on
 
 
@@ -222,170 +222,16 @@ rule combine_foldseek_results_with_metadata:
         """
 
 
-#####################################################################
-## Benchmark GTalign
-#####################################################################
-
-SPEED = ["0", "9"]
-PRESCORE = ["0", "0.3", "0.5"]  # Minimum tmscore for structure pairs to be further processed.
-
-
-rule benchmark_gtalign_against_human_proteome:
+rule all:
+    default_target: True
     input:
-        pdbs="benchmarking_data/positive_controls/{positive_control}/",
-        protein_structures_dir=rules.download_host_pdbs.output.protein_structures_dir,
-    output:
-        txt=OUTPUT_DIRPATH
-        / "{host_organism}"
-        / "gtalign"
-        / "{positive_control}"
-        / "gtalign_speed{speed}_prescore{prescore}.out",
-        outdir=directory(
-            OUTPUT_DIRPATH
-            / "{host_organism}"
-            / "gtalign"
-            / "{positive_control}"
-            / "gtalign_speed{speed}_prescore{prescore}"
-        ),
-    conda:
-        "envs/gtalign.yml"
-    benchmark:
-        "benchmarks/gtalign/{host_organism}/{positive_control}/gtalign_speed{speed}_prescore{prescore}.tsv"
-    threads: 7  # this doesn't actually take 7 threads, it uses 1 gpu, but will fail if another gtalign runs so bounding here
-    shell:
-        """
-        gtalign \
-            -v \
-            --qrs={input.pdbs} \
-            --rfs={input.protein_structures_dir} \
-            -o {output.outdir} \
-            --sfx pdb \
-            -s 0 \
-            --sort=2 \
-            --2tm-score \
-            --infmt=1 \
-            --speed={wildcards.speed} \
-            --nhits=21000 \
-            --nalns=21000 \
-            --pre-score={wildcards.prescore} \
-            -c tmp_gtalign && touch {output.txt}
-        """
-
-
-rule reformat_gtalign_output:
-    input:
-        outdir=rules.benchmark_gtalign_against_human_proteome.output.outdir,
-    output:
-        tsv=OUTPUT_DIRPATH
-        / "{host_organism}"
-        / "gtalign"
-        / "{positive_control}"
-        / "gtalign_speed{speed}_prescore{prescore}.tsv",
-    conda:
-        "envs/web_apis.yml"
-    shell:
-        """
-        python scripts/parse_gtalign_to_tsv_many.py \
-            --input_dir {input.outdir} \
-            --output {output.tsv}
-        """
-
-
-rule combine_gtalign_results_with_metadata:
-    input:
-        gtalign_tsv=rules.reformat_gtalign_output.output.tsv,
-        human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv.gz",
-        host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv",
-        query_metadata_tsv="benchmarking_data/merged_viral_metadata_human.tsv",
-        query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv",
-    output:
-        tsv=OUTPUT_DIRPATH
-        / "{host_organism}"
-        / "gtalign"
-        / "{positive_control}"
-        / "processed"
-        / "gtalign_speed{speed}_prescore{prescore}.tsv",
-    conda:
-        "envs/tidyverse.yml"
-    shell:
-        """
-        Rscript scripts/combine_results_with_metadata.R \
-            --input_results {input.gtalign_tsv} \
-            --input_human_metadata {input.human_metadata_csv} \
-            --input_host_lddt {input.host_lddt_tsv} \
-            --input_query_metadata {input.query_metadata_tsv} \
-            --input_query_lddt {input.query_lddt_tsv} \
-            --output {output.tsv}
-        """
-
-
-#####################################################################
-## Evaluate performance
-#####################################################################
-
-
-rule perform_parameter_sensitivity_specificity_analysis:
-    input:
-        pc_metadata_txt="benchmarking_data/positive_controls/known_mimic_metadata.txt",
-        foldseek_tsv=expand(
-            OUTPUT_DIRPATH
-            / "{{host_organism}}"
-            / "foldseek"
-            / "{{positive_control}}"
-            / "processed"
-            / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv",
+        expand(
+            rules.combine_foldseek_results_with_metadata.output.tsv,
+            host_organism=HOST_ORGANISMS,
+            positive_control=POSITIVE_CONTROLS,
             alignment_type=ALIGNMENT_TYPE,
             tmalign_fast=TMALIGN_FAST,
             exact_tmscore=EXACT_TMSCORE,
             tmscore_threshold=TMSCORE_THRESHOLD,
             exhaustive_search=EXHAUSTIVE_SEARCH,
-        ),
-        gtalign_tsv=expand(
-            OUTPUT_DIRPATH
-            / "{{host_organism}}"
-            / "gtalign"
-            / "{{positive_control}}"
-            / "processed"
-            / "gtalign_speed{speed}_prescore{prescore}.tsv",
-            speed=SPEED,
-            prescore=PRESCORE,
-        ),
-    output:
-        full_tsv=OUTPUT_DIRPATH
-        / "{host_organism}"
-        / "benchmarking_results"
-        / "{positive_control}_all_results.tsv",
-        best_tsv=OUTPUT_DIRPATH
-        / "{host_organism}"
-        / "benchmarking_results"
-        / "{positive_control}_best_results.tsv",
-        full_viral_tsv=OUTPUT_DIRPATH
-        / "{host_organism}"
-        / "benchmarking_results"
-        / "{positive_control}_all_results_viral.tsv",
-        best_viral_tsv=OUTPUT_DIRPATH
-        / "{host_organism}"
-        / "benchmarking_results"
-        / "{positive_control}_best_results_viral.tsv",
-    conda:
-        "envs/tidyverse.yml"
-    shell:
-        """
-        Rscript scripts/perform_parameter_sensitivity_specificity_analysis.R \
-            --input_pc_metadata {input.pc_metadata_txt} \
-            --positive_control {wildcards.positive_control} \
-            --output_full {output.full_tsv} \
-            --output_best {output.best_tsv} \
-            --output_full_viral {output.full_viral_tsv} \
-            --output_best_viral {output.best_viral_tsv} 
-        """
-
-
-rule all:
-    default_target: True
-    input:
-        expand(
-            rules.perform_parameter_sensitivity_specificity_analysis.output.full_tsv,
-            host_organism=HOST_ORGANISMS,
-            positive_control=POSITIVE_CONTROLS,
         ),
