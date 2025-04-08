@@ -1,7 +1,6 @@
 import argparse
 import os
 import re
-
 import numpy as np
 import pandas as pd
 from sklearn.mixture import BayesianGaussianMixture
@@ -458,7 +457,7 @@ def generate_detailed_csv(all_gmm_results, output_path="cluster_analysis_detaile
 
     detailed_data = []
 
-    for model_identifier, result_dict in all_gmm_results.items():
+    for result_dict in all_gmm_results.items():
         merged_df = result_dict["merged_df"]
         cluster_stats = result_dict["cluster_stats"]
         original_cluster_id = result_dict["original_cluster_id"]
