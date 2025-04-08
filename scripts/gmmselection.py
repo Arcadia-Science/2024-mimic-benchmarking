@@ -144,14 +144,13 @@ def process_and_merge_df_pairs(processed_results):
     return result_dict
 
 
-def analyze_cluster(cluster_df, cluster_num, selected_features):
+def analyze_cluster(cluster_df, cluster_num):
     """
     Analyze a specific cluster and return its statistics.
 
     Args:
         cluster_df (DataFrame): The full DataFrame with cluster annotations.
         cluster_num (int): Cluster number to analyze.
-        selected_features (list): List of feature names (unused here, but maybe for future selection?).
 
     Returns:
         dict: Dictionary of summary statistics for the cluster.
@@ -554,13 +553,13 @@ def parse_arguments():
     parser.add_argument(
         "--output",
         default="combined_clusters_gmm_results.csv",
-        help="Output file name for the combined results (default: combined_clusters_gmm_results.csv)",
+        help="Output file name for the combined results",
     )
 
     parser.add_argument(
         "--detailed-output",
         default="cluster_analysis_detailed.csv",
-        help="Output file name for the detailed per-row results (default: cluster_analysis_detailed.csv)",
+        help="Output file name for the detailed per-row results",
     )
 
     return parser.parse_args()
