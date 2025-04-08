@@ -174,7 +174,7 @@ rule benchmark_foldseek_against_human_proteome:
         "benchmarks/{host_organism}/foldseek/{control}/foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}.tsv"
     threads: 7
     params:
-        exhaustive_search = lambda wildcards: "0" if wildcards.tmscore_threshold == "0.5" else "1",
+        exhaustive_search=lambda wildcards: "0" if wildcards.tmscore_threshold == "0.5" else "1",
     shell:
         """
         foldseek easy-search \
