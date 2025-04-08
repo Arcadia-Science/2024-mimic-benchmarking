@@ -1,11 +1,11 @@
-import os
-import pandas as pd
-import numpy as np
-import re
 import argparse
-from sklearn.preprocessing import StandardScaler
-from sklearn.mixture import BayesianGaussianMixture
+import os
+import re
 
+import numpy as np
+import pandas as pd
+from sklearn.mixture import BayesianGaussianMixture
+from sklearn.preprocessing import StandardScaler
 
 def find_and_process_tsv_files(root_directory, verbose=True):
     """
