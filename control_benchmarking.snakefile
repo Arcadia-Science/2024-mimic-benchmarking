@@ -14,7 +14,7 @@ host_metadata = host_metadata[host_metadata["organism"] == "human"]
 HOST_ORGANISMS = host_metadata["organism"].unique().tolist()
 
 
-POSITIVE_CONTROLS = [
+CONTROLS = [
     "bcl2",
     "c4bp",
     "cd47",
@@ -160,19 +160,19 @@ EXHAUSTIVE_SEARCH = ["0", "1"]  # 0: off, 1: on
 
 rule benchmark_foldseek_against_human_proteome:
     input:
-        pdbs="benchmarking_data/positive_controls/{positive_control}/",
+        pdbs="benchmarking_data/controls/{control}/",
         protein_structures_dir=rules.download_host_pdbs.output.protein_structures_dir,
     output:
         tsv=OUTPUT_DIRPATH
         / "{host_organism}"
         / "foldseek"
-        / "{positive_control}"
+        / "{control}"
         / "raw"
         / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv",
     conda:
         "envs/foldseek.yml"
     benchmark:
-        "benchmarks/{host_organism}/foldseek/{positive_control}/foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv"
+        "benchmarks/{host_organism}/foldseek/{control}/foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv"
     threads: 7
     shell:
         """
@@ -200,12 +200,12 @@ rule combine_foldseek_results_with_metadata:
         human_metadata_csv=INPUT_DIRPATH / "human_metadata_combined.csv.gz",
         host_lddt_tsv=INPUT_DIRPATH / "human_proteome_pdb_structure_quality.tsv",
         query_metadata_tsv="benchmarking_data/merged_viral_metadata_human.tsv",
-        query_lddt_tsv="benchmarking_data/positive_controls/positive_controls_plddt.tsv",
+        query_lddt_tsv="benchmarking_data/controls/control_plddt.tsv",
     output:
         tsv=OUTPUT_DIRPATH
         / "{host_organism}"
         / "foldseek"
-        / "{positive_control}"
+        / "{control}"
         / "processed"
         / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv",
     conda:
@@ -228,7 +228,7 @@ rule all:
         expand(
             rules.combine_foldseek_results_with_metadata.output.tsv,
             host_organism=HOST_ORGANISMS,
-            positive_control=POSITIVE_CONTROLS,
+            control=CONTROLS,
             alignment_type=ALIGNMENT_TYPE,
             tmalign_fast=TMALIGN_FAST,
             exact_tmscore=EXACT_TMSCORE,
