@@ -1,88 +1,88 @@
-structure_file	viro3d_filename	structure_species	target_gene	target_uniprot	experimental_doc	mimic_type
-EF-AAM13481.1_12007_relaxed.pdb	EF-AAM13481.1_12007_relaxed	cowpox	C4BP	P04003		single_mimic
-EF-AAO89304.1_12013_relaxed.pdb	EF-AAO89304.1_12013_relaxed	vaccinia	C4BP	P04003	https://doi.org/10.1073/pnas.89.2.628	single_mimic
-EF-CAA48953.1_12014_relaxed.pdb	EF-CAA48953.1_12014_relaxed	variola	C4BP	P04003		single_mimic
-CF-AAO89313.1_12013_relaxed_vaccinia.pdb	CF-AAO89313.1_12013_relaxed	vaccinia	EIF2A	P05198	https://doi.org/10.1128/jvi.66.4.1943-1950.1992	single_mimic
-CF-AAR07371.1_12029_relaxed_yaba.pdb	CF-AAR07371.1_12029_relaxed	yaba	EIF2A	P05198		single_mimic
-EF-AAR31656.1_100_relaxed.pdb	EF-AAR31656.1_100_relaxed	hhv5	IL10	P22301		single_mimic
-CF-AEV80459.1_99_relaxed_GMCMV.pdb	CF-AEV80459.1_99_relaxed	gmcmv	IL10	P22301		single_mimic
-CF-CAD53385.1_127_relaxed_ebv.pdb	CF-CAD53385.1_127_relaxed	ebv	IL10	P22301	https://doi.org/10.1006/jmbi.1997.0990;https://doi.org/10.1016/j.str.2005.01.016	single_mimic
-CF-AAC55181.1_12002_relaxed_mcon.pdb	CF-AAC55181.1_12002_relaxed	molluscum_contagiosum	IL18BP	O95998	https://doi.org/10.1073/pnas.96.20.11537	single_mimic
-CF-AAR07373.1_12029_relaxed_yaba.pdb	CF-AAR07373.1_12029_relaxed	yaba	IL18BP	O95998		single_mimic
-CF-CAA48946.1_12014_relaxed_variola.pdb	CF-CAA48946.1_12014_relaxed	variola	IL18BP	O95998		single_mimic
-AF-F6RNZ2-c4bpMmul.pdb	AF-F6RNZ2-c4bpMmul	macaque	C4BP	P04003		single_mimic
-AF-H2Q114-c4bpPtro.pdb	AF-H2Q114-c4bpPtro	chimp	C4BP	P04003		single_mimic
-AF-P04003-c4bpHsap.pdb	AF-P04003-c4bpHsap	human	C4BP	P04003		single_mimic
-AF-P08607-c4bpMmus.pdb	AF-P08607-c4bpMmus	mouse	C4BP	P04003		single_mimic
-AF-F7EFD7-eif2sMmul.pdb	AF-F7EFD7-eif2sMmul	macaque	EIF2A	P05198		single_mimic
-AF-H2Q8H4-eif2sPtro.pdb	AF-H2Q8H4-eif2sPtro	chimp	EIF2A	P05198		single_mimic
-AF-P05198-eif2sHsap.pdb	AF-P05198-eif2sHsap	human	EIF2A	P05198		single_mimic
-AF-Q6ZWX6-eif2sMmus.pdb	AF-Q6ZWX6-eif2sMmus	mouse	EIF2A	P05198		single_mimic
-AF-H2Q105-il10Ptro.pdb	AF-H2Q105-il10Ptro	chimp	IL10	P22301		single_mimic
-AF-P18893-il10Mmus.pdb	AF-P18893-il10Mmus	mouse	IL10	P22301		single_mimic
-AF-P22301-il10Hsap.pdb	AF-P22301-il10Hsap	human	IL10	P22301		single_mimic
-AF-P51496-il10Mmul.pdb	AF-P51496-il10Mmul	macaque	IL10	P22301		single_mimic
-AF-A0A6D2WYC5-il18bpPtro.pdb	AF-A0A6D2WYC5-il18bpPtro	chimp	IL18BP	O95998		single_mimic
-AF-B2D0A1-il18bpMmul.pdb	AF-B2D0A1-il18bpMmul	macaque	IL18BP	O95998		single_mimic
-AF-O95998-il18bpHsap.pdb	AF-O95998-il18bpHsap	human	IL18BP	O95998		single_mimic
-AF-Q9Z0M9-il18bpMmus.pdb	AF-Q9Z0M9-il18bpMmus	mouse	IL18BP	O95998		single_mimic
-EF-CAD53396.1_127_relaxed.pdb	EF-CAD53396.1_127_relaxed	ebv	BCL2	P10415	https://doi.org/10.1016/j.jmb.2003.08.007	single_mimic
-EF-CAD53468.1_127_relaxed.pdb	EF-CAD53468.1_127_relaxed	ebv	BCL2	P10415	https://doi.org/10.1128/jvi.73.6.5181-5185.1999	single_mimic
-AF-A0A5F7ZZ15-F1-model_v4_mmul.pdb	AF-A0A5F7ZZ15-F1-model_v4_mmul	macaque	BCL2	P10415		single_mimic
-AF-H2QEM8-F1-model_v4_ptro.pdb	AF-H2QEM8-F1-model_v4_ptro	chimp	BCL2	P10415		single_mimic
-AF-P10415-F1-model_v4_hsap.pdb	AF-P10415-F1-model_v4_hsap	human	BCL2	P10415		single_mimic
-AF-P10417-F1-model_v4._mmus.pdb	AF-P10417-F1-model_v4._mmus	mouse	BCL2	P10415		single_mimic
-CF-AAL40480.1_12009_relaxed.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3; P10415		dual_mimic
-CF-AAL40480.1_12009_relaxed_pt1.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3		single_mimic
-CF-AAL40480.1_12009_relaxed_pt2.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	P10415		single_mimic
-CF-AAM13483.1_12007_relaxed.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3; P10415		dual_mimic
-CF-AAM13483.1_12007_relaxed_pt1.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3		single_mimic
-CF-AAM13483.1_12007_relaxed_pt2.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	P10415		single_mimic
-CF-AAO89306.1_12013_relaxed.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3; P10415	https://doi.org/10.1016/j.celrep.2023.112878	dual_mimic
-CF-AAO89306.1_12013_relaxed_pt1.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3	https://doi.org/10.1016/j.celrep.2023.112878	single_mimic
-CF-AAO89306.1_12013_relaxed_pt2.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	P10415	https://doi.org/10.1016/j.celrep.2023.112878	single_mimic
-AF-A0A5F7ZZ15-F1-model_v4_mmul_bcl2.pdb	AF-A0A5F7ZZ15-F1-model_v4_mmul_bcl2	macaque	C1L	P10415		single_mimic
-AF-F7GAH8-F1-model_v4_mmul_pydc.pdb	AF-F7GAH8-F1-model_v4_mmul_pydc	macaque	C1L	Q8WXC3		single_mimic
-AF-H2QB01-F1-model_v4_ptro_pydc.pdb	AF-H2QB01-F1-model_v4_ptro_pydc	chimp	C1L	Q8WXC3		single_mimic
-AF-H2QEM8-F1-model_v4_ptro_bcl2.pdb	AF-H2QEM8-F1-model_v4_ptro_bcl2	chimp	C1L	P10415		single_mimic
-AF-P10415-F1-model_v4_hsap_bcl2.pdb	AF-P10415-F1-model_v4_hsap_bcl2	human	C1L	P10415		single_mimic
-AF-P10417-F1-model_v4_mmus_bcl2.pdb	AF-P10417-F1-model_v4_mmus_bcl2	mouse	C1L	P10415		single_mimic
-AF-Q54AA2-F1-model_v4_mmus_pycard.pdb	AF-Q54AA2-F1-model_v4_mmus_pycard	mouse	C1L	Q8WXC3		single_mimic
-AF-Q8WXC3-F1-model_v4_hsap_pydc.pdb	AF-Q8WXC3-F1-model_v4_hsap_pydc	human	C1L	Q8WXC3		single_mimic
-EF-AAR31716.1_100_relaxed.pdb	EF-AAR31716.1_100_relaxed	hcmv	CCR1	P32246	https://doi.org/10.3390/v4112448	general_mimic
-AF-A0A6D2WDS4-F1-model_v4.pdb	AF-A0A6D2WDS4-F1-model_v4	chimp	CCR1	P32246		general_mimic
-AF-P32246-F1-model_v4.pdb	AF-P32246-F1-model_v4	human	CCR1	P32246		general_mimic
-AF-P51675-F1-model_v4.pdb	AF-P51675-F1-model_v4	mouse	CCR1	P32246		general_mimic
-AF-P56482-F1-model_v4.pdb	AF-P56482-F1-model_v4	macaque	CCR1	P32246		general_mimic
-EF-AAD46503.1_158_relaxed.pdb	EF-AAD46503.1_158_relaxed	kshv	CCR2	P41597	https://doi.org/10.1073/pnas.2403217121	general_mimic
-AF-A0A6D2W375-F1-model_v4.pdb	AF-A0A6D2W375-F1-model_v4	chimp	CCR2	P41597		general_mimic
-AF-O18793-F1-model_v4.pdb	AF-O18793-F1-model_v4	macaque	CCR2	P41597		general_mimic
-AF-P41597-F1-model_v4.pdb	AF-P41597-F1-model_v4	human	CCR2	P41597		general_mimic
-AF-P51683-F1-model_v4.pdb	AF-P51683-F1-model_v4	mouse	CCR2	P41597		general_mimic
-CF-AAO89441.1_12013_relaxed.pdb	CF-AAO89441.1_12013_relaxed	vaccinia	CD47	Q08722	https://doi.org/10.1128/jvi.70.2.905-914.1996; https://doi.org/10.1006/viro.1995.9942	single_mimic
-CF-AAR07485.1_12029_relaxed.pdb	CF-AAR07485.1_12029_relaxed	yaba	CD47	Q08722		single_mimic
-CF-AST09350.1_11992_relaxed.pdb	CF-AST09350.1_11992_relaxed	murmansk	CD47	Q08722		single_mimic
-AF-A0A2I3SRF9-F1-model_v4_ptro.pdb	AF-A0A2I3SRF9-F1-model_v4_ptro	chimp	CD47	Q08722		single_mimic
-AF-F7F5Z8-F1-model_v4_mmul.pdb	AF-F7F5Z8-F1-model_v4_mmul	macaque	CD47	Q08722		single_mimic
-AF-Q08722-F1-model_v4_hsap.pdb	AF-Q08722-F1-model_v4_hsap	human	CD47	Q08722		single_mimic
-AF-Q61735-F1-model_v4_mmus.pdb	AF-Q61735-F1-model_v4_mmus	mouse	CD47	Q08722		single_mimic
-EF-AAC55276.1_12002_relaxed.pdb	EF-AAC55276.1_12002_relaxed	molluscum_contagiosum	chemokine	NA	https://doi.org/10.1073/pnas.95.11.6403	general_mimic
-CF-AAO42519.1.1.4_7222_relaxed.pdb	CF-AAO42519.1.1.4_7222_relaxed	pegivirus	helicase	NA		common_domain
-CF-AAL40628.1_12009_relaxed.pdb	CF-AAL40628.1_12009_relaxed	monkeypox	IFNgR	P15260		single_mimic
-CF-AAO89469.1_12013_relaxed.pdb	CF-AAO89469.1_12013_relaxed	vaccinia	IFNgR	P15260	https://doi.org/10.1128/jvi.69.8.4633-4639.1995	single_mimic
-CF-AXN74982.1_12005_relaxed.pdb	CF-AXN74982.1_12005_relaxed	akhmeta	IFNgR	P15260		single_mimic
-AF-F7HB25-F1-model_v4_mmul.pdb	AF-F7HB25-F1-model_v4_mmul	macaque	IFNgR	P15260		single_mimic
-AF-H2R6X1-F1-model_v4_ptro.pdb	AF-H2R6X1-F1-model_v4_ptro	chimp	IFNgR	P15260		single_mimic
-AF-P15260-F1-model_v4_hsap.pdb	AF-P15260-F1-model_v4_hsap	human	IFNgR	P15260		single_mimic
-AF-P15261-F1-model_v4_mmus.pdb	AF-P15261-F1-model_v4_mmus	mouse	IFNgR	P15260		single_mimic
-CF-CAD53438.2_127_relaxed.pdb	CF-CAD53438.2_127_relaxed	ebv	kinase	NA	https://doi.org/10.1128/jvi.01099-08	common_domain
-EF-AAL73713.1_12006_relaxed.pdb	EF-AAL73713.1_12006_relaxed	camelpox	LFG4	Q9HC24	https://doi.org/10.1371/journal.ppat.0030017	single_mimic
-EF-AAR31710.1_100_relaxed.pdb	EF-AAR31710.1_100_relaxed	cmv	LFG4	Q9HC24		single_mimic
-AF-F6TQD4-F1-model_v4_mmul.pdb	AF-F6TQD4-F1-model_v4_mmul	macaque	LFG4	Q9HC24		single_mimic
-AF-K6ZBP7-F1-model_v4_ptro.pdb	AF-K6ZBP7-F1-model_v4_ptro	chimp	LFG4	Q9HC24		single_mimic
-AF-Q9DA39-F1-model_v4_mmus.pdb	AF-Q9DA39-F1-model_v4_mmus	mouse	LFG4	Q9HC24		single_mimic
-AF-Q9HC24-F1-model_v4_hsap.pdb	AF-Q9HC24-F1-model_v4_hsap	human	LFG4	Q9HC24		single_mimic
-CF-AAT98578.1.15_10182_relaxed.pdb	CF-AAT98578.1.15_10182_relaxed	hku1	NSP16	NA		common_domain
-CF-QHD43415.1.1.36_10195_relaxed.pdb	CF-QHD43415.1.1.36_10195_relaxed	sarscov2	NSP16	NA		common_domain
-CF-AAT98578.1.1.21_10182_relaxed.pdb	CF-AAT98578.1.1.21_10182_relaxed	hku1	NSP5	NA		common_domain
-CF-QHD43415.1.1.21_10195_relaxed.pdb	CF-QHD43415.1.1.21_10195_relaxed	sarscov2	NSP5	NA		common_domain
+structure_file	viro3d_filename	structure_species	target_gene	target_uniprot	experimental_doc	mimic_type	mimic_and_cluster_id
+EF-CAD53396.1_127_relaxed.pdb	EF-CAD53396.1_127_relaxed	ebv	BCL2	P10415	https://doi.org/10.1016/j.jmb.2003.08.007	single_mimic	BCL2 1
+EF-CAD53468.1_127_relaxed.pdb	EF-CAD53468.1_127_relaxed	ebv	BCL2	P10415	https://doi.org/10.1128/jvi.73.6.5181-5185.1999	single_mimic	BCL2 2
+AF-A0A5F7ZZ15-F1-model_v4_mmul.pdb	AF-A0A5F7ZZ15-F1-model_v4_mmul	macaque	BCL2	P10415		single_mimic	NA
+AF-H2QEM8-F1-model_v4_ptro.pdb	AF-H2QEM8-F1-model_v4_ptro	chimp	BCL2	P10415		single_mimic	NA
+AF-P10415-F1-model_v4_hsap.pdb	AF-P10415-F1-model_v4_hsap	human	BCL2	P10415		single_mimic	NA
+AF-P10417-F1-model_v4._mmus.pdb	AF-P10417-F1-model_v4._mmus	mouse	BCL2	P10415		single_mimic	NA
+CF-AAL40480.1_12009_relaxed.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3; P10415		dual_mimic	C1L
+CF-AAL40480.1_12009_relaxed_pt1.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3		single_mimic	C1L pt1
+CF-AAL40480.1_12009_relaxed_pt2.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	P10415		single_mimic	C1L pt2
+CF-AAM13483.1_12007_relaxed.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3; P10415		dual_mimic	C1L
+CF-AAM13483.1_12007_relaxed_pt1.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3		single_mimic	C1L pt1
+CF-AAM13483.1_12007_relaxed_pt2.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	P10415		single_mimic	C1L pt2
+CF-AAO89306.1_12013_relaxed.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3; P10415	https://doi.org/10.1016/j.celrep.2023.112878	dual_mimic	C1L
+CF-AAO89306.1_12013_relaxed_pt1.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3	https://doi.org/10.1016/j.celrep.2023.112878	single_mimic	C1L pt1
+CF-AAO89306.1_12013_relaxed_pt2.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	P10415	https://doi.org/10.1016/j.celrep.2023.112878	single_mimic	C1L pt2
+AF-A0A5F7ZZ15-F1-model_v4_mmul_bcl2.pdb	AF-A0A5F7ZZ15-F1-model_v4_mmul_bcl2	macaque	C1L	P10415		single_mimic	NA
+AF-F7GAH8-F1-model_v4_mmul_pydc.pdb	AF-F7GAH8-F1-model_v4_mmul_pydc	macaque	C1L	Q8WXC3		single_mimic	NA
+AF-H2QB01-F1-model_v4_ptro_pydc.pdb	AF-H2QB01-F1-model_v4_ptro_pydc	chimp	C1L	Q8WXC3		single_mimic	NA
+AF-H2QEM8-F1-model_v4_ptro_bcl2.pdb	AF-H2QEM8-F1-model_v4_ptro_bcl2	chimp	C1L	P10415		single_mimic	NA
+AF-P10415-F1-model_v4_hsap_bcl2.pdb	AF-P10415-F1-model_v4_hsap_bcl2	human	C1L	P10415		single_mimic	NA
+AF-P10417-F1-model_v4_mmus_bcl2.pdb	AF-P10417-F1-model_v4_mmus_bcl2	mouse	C1L	P10415		single_mimic	NA
+AF-Q54AA2-F1-model_v4_mmus_pycard.pdb	AF-Q54AA2-F1-model_v4_mmus_pycard	mouse	C1L	Q8WXC3		single_mimic	NA
+AF-Q8WXC3-F1-model_v4_hsap_pydc.pdb	AF-Q8WXC3-F1-model_v4_hsap_pydc	human	C1L	Q8WXC3		single_mimic	NA
+EF-AAM13481.1_12007_relaxed.pdb	EF-AAM13481.1_12007_relaxed	cowpox	C4BP	P04003		single_mimic	C4BP
+EF-AAO89304.1_12013_relaxed.pdb	EF-AAO89304.1_12013_relaxed	vaccinia	C4BP	P04003	https://doi.org/10.1073/pnas.89.2.628	single_mimic	C4BP
+EF-CAA48953.1_12014_relaxed.pdb	EF-CAA48953.1_12014_relaxed	variola	C4BP	P04003		single_mimic	C4BP
+AF-F6RNZ2-c4bpMmul.pdb	AF-F6RNZ2-c4bpMmul	macaque	C4BP	P04003		single_mimic	NA
+AF-H2Q114-c4bpPtro.pdb	AF-H2Q114-c4bpPtro	chimp	C4BP	P04003		single_mimic	NA
+AF-P04003-c4bpHsap.pdb	AF-P04003-c4bpHsap	human	C4BP	P04003		single_mimic	NA
+AF-P08607-c4bpMmus.pdb	AF-P08607-c4bpMmus	mouse	C4BP	P04003		single_mimic	NA
+EF-AAR31716.1_100_relaxed.pdb	EF-AAR31716.1_100_relaxed	hcmv	CCR1	P32246	https://doi.org/10.3390/v4112448	general_mimic	CCR1
+AF-A0A6D2WDS4-F1-model_v4.pdb	AF-A0A6D2WDS4-F1-model_v4	chimp	CCR1	P32246		general_mimic	NA
+AF-P32246-F1-model_v4.pdb	AF-P32246-F1-model_v4	human	CCR1	P32246		general_mimic	NA
+AF-P51675-F1-model_v4.pdb	AF-P51675-F1-model_v4	mouse	CCR1	P32246		general_mimic	NA
+AF-P56482-F1-model_v4.pdb	AF-P56482-F1-model_v4	macaque	CCR1	P32246		general_mimic	NA
+EF-AAD46503.1_158_relaxed.pdb	EF-AAD46503.1_158_relaxed	kshv	CCR2	P41597	https://doi.org/10.1073/pnas.2403217121	general_mimic	CCR2
+AF-A0A6D2W375-F1-model_v4.pdb	AF-A0A6D2W375-F1-model_v4	chimp	CCR2	P41597		general_mimic	NA
+AF-O18793-F1-model_v4.pdb	AF-O18793-F1-model_v4	macaque	CCR2	P41597		general_mimic	NA
+AF-P41597-F1-model_v4.pdb	AF-P41597-F1-model_v4	human	CCR2	P41597		general_mimic	NA
+AF-P51683-F1-model_v4.pdb	AF-P51683-F1-model_v4	mouse	CCR2	P41597		general_mimic	NA
+CF-AAO89441.1_12013_relaxed.pdb	CF-AAO89441.1_12013_relaxed	vaccinia	CD47	Q08722	https://doi.org/10.1128/jvi.70.2.905-914.1996; https://doi.org/10.1006/viro.1995.9942	single_mimic	CD47
+CF-AAR07485.1_12029_relaxed.pdb	CF-AAR07485.1_12029_relaxed	yaba	CD47	Q08722		single_mimic	CD47
+CF-AST09350.1_11992_relaxed.pdb	CF-AST09350.1_11992_relaxed	murmansk	CD47	Q08722		single_mimic	CD47
+AF-A0A2I3SRF9-F1-model_v4_ptro.pdb	AF-A0A2I3SRF9-F1-model_v4_ptro	chimp	CD47	Q08722		single_mimic	NA
+AF-F7F5Z8-F1-model_v4_mmul.pdb	AF-F7F5Z8-F1-model_v4_mmul	macaque	CD47	Q08722		single_mimic	NA
+AF-Q08722-F1-model_v4_hsap.pdb	AF-Q08722-F1-model_v4_hsap	human	CD47	Q08722		single_mimic	NA
+AF-Q61735-F1-model_v4_mmus.pdb	AF-Q61735-F1-model_v4_mmus	mouse	CD47	Q08722		single_mimic	NA
+EF-AAC55276.1_12002_relaxed.pdb	EF-AAC55276.1_12002_relaxed	molluscum_contagiosum	chemokine	NA	https://doi.org/10.1073/pnas.95.11.6403	general_mimic	chemokine
+CF-AAO89313.1_12013_relaxed_vaccinia.pdb	CF-AAO89313.1_12013_relaxed	vaccinia	EIF2A	P05198	https://doi.org/10.1128/jvi.66.4.1943-1950.1992	single_mimic	EIF2a 1
+CF-AAR07371.1_12029_relaxed_yaba.pdb	CF-AAR07371.1_12029_relaxed	yaba	EIF2A	P05198		single_mimic	EIF2a 2
+AF-F7EFD7-eif2sMmul.pdb	AF-F7EFD7-eif2sMmul	macaque	EIF2A	P05198		single_mimic	NA
+AF-H2Q8H4-eif2sPtro.pdb	AF-H2Q8H4-eif2sPtro	chimp	EIF2A	P05198		single_mimic	NA
+AF-P05198-eif2sHsap.pdb	AF-P05198-eif2sHsap	human	EIF2A	P05198		single_mimic	NA
+AF-Q6ZWX6-eif2sMmus.pdb	AF-Q6ZWX6-eif2sMmus	mouse	EIF2A	P05198		single_mimic	NA
+CF-AAO42519.1.1.4_7222_relaxed.pdb	CF-AAO42519.1.1.4_7222_relaxed	pegivirus	helicase	NA		common_domain	helicase
+CF-AAL40628.1_12009_relaxed.pdb	CF-AAL40628.1_12009_relaxed	monkeypox	IFNgR	P15260		single_mimic	IFNgR
+CF-AAO89469.1_12013_relaxed.pdb	CF-AAO89469.1_12013_relaxed	vaccinia	IFNgR	P15260	https://doi.org/10.1128/jvi.69.8.4633-4639.1995	single_mimic	IFNgR
+CF-AXN74982.1_12005_relaxed.pdb	CF-AXN74982.1_12005_relaxed	akhmeta	IFNgR	P15260		single_mimic	IFNgR
+AF-F7HB25-F1-model_v4_mmul.pdb	AF-F7HB25-F1-model_v4_mmul	macaque	IFNgR	P15260		single_mimic	NA
+AF-H2R6X1-F1-model_v4_ptro.pdb	AF-H2R6X1-F1-model_v4_ptro	chimp	IFNgR	P15260		single_mimic	NA
+AF-P15260-F1-model_v4_hsap.pdb	AF-P15260-F1-model_v4_hsap	human	IFNgR	P15260		single_mimic	NA
+AF-P15261-F1-model_v4_mmus.pdb	AF-P15261-F1-model_v4_mmus	mouse	IFNgR	P15260		single_mimic	NA
+EF-AAR31656.1_100_relaxed.pdb	EF-AAR31656.1_100_relaxed	hhv5	IL10	P22301		single_mimic	IL10 1
+CF-AEV80459.1_99_relaxed_GMCMV.pdb	CF-AEV80459.1_99_relaxed	gmcmv	IL10	P22301		single_mimic	IL10 2
+CF-CAD53385.1_127_relaxed_ebv.pdb	CF-CAD53385.1_127_relaxed	ebv	IL10	P22301	https://doi.org/10.1006/jmbi.1997.0990;https://doi.org/10.1016/j.str.2005.01.016	single_mimic	IL10 2
+AF-H2Q105-il10Ptro.pdb	AF-H2Q105-il10Ptro	chimp	IL10	P22301		single_mimic	NA
+AF-P18893-il10Mmus.pdb	AF-P18893-il10Mmus	mouse	IL10	P22301		single_mimic	NA
+AF-P22301-il10Hsap.pdb	AF-P22301-il10Hsap	human	IL10	P22301		single_mimic	NA
+AF-P51496-il10Mmul.pdb	AF-P51496-il10Mmul	macaque	IL10	P22301		single_mimic	NA
+CF-AAC55181.1_12002_relaxed_mcon.pdb	CF-AAC55181.1_12002_relaxed	molluscum_contagiosum	IL18BP	O95998	https://doi.org/10.1073/pnas.96.20.11537	single_mimic	IL18BP 1
+CF-AAR07373.1_12029_relaxed_yaba.pdb	CF-AAR07373.1_12029_relaxed	yaba	IL18BP	O95998		single_mimic	IL18BP 2
+CF-CAA48946.1_12014_relaxed_variola.pdb	CF-CAA48946.1_12014_relaxed	variola	IL18BP	O95998		single_mimic	IL18BP 3
+AF-A0A6D2WYC5-il18bpPtro.pdb	AF-A0A6D2WYC5-il18bpPtro	chimp	IL18BP	O95998		single_mimic	NA
+AF-B2D0A1-il18bpMmul.pdb	AF-B2D0A1-il18bpMmul	macaque	IL18BP	O95998		single_mimic	NA
+AF-O95998-il18bpHsap.pdb	AF-O95998-il18bpHsap	human	IL18BP	O95998		single_mimic	NA
+AF-Q9Z0M9-il18bpMmus.pdb	AF-Q9Z0M9-il18bpMmus	mouse	IL18BP	O95998		single_mimic	NA
+CF-CAD53438.2_127_relaxed.pdb	CF-CAD53438.2_127_relaxed	ebv	kinase	NA	https://doi.org/10.1128/jvi.01099-08	common_domain	kinase
+EF-AAL73713.1_12006_relaxed.pdb	EF-AAL73713.1_12006_relaxed	camelpox	LFG4	Q9HC24	https://doi.org/10.1371/journal.ppat.0030017	single_mimic	LFG4
+EF-AAR31710.1_100_relaxed.pdb	EF-AAR31710.1_100_relaxed	cmv	LFG4	Q9HC24		single_mimic	LFG4
+AF-F6TQD4-F1-model_v4_mmul.pdb	AF-F6TQD4-F1-model_v4_mmul	macaque	LFG4	Q9HC24		single_mimic	NA
+AF-K6ZBP7-F1-model_v4_ptro.pdb	AF-K6ZBP7-F1-model_v4_ptro	chimp	LFG4	Q9HC24		single_mimic	NA
+AF-Q9DA39-F1-model_v4_mmus.pdb	AF-Q9DA39-F1-model_v4_mmus	mouse	LFG4	Q9HC24		single_mimic	NA
+AF-Q9HC24-F1-model_v4_hsap.pdb	AF-Q9HC24-F1-model_v4_hsap	human	LFG4	Q9HC24		single_mimic	NA
+CF-AAT98578.1.15_10182_relaxed.pdb	CF-AAT98578.1.15_10182_relaxed	hku1	NSP16	NA		common_domain	NSP16
+CF-QHD43415.1.1.36_10195_relaxed.pdb	CF-QHD43415.1.1.36_10195_relaxed	sarscov2	NSP16	NA		common_domain	NSP16
+CF-AAT98578.1.1.21_10182_relaxed.pdb	CF-AAT98578.1.1.21_10182_relaxed	hku1	NSP5	NA		common_domain	NSP5
+CF-QHD43415.1.1.21_10195_relaxed.pdb	CF-QHD43415.1.1.21_10195_relaxed	sarscov2	NSP5	NA		common_domain	NSP5
