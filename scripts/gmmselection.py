@@ -1,9 +1,8 @@
 import argparse
-import numpy
+import numpy as np
 import os
-import pandas
+import pandas as pd
 import re
-
 from sklearn.mixture import BayesianGaussianMixture
 from sklearn.preprocessing import StandardScaler
 
