@@ -155,7 +155,6 @@ ALIGNMENT_TYPE = ["1", "2"]  # 1: TMAlign, 2: 3di + AA
 TMALIGN_FAST = ["0"]  # 0: off, 1: on
 EXACT_TMSCORE = ["1"]  # 0: off, 1: on
 TMSCORE_THRESHOLD = ["0", "0.5"]
-EXHAUSTIVE_SEARCH = ["0", "1"]  # 0: off, 1: on
 
 
 rule benchmark_foldseek_against_human_proteome:
@@ -168,12 +167,14 @@ rule benchmark_foldseek_against_human_proteome:
         / "foldseek"
         / "{control}"
         / "raw"
-        / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv",
+        / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}.tsv",
     conda:
         "envs/foldseek.yml"
     benchmark:
-        "benchmarks/{host_organism}/foldseek/{control}/foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv"
+        "benchmarks/{host_organism}/foldseek/{control}/foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}.tsv"
     threads: 7
+    params:
+        exhaustive_search = lambda wildcards: "0" if wildcards.tmscore_threshold == "0.5" else "1",
     shell:
         """
         foldseek easy-search \
@@ -186,7 +187,7 @@ rule benchmark_foldseek_against_human_proteome:
             --alignment-type {wildcards.alignment_type} \
             --tmalign-fast {wildcards.tmalign_fast} \
             --exact-tmscore {wildcards.exact_tmscore} \
-            --exhaustive-search {wildcards.exhaustive_search} \
+            --exhaustive-search {params.exhaustive_search} \
             --tmscore-threshold {wildcards.tmscore_threshold} \
             --format-output query,target,qlen,tlen,alnlen,alntmscore,qtmscore,ttmscore,lddt,prob,qcov,tcov,pident,bits,evalue,qstart,qend,tstart,tend \
             --format-mode 4 \
@@ -207,7 +208,7 @@ rule combine_foldseek_results_with_metadata:
         / "foldseek"
         / "{control}"
         / "processed"
-        / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}_exhaustivesearch{exhaustive_search}.tsv",
+        / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}.tsv",
     conda:
         "envs/tidyverse.yml"
     shell:
@@ -233,5 +234,4 @@ rule all:
             tmalign_fast=TMALIGN_FAST,
             exact_tmscore=EXACT_TMSCORE,
             tmscore_threshold=TMSCORE_THRESHOLD,
-            exhaustive_search=EXHAUSTIVE_SEARCH,
         ),
