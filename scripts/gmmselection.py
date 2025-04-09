@@ -42,9 +42,7 @@ def find_and_process_tsv_files(root_directory, verbose=True):
 
                 try:
                     df = pd.read_csv(full_path, sep="\t", low_memory=False)
-                    grandparent = os.path.basename(
-                        os.path.dirname(os.path.dirname(full_path))
-                    )
+                    grandparent = os.path.basename(os.path.dirname(os.path.dirname(full_path)))
                     key = f"{grandparent}_{filename}"
                     tsv_files_dict[key] = df
                     files_kept += 1
@@ -252,17 +250,10 @@ def process_all_dataframes_with_gmm(
             if cluster_df.empty:
                 continue
 
-            if (
-                "neg_log_evalue" not in cluster_df.columns
-                and "evalue" in cluster_df.columns
-            ):
-                cluster_df["neg_log_evalue"] = -np.log10(
-                    cluster_df["evalue"].replace(0, 1e-300)
-                )
+            if "neg_log_evalue" not in cluster_df.columns and "evalue" in cluster_df.columns:
+                cluster_df["neg_log_evalue"] = -np.log10(cluster_df["evalue"].replace(0, 1e-300))
             elif "neg_log_evalue" not in cluster_df.columns:
-                print(
-                    f"Warning: No evalue column found for {key}, cluster {cluster_id}"
-                )
+                print(f"Warning: No evalue column found for {key}, cluster {cluster_id}")
                 cluster_df["neg_log_evalue"] = float("nan")
 
             unique_host_genes = (
@@ -282,9 +273,7 @@ def process_all_dataframes_with_gmm(
                 feature_combinations = [["qtmscore", "neg_log_evalue", "alnlen"]]
 
             for feature_combination in feature_combinations:
-                selected_features = [
-                    f for f in feature_combination if f in cluster_df.columns
-                ]
+                selected_features = [f for f in feature_combination if f in cluster_df.columns]
                 if not selected_features:
                     continue
 
@@ -314,8 +303,7 @@ def process_all_dataframes_with_gmm(
 
                         feature_df.loc[X.index, "cluster"] = cluster_labels
                         feature_df.loc[X.index, "cluster_probability"] = [
-                            probs[label]
-                            for probs, label in zip(cluster_probs, cluster_labels)
+                            probs[label] for probs, label in zip(cluster_probs, cluster_labels)
                         ]
                     except Exception as e:
                         print(f"Error clustering {key}, cluster {cluster_id}: {e}")
@@ -354,9 +342,7 @@ def process_all_dataframes_with_gmm(
                 cluster_stats = result["cluster_stats"]
                 best_by = result["best_by"]
 
-                metric_key = (
-                    "qtmscore_mean" if best_by == "qtmscore" else "neg_log_evalue_mean"
-                )
+                metric_key = "qtmscore_mean" if best_by == "qtmscore" else "neg_log_evalue_mean"
                 valid_clusters = {
                     cnum: stats.get(metric_key)
                     for cnum, stats in cluster_stats.items()
@@ -367,16 +353,12 @@ def process_all_dataframes_with_gmm(
                     print(f"No valid clusters for {model_identifier}")
                     continue
 
-                sorted_clusters = sorted(
-                    valid_clusters.items(), key=lambda x: x[1], reverse=True
-                )
+                sorted_clusters = sorted(valid_clusters.items(), key=lambda x: x[1], reverse=True)
                 best_cluster = sorted_clusters[0][0]
                 best_stats = cluster_stats[best_cluster]
 
                 next_best_stats = (
-                    cluster_stats.get(sorted_clusters[1][0])
-                    if len(sorted_clusters) > 1
-                    else None
+                    cluster_stats.get(sorted_clusters[1][0]) if len(sorted_clusters) > 1 else None
                 )
                 qtmscore_diff = 0.0
                 neg_log_evalue_diff = 0.0
@@ -387,8 +369,7 @@ def process_all_dataframes_with_gmm(
                         and next_best_stats.get("qtmscore_mean") is not None
                     ):
                         qtmscore_diff = (
-                            best_stats["qtmscore_mean"]
-                            - next_best_stats["qtmscore_mean"]
+                            best_stats["qtmscore_mean"] - next_best_stats["qtmscore_mean"]
                         )
                     if (
                         best_stats.get("neg_log_evalue_mean") is not None
@@ -411,18 +392,14 @@ def process_all_dataframes_with_gmm(
                     "best_neg_log_evalue": best_stats.get("neg_log_evalue_mean"),
                     "qtmscore_difference_vs_nextbest": qtmscore_diff,
                     "neg_log_evalue_difference_vs_nextbest": neg_log_evalue_diff,
-                    "cluster_members_host_genes": ", ".join(
-                        best_stats.get("host_genes", [])
-                    ),
+                    "cluster_members_host_genes": ", ".join(best_stats.get("host_genes", [])),
                     "cluster_members_host_functions": ", ".join(
                         best_stats.get("host_functions", [])
                     ),
                     "cluster_member_queries": ", ".join(best_stats.get("queries", [])),
                     "genbank_names": ", ".join(best_stats.get("genbank_names", [])),
                     "total_unique_host_genes": result["total_unique_host_genes"],
-                    "best_cluster_unique_host_genes": len(
-                        best_stats.get("host_genes", [])
-                    ),
+                    "best_cluster_unique_host_genes": len(best_stats.get("host_genes", [])),
                     "evalue_min": best_stats.get("evalue_min"),
                     "evalue_max": best_stats.get("evalue_max"),
                     "evalue_mean": best_stats.get("evalue_mean"),
@@ -480,23 +457,14 @@ def generate_detailed_csv(all_gmm_results, output_path="cluster_analysis_detaile
             continue
 
         best_cluster = max(cluster_means, key=cluster_means.get)
-        best_cluster_df = merged_df[
-            merged_df["cluster"].astype(int) == int(best_cluster)
-        ].copy()
-        best_cluster_analysis = analyze_cluster(
-            merged_df, best_cluster, result_dict["feature_set"]
-        )
+        best_cluster_df = merged_df[merged_df["cluster"].astype(int) == int(best_cluster)].copy()
+        best_cluster_analysis = analyze_cluster(merged_df, best_cluster, result_dict["feature_set"])
 
         grandparent_folder = source_key.split("_")[0] if "_" in source_key else ""
 
         # Ensure protein_id is present or compute it
-        if (
-            "protein_id" not in best_cluster_df.columns
-            and "query" in best_cluster_df.columns
-        ):
-            best_cluster_df["protein_id"] = best_cluster_df["query"].apply(
-                extract_protein_id
-            )
+        if "protein_id" not in best_cluster_df.columns and "query" in best_cluster_df.columns:
+            best_cluster_df["protein_id"] = best_cluster_df["query"].apply(extract_protein_id)
 
         for _, row in best_cluster_df.iterrows():
             entry = {
@@ -516,12 +484,8 @@ def generate_detailed_csv(all_gmm_results, output_path="cluster_analysis_detaile
                 "host_gene_names_primary": row.get("host_gene_names_primary", "N/A"),
                 "host_protein_names": row.get("host_protein_names", "N/A"),
                 "genbank_name": row.get("genbank_name", "N/A"),
-                "best_cluster_qtmscore_min": best_cluster_analysis.get(
-                    "qtmscore_min", "N/A"
-                ),
-                "best_cluster_qtmscore_max": best_cluster_analysis.get(
-                    "qtmscore_max", "N/A"
-                ),
+                "best_cluster_qtmscore_min": best_cluster_analysis.get("qtmscore_min", "N/A"),
+                "best_cluster_qtmscore_max": best_cluster_analysis.get("qtmscore_max", "N/A"),
                 "best_cluster_neg_log_evalue_min": best_cluster_analysis.get(
                     "neg_log_evalue_min", "N/A"
                 ),
@@ -544,13 +508,9 @@ def parse_arguments():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description="gmm selection workflow")
 
-    parser.add_argument(
-        "--root-dir", required=True, help="Root directory to search for TSV files"
-    )
+    parser.add_argument("--root-dir", required=True, help="Root directory to search for TSV files")
 
-    parser.add_argument(
-        "--clusters-csv", required=True, help="Path to the viro3dclusters CSV file"
-    )
+    parser.add_argument("--clusters-csv", required=True, help="Path to the viro3dclusters CSV file")
 
     parser.add_argument(
         "--output",
@@ -587,9 +547,7 @@ def main():
     processed_data = process_and_merge_df_pairs(processed_results)
 
     # Step 5: Apply GMM clustering and analyze results
-    combined_summary, all_results = process_all_dataframes_with_gmm(
-        processed_data, viro3dclusters
-    )
+    combined_summary, all_results = process_all_dataframes_with_gmm(processed_data, viro3dclusters)
 
     # Step 6: Generate and save detailed per-row data for best clusters
     detailed_df = generate_detailed_csv(all_results, args.detailed_output)
