@@ -222,16 +222,47 @@ rule combine_foldseek_results_with_metadata:
             --output {output.tsv}
         """
 
+rule download_viro3d_cluster_info:
+    output: csv=INPUT_DIRPATH / "viral" / "foldseekCluster90_1E-5_meta.csv"
+    shell:
+        """
+        curl -JLo {output} https://raw.githubusercontent.com/ulad-litvin/viro3d-analysis/refs/heads/main/4_structural_clustering/foldseekCluster90_1E-5/foldseekCluster90_1E-5_meta.csv
+        """
 
-rule all:
-    default_target: True
+rule run_gmmselection:
     input:
-        expand(
-            rules.combine_foldseek_results_with_metadata.output.tsv,
-            host_organism=HOST_ORGANISMS,
+        csv=rules.download_viro3d_cluster_info.output.csv,
+        tsvs=expand(
+            OUTPUT_DIRPATH
+            / "{{host_organism}}"
+            / "foldseek"
+            / "{control}"
+            / "processed"
+            / "foldseek_alignmenttype{alignment_type}_tmalignfast{tmalign_fast}_exacttmscore{exact_tmscore}_tmscorethreshold{tmscore_threshold}.tsv",
             control=CONTROLS,
             alignment_type=ALIGNMENT_TYPE,
             tmalign_fast=TMALIGN_FAST,
             exact_tmscore=EXACT_TMSCORE,
             tmscore_threshold=TMSCORE_THRESHOLD,
+        ),
+    output:
+        csv=OUTPUT_DIRPATH / "{host_organism}" / "selected_mimics" / "gmmviro3d_benchmarking041025.csv",
+        csv_detailed=OUTPUT_DIRPATH / "{host_organism}" / "selected_mimics" / "gmmviro3d_benchmarking041025_detailed.csv",
+    conda: "envs/scikitlearn.yml"
+    shell:
+        """
+        python scripts/gmmselection.py \
+            --root-dir . \
+            --clusters-csv {input.csv} \
+            --output {output.csv} \
+            --detailed-output {output.csv_detailed}
+        """
+    
+
+rule all:
+    default_target: True
+    input:
+        expand(
+            rules.run_gmmselection.output.csv,
+            host_organism=HOST_ORGANISMS,
         ),
