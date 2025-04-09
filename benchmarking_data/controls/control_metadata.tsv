@@ -28,7 +28,7 @@ CF-AXN74982.1_12005_relaxed.pdb	CF-AXN74982.1_12005_relaxed	akhmeta	IFNgR	P15260
 EF-AAR31656.1_100_relaxed.pdb	EF-AAR31656.1_100_relaxed	hhv5	IL10	P22301		single_mimic	IL10 1
 CF-AEV80459.1_99_relaxed_GMCMV.pdb	CF-AEV80459.1_99_relaxed	gmcmv	IL10	P22301		single_mimic	IL10 2
 CF-CAD53385.1_127_relaxed_ebv.pdb	CF-CAD53385.1_127_relaxed	ebv	IL10	P22301	https://doi.org/10.1006/jmbi.1997.0990;https://doi.org/10.1016/j.str.2005.01.016	single_mimic	IL10 2
-CF-AAC55181.1_12002_relaxed_mcon.pdb	CF-AAC55181.1_12002_relaxed	molluscum_contagiosum	IL18BP	O95998	https://doi.org/10.1073/pnas.96.20.11537	single_mimic	IL18BP 1
+EF-AAC55182.1_12002_relaxed.pdb	EF-AAC55182.1_12002_relaxed	molluscum_contagiosum	IL18BP	O95998	https://doi.org/10.1073/pnas.96.20.11537	single_mimic	IL18BP 1
 CF-AAR07373.1_12029_relaxed_yaba.pdb	CF-AAR07373.1_12029_relaxed	yaba	IL18BP	O95998		single_mimic	IL18BP 2
 CF-CAA48946.1_12014_relaxed_variola.pdb	CF-CAA48946.1_12014_relaxed	variola	IL18BP	O95998		single_mimic	IL18BP 3
 CF-CAD53438.2_127_relaxed.pdb	CF-CAD53438.2_127_relaxed	ebv	kinase	NA	https://doi.org/10.1128/jvi.01099-08	common_domain	kinase
