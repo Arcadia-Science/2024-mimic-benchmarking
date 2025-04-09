@@ -459,8 +459,8 @@ def generate_detailed_csv(all_gmm_results, output_path="cluster_analysis_detaile
         return None
 
     detailed_data = []
-    # noqa: B007
-    for model_identifier,result_dict in all_gmm_results.items():
+
+    for model_identifier, result_dict in all_gmm_results.items():  # noqa: B007
         merged_df = result_dict["merged_df"]
         cluster_stats = result_dict["cluster_stats"]
         original_cluster_id = result_dict["original_cluster_id"]
