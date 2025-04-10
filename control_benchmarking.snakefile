@@ -262,7 +262,7 @@ rule run_gmmselection:
     shell:
         """
         python scripts/gmmselection.py \
-            --root-dir . \
+            --root-dir outputs/human/foldseek \
             --clusters-csv {input.csv} \
             --output {output.csv} \
             --detailed-output {output.csv_detailed}
