@@ -1,33 +1,82 @@
 import os
-import pymol2
 import subprocess
+
+import pymol2
 
 # Dictionary of structure pairs
 structure_pairs = {
-    "bcl2": ("./benchmarking_data/controls/bcl2/viral/EF-CAD53396.1_127_relaxed.pdb", "./benchmarking_data/human_structures/AF-P10415-F1-model_v4.pdb"),
-    "c1lpt1": ("./benchmarking_data/controls/c1lpt1/viral/CF-AAO89306.1_12013_relaxed_pt1.pdb", "./benchmarking_data/human_structures/AF-Q8WXC3-F1-model_v4.pdb"),
-    "c1lpt2": ("./benchmarking_data/controls/c1lpt2/viral/CF-AAO89306.1_12013_relaxed_pt2.pdb", "./benchmarking_data/human_structures/AF-Q5TBC7-F1-model_v4.pdb"),
-    "c4bp": ("./benchmarking_data/controls/c4bp/viral/EF-AAO89304.1_12013_relaxed.pdb", "./benchmarking_data/human_structures/AF-P04003-F1-model_v4.pdb"),
-    "ccr1": ("./benchmarking_data/controls/ccr1/viral/EF-AAR31716.1_100_relaxed.pdb", "./benchmarking_data/human_structures/AF-P32246-F1-model_v4.pdb"),
-    "ccr2": ("./benchmarking_data/controls/ccr2/viral/EF-AAD46503.1_158_relaxed.pdb", "./benchmarking_data/human_structures/AF-P41597-F1-model_v4.pdb"),
-    "cd47": ("./benchmarking_data/controls/cd47/viral/CF-AAO89441.1_12013_relaxed.pdb", "./benchmarking_data/human_structures/AF-Q08722-F1-model_v4.pdb"),
-    "chemokine": ("./benchmarking_data/controls/chemokine/viral/EF-AAC55276.1_12002_relaxed.pdb", "./benchmarking_data/human_structures/AF-Q9Y4X3-F1-model_v4.pdb"),
-    "eif2a": ("./benchmarking_data/controls/eif2a/viral/CF-AAO89313.1_12013_relaxed_vaccinia.pdb", "./benchmarking_data/human_structures/AF-P05198-F1-model_v4.pdb"),
-    "helicase": ("./benchmarking_data/controls/helicase/viral/CF-AAO42519.1.1.4_7222_relaxed.pdb", "./benchmarking_data/human_structures/AF-Q08211-F1-model_v4.pdb"),
-    "ifngr": ("./benchmarking_data/controls/ifngr/viral/CF-AAO89469.1_12013_relaxed.pdb", "./benchmarking_data/human_structures/AF-P15260-F1-model_v4.pdb"),
-    "il10": ("./benchmarking_data/controls/il10/viral/CF-CAD53385.1_127_relaxed_ebv.pdb", "./benchmarking_data/human_structures/AF-P22301-F1-model_v4.pdb"),
-    "il18bp": ("./benchmarking_data/controls/il18bp/viral/EF-AAC55182.1_12002_relaxed.pdb", "./benchmarking_data/human_structures/AF-O95998-F1-model_v4.pdb"),
-    "kinase": ("./benchmarking_data/controls/kinase/viral/CF-CAD53438.2_127_relaxed.pdb", "./benchmarking_data/human_structures/AF-Q00535-F1-model_v4.pdb"),
-    "lfg4": ("./benchmarking_data/controls/lfg4/viral/EF-AAL73713.1_12006_relaxed.pdb", "./benchmarking_data/human_structures/AF-Q9HC24-F1-model_v4.pdb"),
-    "nsp16": ("./benchmarking_data/controls/nsp16/viral/CF-QHD43415.1.1.36_10195_relaxed.pdb", "./benchmarking_data/human_structures/AF-Q9UI43-F1-model_v4.pdb"),
-    "nsp5": ("./benchmarking_data/controls/nsp5/viral/CF-QHD43415.1.1.21_10195_relaxed.pdb", "./benchmarking_data/human_structures/AF-Q2L4Q9-F1-model_v4.pdb"),
+    "bcl2": (
+        "./benchmarking_data/controls/bcl2/viral/EF-CAD53396.1_127_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-P10415-F1-model_v4.pdb",
+    ),
+    "c1lpt1": (
+        "./benchmarking_data/controls/c1lpt1/viral/CF-AAO89306.1_12013_relaxed_pt1.pdb",
+        "./benchmarking_data/human_structures/AF-Q8WXC3-F1-model_v4.pdb",
+    ),
+    "c1lpt2": (
+        "./benchmarking_data/controls/c1lpt2/viral/CF-AAO89306.1_12013_relaxed_pt2.pdb",
+        "./benchmarking_data/human_structures/AF-Q5TBC7-F1-model_v4.pdb",
+    ),
+    "c4bp": (
+        "./benchmarking_data/controls/c4bp/viral/EF-AAO89304.1_12013_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-P04003-F1-model_v4.pdb",
+    ),
+    "ccr1": (
+        "./benchmarking_data/controls/ccr1/viral/EF-AAR31716.1_100_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-P32246-F1-model_v4.pdb",
+    ),
+    "ccr2": (
+        "./benchmarking_data/controls/ccr2/viral/EF-AAD46503.1_158_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-P41597-F1-model_v4.pdb",
+    ),
+    "cd47": (
+        "./benchmarking_data/controls/cd47/viral/CF-AAO89441.1_12013_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-Q08722-F1-model_v4.pdb",
+    ),
+    "chemokine": (
+        "./benchmarking_data/controls/chemokine/viral/EF-AAC55276.1_12002_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-Q9Y4X3-F1-model_v4.pdb",
+    ),
+    "eif2a": (
+        "./benchmarking_data/controls/eif2a/viral/CF-AAO89313.1_12013_relaxed_vaccinia.pdb",
+        "./benchmarking_data/human_structures/AF-P05198-F1-model_v4.pdb",
+    ),
+    "helicase": (
+        "./benchmarking_data/controls/helicase/viral/CF-AAO42519.1.1.4_7222_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-Q08211-F1-model_v4.pdb",
+    ),
+    "ifngr": (
+        "./benchmarking_data/controls/ifngr/viral/CF-AAO89469.1_12013_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-P15260-F1-model_v4.pdb",
+    ),
+    "il10": (
+        "./benchmarking_data/controls/il10/viral/CF-CAD53385.1_127_relaxed_ebv.pdb",
+        "./benchmarking_data/human_structures/AF-P22301-F1-model_v4.pdb",
+    ),
+    "il18bp": (
+        "./benchmarking_data/controls/il18bp/viral/EF-AAC55182.1_12002_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-O95998-F1-model_v4.pdb",
+    ),
+    "kinase": (
+        "./benchmarking_data/controls/kinase/viral/CF-CAD53438.2_127_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-Q00535-F1-model_v4.pdb",
+    ),
+    "lfg4": (
+        "./benchmarking_data/controls/lfg4/viral/EF-AAL73713.1_12006_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-Q9HC24-F1-model_v4.pdb",
+    ),
+    "nsp16": (
+        "./benchmarking_data/controls/nsp16/viral/CF-QHD43415.1.1.36_10195_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-Q9UI43-F1-model_v4.pdb",
+    ),
+    "nsp5": (
+        "./benchmarking_data/controls/nsp5/viral/CF-QHD43415.1.1.21_10195_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-Q2L4Q9-F1-model_v4.pdb",
+    ),
 }
 
 # Define custom colors
-custom_colors = {
-    "seaweed": [0.2314, 0.5961, 0.5255],
-    "rose": [0.9725, 0.5961, 0.6824]
-}
+custom_colors = {"seaweed": [0.2314, 0.5961, 0.5255], "rose": [0.9725, 0.5961, 0.6824]}
 
 # Toggle for high-quality rendering
 high_quality = False  # Set to True for ray-traced final renders
@@ -74,7 +123,7 @@ with pymol2.PyMOL() as pymol:
         cmd.set("cartoon_ladder_mode", 1)
         cmd.set("cartoon_nucleic_acid_mode", 4)
         cmd.set("cartoon_ring_transparency", 0.5)
-        #cmd.set("ray_trace_mode", 1)
+        # cmd.set("ray_trace_mode", 1)
         cmd.set("antialias", 1)
 
         # Apply coloring
@@ -115,24 +164,34 @@ with pymol2.PyMOL() as pymol:
 
         # Create GIF using ImageMagick
         gif_name = f"{pair_name}_alignment.gif"
-        subprocess.run([
-            "convert",
-            "-delay", "8",
-            "-loop", "0",
-            f"{frame_folder}/{pair_name}_frame*.png",
-            gif_name
-        ])
+        subprocess.run(
+            [
+                "convert",
+                "-delay",
+                "8",
+                "-loop",
+                "0",
+                f"{frame_folder}/{pair_name}_frame*.png",
+                gif_name,
+            ]
+        )
 
         # Create MP4 using ffmpeg
         mp4_name = f"{pair_name}_alignment.mp4"
-        subprocess.run([
-            "ffmpeg",
-            "-framerate", "15",
-            "-i", f"{frame_folder}/{pair_name}_frame%04d.png",
-            "-c:v", "libx264",
-            "-pix_fmt", "yuv420p",
-            "-y",
-            mp4_name
-        ])
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-framerate",
+                "15",
+                "-i",
+                f"{frame_folder}/{pair_name}_frame%04d.png",
+                "-c:v",
+                "libx264",
+                "-pix_fmt",
+                "yuv420p",
+                "-y",
+                mp4_name,
+            ]
+        )
 
         cmd.reinitialize()
