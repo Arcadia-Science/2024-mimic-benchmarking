@@ -252,11 +252,11 @@ rule run_gmmselection:
         csv=OUTPUT_DIRPATH
         / "{host_organism}"
         / "selected_mimics"
-        / "gmmviro3d_benchmarking041025.csv",
+        / "gmmviro3d_benchmarking041425.csv",
         csv_detailed=OUTPUT_DIRPATH
         / "{host_organism}"
         / "selected_mimics"
-        / "gmmviro3d_benchmarking041025_detailed.csv",
+        / "gmmviro3d_benchmarking041425_detailed.csv",
     conda:
         "envs/scikitlearn.yml"
     shell:
