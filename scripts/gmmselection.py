@@ -32,7 +32,7 @@ def find_and_process_tsv_files(root_directory, verbose=True):
     for dirpath, _, filenames in os.walk(root_directory):
         if "processed" not in dirpath:
             continue
-            
+
         for filename in filenames:
             files_checked += 1
 
