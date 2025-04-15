@@ -224,7 +224,13 @@ def analyze_cluster(cluster_df, cluster_num):
 
 def process_all_dataframes_with_gmm(processed_data):
     """
-    Run GMM clustering on all processed DataFrames and extract summary stats.
+    Run GMM clustering on all processed DataFrames and extract summary stats. Our main goal is to use this gmm to help us select 
+    a distinct winning cluster of 'best' hits.
+    The maximum number of components was set to 40; we do not expect our known mimic search results to have more than 
+    40 meaningful clusters.
+    Weight_concentration_prior controls the model preference for many vs. few clusters. We use 0.1, which will prioritize fewer clusters.
+    These settings were in part determined empirically in our initial testing of using the gmm framework and we don't expect slightly 
+    changing them to dramatically impact the outcomes here. 
 
     Args:
         processed_data (dict): Dictionary of processed DataFrames keyed by filename.
@@ -275,10 +281,12 @@ def process_all_dataframes_with_gmm(processed_data):
                 feature_combinations = [["qtmscore", "neg_log_evalue", "alnlen"]]
 
             for feature_combination in feature_combinations:
-                selected_features = [f for f in feature_combination if f in cluster_df.columns]
-                if not selected_features:
+                if not all(f in cluster_df.columns for f in feature_combination):
+                    print(f"Skipping clustering for {key}, cluster {cluster_id} — missing one or more features: {feature_combination}")
                     continue
 
+                selected_features = feature_combination                
+                 
                 feature_df = cluster_df.copy()
                 X = feature_df[selected_features].dropna()
 
@@ -309,8 +317,8 @@ def process_all_dataframes_with_gmm(processed_data):
                         ]
                     except Exception as e:
                         print(f"Error clustering {key}, cluster {cluster_id}: {e}")
-                        feature_df["cluster"] = 0
-                        feature_df["cluster_probability"] = 1.0
+                        feature_df["cluster"] = UNCLUSTERED_CLUSTER_ID
+                        feature_df["cluster_probability"] = np.nan
 
                 model_id = f"{key}_Cluster_{cluster_id}_{'_'.join(feature_combination)}_cov-tied"
 
@@ -318,10 +326,6 @@ def process_all_dataframes_with_gmm(processed_data):
                     c: analyze_cluster(feature_df, c)
                     for c in feature_df["cluster"].unique()
                 }
-
-                for cnum, stats in cluster_stats.items():
-                    if stats["size"] == 0:
-                        print(f"WARNING: Cluster {cnum} in {model_id} has 0 members!")
 
                 gmm_results[model_id] = {
                     "merged_df": feature_df,
@@ -362,8 +366,8 @@ def process_all_dataframes_with_gmm(processed_data):
                 next_best_stats = (
                     cluster_stats.get(sorted_clusters[1][0]) if len(sorted_clusters) > 1 else None
                 )
-                qtmscore_diff = 0.0
-                neg_log_evalue_diff = 0.0
+                qtmscore_diff = None
+                neg_log_evalue_diff = None
 
                 if next_best_stats:
                     if (
