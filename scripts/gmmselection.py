@@ -307,7 +307,7 @@ def process_all_dataframes_with_gmm(processed_data):
                 feature_df = cluster_df.copy()
                 X = feature_df[selected_features].dropna()
 
-                if X.shape[0] < 2:
+                if X.shape[0] < 10:
                     feature_df["cluster"] = UNCLUSTERED_CLUSTER_ID
                     feature_df["cluster_probability"] = np.nan
                 else:
