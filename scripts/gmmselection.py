@@ -109,8 +109,11 @@ def process_all_dfs(result_dict, viro3dclusters):
 def process_and_merge_df_pairs(processed_results):
     """
     Processes type1/type2 DataFrame pairs in a dictionary:
-    - For type2 entries: transform e-values to -log10 and filter.
-    - For type1 entries: merge e-value info from corresponding type2 DataFrames.
+    - For type2 entries (3di + AA mode): transform e-values to -log10 and filter. The filter thresholds were chosen
+    empirically based on our observation that 3di + AA mode returns many very short/low quality alignments that we do
+    not want to follow up with.
+    - For type1 entries (TMAlign mode): merge e-value info from corresponding type2 DataFrames.
+    - Every type1 entry will have a corresponding type2 entry. 
 
     Args:
         processed_results (dict): Dictionary of DataFrames keyed by filename.
@@ -130,7 +133,7 @@ def process_and_merge_df_pairs(processed_results):
     for type1_key in [k for k in processed_results if "alignmenttype1" in k]:
         type2_key = type1_key.replace("alignmenttype1", "alignmenttype2")
         if type2_key not in processed_results:
-            continue  # Skip if no matching type2
+            raise ValueError(f"No matching type2 file found for: {type1_key}")
 
         df1 = result_dict[type1_key]
         df2 = result_dict[type2_key]
