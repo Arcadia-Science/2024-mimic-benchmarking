@@ -4,9 +4,10 @@ import re
 
 import numpy as np
 import pandas as pd
+from sklearn.metrics import silhouette_score
 from sklearn.mixture import BayesianGaussianMixture
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import silhouette_score
+
 
 def find_and_process_tsv_files(root_directory, verbose=True):
     """
@@ -92,7 +93,9 @@ def process_all_dfs(result_dict, viro3dclusters):
         df_copy = df.copy()
 
         df_copy["extracted_id"] = df_copy["query"].astype(str).apply(extract_prefix)
-        viro3dclusters["match_id"] = viro3dclusters["cluster_member"].astype(str).apply(extract_prefix) 
+        viro3dclusters["match_id"] = (
+            viro3dclusters["cluster_member"].astype(str).apply(extract_prefix)
+        )
 
         merged_df = df_copy.merge(
             viro3dclusters[["match_id", "cluster_id", "genbank_name"]],
@@ -103,7 +106,7 @@ def process_all_dfs(result_dict, viro3dclusters):
 
         merged_df.drop(columns=["match_id"], inplace=True)
         processed_dict[key] = merged_df
-        
+
         before = len(df_copy)
         after = len(merged_df)
 
@@ -118,13 +121,15 @@ def process_all_dfs(result_dict, viro3dclusters):
 def process_and_merge_df_pairs(processed_results):
     """
     Processes type1/type2 DataFrame pairs in a dictionary:
-    - For type2 entries (3di + AA mode): transform e-values to -log10 and filter. The filter thresholds were chosen
-    empirically based on our observation that 3di + AA mode returns many very short/low quality alignments that we do
-    not want to follow up with.
-    - E-value of zero (which in our data represents very low e-value) is replaced with 1e-300 to avoid log calculation errors.
-    1e-300 is very small relative to any other returned e-values in our data.
+    - For type2 entries (3di + AA mode): transform e-values to -log10 and filter.
+    The filter thresholds were chosen empirically based on our observation that
+    3di + AA mode returns many very short/low quality alignments that we do not
+    want to follow up with.
+    - E-value of zero (which in our data represents very low e-value) is replaced
+    with 1e-300 to avoid log calculation errors. 1e-300 is very small relative
+    to any other returned e-values in our data.
     - For type1 entries (TMAlign mode): merge e-value info from corresponding type2 DataFrames.
-    - Every type1 entry will have a corresponding type2 entry. 
+    - Every type1 entry will have a corresponding type2 entry.
 
     Args:
         processed_results (dict): Dictionary of DataFrames keyed by filename.
@@ -231,16 +236,16 @@ def analyze_cluster(cluster_df, cluster_num):
     return stats
 
 
-
 def process_all_dataframes_with_gmm(processed_data):
     """
-    Run GMM clustering on all processed DataFrames and extract summary stats. Our main goal is to use this gmm to help us select 
-    a distinct winning cluster of 'best' hits.
-    The maximum number of components was set to 40; we do not expect our known mimic search results to have more than 
-    40 meaningful clusters.
-    Weight_concentration_prior controls the model preference for many vs. few clusters. We use 0.1, which will prioritize fewer clusters.
-    These settings were in part determined empirically in our initial testing of using the gmm framework and we don't expect slightly 
-    changing them to dramatically impact the outcomes here. 
+    Run GMM clustering on all processed DataFrames and extract summary stats.
+    Our main goal is to use this gmm to help us select a distinct winning cluster of 'best' hits.
+    The maximum number of components was set to 40; we do not expect our known
+    mimic search results to have more than 40 meaningful clusters.
+    Weight_concentration_prior controls the model preference for many vs. few clusters.
+    We use 0.1, which will prioritize fewer clusters. These settings were in part
+    determined empirically in our initial testing of using the gmm framework and we
+    don't expect slightly changing them to dramatically impact the outcomes here.
 
     Args:
         processed_data (dict): Dictionary of processed DataFrames keyed by filename.
@@ -252,7 +257,7 @@ def process_all_dataframes_with_gmm(processed_data):
     all_summary_data = []
     all_gmm_results = {}
 
-    UNCLUSTERED_CLUSTER_ID = 0    
+    UNCLUSTERED_CLUSTER_ID = 0
 
     for key, df in processed_data.items():
         print(f"\nProcessing: {key}")
@@ -291,11 +296,14 @@ def process_all_dataframes_with_gmm(processed_data):
 
             for feature_combination in feature_combinations:
                 if not all(f in cluster_df.columns for f in feature_combination):
-                    print(f"Skipping clustering for {key}, cluster {cluster_id} — missing one or more features: {feature_combination}")
+                    print(
+                        f"Skipping clustering for {key}, cluster {cluster_id} — "
+                        f"missing one or more features: {feature_combination}"
+                    )
                     continue
 
-                selected_features = feature_combination                
-                 
+                selected_features = feature_combination
+
                 feature_df = cluster_df.copy()
                 X = feature_df[selected_features].dropna()
 
@@ -338,8 +346,7 @@ def process_all_dataframes_with_gmm(processed_data):
                 model_id = f"{key}_Cluster_{cluster_id}_{'_'.join(feature_combination)}_cov-tied"
 
                 cluster_stats = {
-                    c: analyze_cluster(feature_df, c)
-                    for c in feature_df["cluster"].unique()
+                    c: analyze_cluster(feature_df, c) for c in feature_df["cluster"].unique()
                 }
 
                 gmm_results[model_id] = {
@@ -378,7 +385,7 @@ def process_all_dataframes_with_gmm(processed_data):
                 sorted_clusters = sorted(valid_clusters.items(), key=lambda x: x[1], reverse=True)
                 best_cluster = sorted_clusters[0][0]
                 best_stats = cluster_stats[best_cluster]
-                
+
                 next_best_stats = (
                     cluster_stats.get(sorted_clusters[1][0]) if len(sorted_clusters) > 1 else None
                 )
@@ -438,6 +445,7 @@ def process_all_dataframes_with_gmm(processed_data):
 
     combined_summary_df = pd.DataFrame(all_summary_data)
     return combined_summary_df, all_gmm_results
+
 
 def generate_detailed_csv(all_gmm_results, output_path="cluster_analysis_detailed.csv"):
     """
