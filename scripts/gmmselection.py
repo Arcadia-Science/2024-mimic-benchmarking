@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn.mixture import BayesianGaussianMixture
 from sklearn.preprocessing import StandardScaler
-
+from sklearn.metrics import silhouette_score
 
 def find_and_process_tsv_files(root_directory, verbose=True):
     """
@@ -231,6 +231,7 @@ def analyze_cluster(cluster_df, cluster_num):
     return stats
 
 
+
 def process_all_dataframes_with_gmm(processed_data):
     """
     Run GMM clustering on all processed DataFrames and extract summary stats. Our main goal is to use this gmm to help us select 
@@ -317,6 +318,12 @@ def process_all_dataframes_with_gmm(processed_data):
                         gmm.fit(X_scaled)
 
                         cluster_labels = gmm.predict(X_scaled)
+
+                        if len(set(cluster_labels)) > 1:
+                            sil_score = silhouette_score(X_scaled, cluster_labels)
+                        else:
+                            sil_score = None
+
                         cluster_probs = gmm.predict_proba(X_scaled)
 
                         feature_df.loc[X.index, "cluster"] = cluster_labels
@@ -349,6 +356,7 @@ def process_all_dataframes_with_gmm(processed_data):
                     "total_unique_host_genes": len(unique_host_genes),
                     "source_key": key,
                     "alignment_type": alignment_type,
+                    "silhouette_score": sil_score,
                 }
 
             for model_identifier, result in gmm_results.items():
@@ -370,7 +378,7 @@ def process_all_dataframes_with_gmm(processed_data):
                 sorted_clusters = sorted(valid_clusters.items(), key=lambda x: x[1], reverse=True)
                 best_cluster = sorted_clusters[0][0]
                 best_stats = cluster_stats[best_cluster]
-
+                
                 next_best_stats = (
                     cluster_stats.get(sorted_clusters[1][0]) if len(sorted_clusters) > 1 else None
                 )
@@ -421,6 +429,7 @@ def process_all_dataframes_with_gmm(processed_data):
                     "probability_max": best_stats.get("probability_max"),
                     "qtmscore_min": best_stats.get("qtmscore_min"),
                     "qtmscore_max": best_stats.get("qtmscore_max"),
+                    "silhouette_score": result["silhouette_score"],
                 }
 
                 all_summary_data.append(summary_entry)
@@ -429,7 +438,6 @@ def process_all_dataframes_with_gmm(processed_data):
 
     combined_summary_df = pd.DataFrame(all_summary_data)
     return combined_summary_df, all_gmm_results
-
 
 def generate_detailed_csv(all_gmm_results, output_path="cluster_analysis_detailed.csv"):
     """
