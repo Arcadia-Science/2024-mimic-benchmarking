@@ -69,8 +69,8 @@ def extract_prefix(query):
     Returns:
         str or None: The matched ID or None if no match is found.
     """
-    match = re.search(r"(EF-|CF-)[\w.-]+_relaxed", str(query))
-    return match.group(0) if match else None
+    match = re.search(r"(EF-|CF-)([\w.-]+_relaxed)", str(query))
+    return match.group(2) if match else None
 
 
 def process_all_dfs(result_dict, viro3dclusters):
@@ -92,16 +92,25 @@ def process_all_dfs(result_dict, viro3dclusters):
         df_copy = df.copy()
 
         df_copy["extracted_id"] = df_copy["query"].astype(str).apply(extract_prefix)
+        viro3dclusters["match_id"] = viro3dclusters["cluster_member"].astype(str).apply(extract_prefix) 
 
         merged_df = df_copy.merge(
-            viro3dclusters[["cluster_member", "cluster_id", "genbank_name"]],
+            viro3dclusters[["match_id", "cluster_id", "genbank_name"]],
             left_on="extracted_id",
-            right_on="cluster_member",
+            right_on="match_id",
             how="left",
         )
 
-        merged_df.drop(columns=["cluster_member"], inplace=True)
+        merged_df.drop(columns=["match_id"], inplace=True)
         processed_dict[key] = merged_df
+        
+        before = len(df_copy)
+        after = len(merged_df)
+
+        if before != after:
+            print(f"⚠️ Row count changed during merge: before = {before}, after = {after}")
+        else:
+            print(f"✅ Row count unchanged: {before} rows")
 
     return processed_dict
 
@@ -262,7 +271,6 @@ def process_all_dataframes_with_gmm(processed_data):
 
             if "neg_log_evalue" not in cluster_df.columns:
                 print(f"Warning: No evalue column found for {key}, cluster {cluster_id}")
-                cluster_df["neg_log_evalue"] = float("nan")
 
             unique_host_genes = (
                 cluster_df["host_gene_names_primary"].dropna().unique()
