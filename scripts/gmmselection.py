@@ -112,6 +112,8 @@ def process_and_merge_df_pairs(processed_results):
     - For type2 entries (3di + AA mode): transform e-values to -log10 and filter. The filter thresholds were chosen
     empirically based on our observation that 3di + AA mode returns many very short/low quality alignments that we do
     not want to follow up with.
+    - E-value of zero (which in our data represents very low e-value) is replaced with 1e-300 to avoid log calculation errors.
+    1e-300 is very small relative to any other returned e-values in our data.
     - For type1 entries (TMAlign mode): merge e-value info from corresponding type2 DataFrames.
     - Every type1 entry will have a corresponding type2 entry. 
 
@@ -149,14 +151,13 @@ def process_and_merge_df_pairs(processed_results):
     return result_dict
 
 
-def analyze_cluster(cluster_df, cluster_num, selected_features):
+def analyze_cluster(cluster_df, cluster_num):
     """
     Analyze a specific cluster and return its statistics.
 
     Args:
         cluster_df (DataFrame): The full DataFrame with cluster annotations.
         cluster_num (int): Cluster number to analyze.
-        selected_features (list): List of feature names.
 
     Returns:
         dict: Dictionary of summary statistics for the cluster.
@@ -221,17 +222,12 @@ def analyze_cluster(cluster_df, cluster_num, selected_features):
     return stats
 
 
-def process_all_dataframes_with_gmm(
-    processed_data, viro3dclusters, min_cluster_size=2, feature_combinations=None
-):
+def process_all_dataframes_with_gmm(processed_data):
     """
     Run GMM clustering on all processed DataFrames and extract summary stats.
 
     Args:
         processed_data (dict): Dictionary of processed DataFrames keyed by filename.
-        viro3dclusters (DataFrame): DataFrame containing virus cluster metadata.
-        min_cluster_size (int): Minimum size required to consider a cluster.
-        feature_combinations (list): List of feature combinations to cluster on.
 
     Returns:
         (DataFrame, dict): Combined summary DataFrame and full GMM results.
@@ -239,6 +235,8 @@ def process_all_dataframes_with_gmm(
 
     all_summary_data = []
     all_gmm_results = {}
+
+    UNCLUSTERED_CLUSTER_ID = 0    
 
     for key, df in processed_data.items():
         print(f"\nProcessing: {key}")
@@ -256,9 +254,7 @@ def process_all_dataframes_with_gmm(
             if cluster_df.empty:
                 continue
 
-            if "neg_log_evalue" not in cluster_df.columns and "evalue" in cluster_df.columns:
-                cluster_df["neg_log_evalue"] = -np.log10(cluster_df["evalue"].replace(0, 1e-300))
-            elif "neg_log_evalue" not in cluster_df.columns:
+            if "neg_log_evalue" not in cluster_df.columns:
                 print(f"Warning: No evalue column found for {key}, cluster {cluster_id}")
                 cluster_df["neg_log_evalue"] = float("nan")
 
@@ -287,8 +283,8 @@ def process_all_dataframes_with_gmm(
                 X = feature_df[selected_features].dropna()
 
                 if X.shape[0] < 2:
-                    feature_df["cluster"] = 0
-                    feature_df["cluster_probability"] = 1.0
+                    feature_df["cluster"] = UNCLUSTERED_CLUSTER_ID
+                    feature_df["cluster_probability"] = np.nan
                 else:
                     try:
                         X_scaled = StandardScaler().fit_transform(X)
@@ -319,7 +315,7 @@ def process_all_dataframes_with_gmm(
                 model_id = f"{key}_Cluster_{cluster_id}_{'_'.join(feature_combination)}_cov-tied"
 
                 cluster_stats = {
-                    c: analyze_cluster(feature_df, c, selected_features)
+                    c: analyze_cluster(feature_df, c)
                     for c in feature_df["cluster"].unique()
                 }
 
@@ -464,7 +460,7 @@ def generate_detailed_csv(all_gmm_results, output_path="cluster_analysis_detaile
 
         best_cluster = max(cluster_means, key=cluster_means.get)
         best_cluster_df = merged_df[merged_df["cluster"].astype(int) == int(best_cluster)].copy()
-        best_cluster_analysis = analyze_cluster(merged_df, best_cluster, result_dict["feature_set"])
+        best_cluster_analysis = analyze_cluster(merged_df, best_cluster)
 
         grandparent_folder = source_key.split("_")[0] if "_" in source_key else ""
 
@@ -553,7 +549,7 @@ def main():
     processed_data = process_and_merge_df_pairs(processed_results)
 
     # Step 5: Apply GMM clustering and analyze results
-    combined_summary, all_results = process_all_dataframes_with_gmm(processed_data, viro3dclusters)
+    combined_summary, all_results = process_all_dataframes_with_gmm(processed_data)
 
     # Step 6: Generate and save detailed per-row data for best clusters
     detailed_df = generate_detailed_csv(all_results, args.detailed_output)
