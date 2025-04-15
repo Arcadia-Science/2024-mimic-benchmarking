@@ -95,7 +95,7 @@ with pymol2.PyMOL() as pymol:
         cmd.load(file2, mol2)
 
         # Align second structure to first
-        cmd.align(mol1, mol2)
+        cmd.cealign(mol1, mol2)
 
         # Define custom colors
         for name, rgb in custom_colors.items():
@@ -143,7 +143,7 @@ with pymol2.PyMOL() as pymol:
         print("Frame count reported by PyMOL:", cmd.count_frames())
 
         # Prepare output folder
-        frame_folder = f"{pair_name}_frames"
+        frame_folder = f"{pair_name}_frames_cealign"
         os.makedirs(frame_folder, exist_ok=True)
 
         # Export PNG frames
@@ -163,7 +163,7 @@ with pymol2.PyMOL() as pymol:
                 break
 
         # Create GIF using ImageMagick
-        gif_name = f"{pair_name}_alignment.gif"
+        gif_name = f"{pair_name}_cealignment.gif"
         subprocess.run(
             [
                 "convert",
@@ -177,7 +177,7 @@ with pymol2.PyMOL() as pymol:
         )
 
         # Create MP4 using ffmpeg
-        mp4_name = f"{pair_name}_alignment.mp4"
+        mp4_name = f"{pair_name}_cealignment.mp4"
         subprocess.run(
             [
                 "ffmpeg",
