@@ -1,6 +1,7 @@
 import argparse
 import os
 import re
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -307,23 +308,35 @@ def process_all_dataframes_with_gmm(processed_data):
                 feature_df = cluster_df.copy()
                 X = feature_df[selected_features].dropna()
 
+                clustering_successful = False
+
                 if X.shape[0] < 10:
                     feature_df["cluster"] = UNCLUSTERED_CLUSTER_ID
                     feature_df["cluster_probability"] = np.nan
+                    clustering_successful = True
                 else:
                     try:
                         X_scaled = StandardScaler().fit_transform(X)
 
-                        gmm = BayesianGaussianMixture(
-                            weight_concentration_prior_type="dirichlet_process",
-                            weight_concentration_prior=0.1,
-                            n_components=min(X.shape[0], 40),
-                            covariance_type="tied",
-                            max_iter=3000,
-                            tol=1e-5,
-                            random_state=42,
-                        )
-                        gmm.fit(X_scaled)
+                        with warnings.catch_warnings(record=True) as w:
+                            warnings.simplefilter("always")
+                            gmm = BayesianGaussianMixture(
+                                weight_concentration_prior_type="dirichlet_process",
+                                weight_concentration_prior=0.1,
+                                n_components=min(X.shape[0], 40),
+                                covariance_type="tied",
+                                max_iter=3000,
+                                tol=1e-5,
+                                random_state=42,
+                            )
+                            gmm.fit(X_scaled)
+
+                            if w:
+                                print(f"Warning(s) during clustering {key}, cluster {cluster_id}:")
+                                for warning in w:
+                                    print(f" - {warning.message}")
+
+                        clustering_successful = True
 
                         cluster_labels = gmm.predict(X_scaled)
 
@@ -336,35 +349,48 @@ def process_all_dataframes_with_gmm(processed_data):
 
                         feature_df.loc[X.index, "cluster"] = cluster_labels
                         feature_df.loc[X.index, "cluster_probability"] = [
-                            probs[label] for probs, label in zip(cluster_probs, cluster_labels)
+                            float(probs[label].item())
+                            if hasattr(probs[label], "item")
+                            else float(probs[label])
+                            for probs, label in zip(cluster_probs, cluster_labels)
                         ]
+
                     except Exception as e:
                         print(f"Error clustering {key}, cluster {cluster_id}: {e}")
                         feature_df["cluster"] = UNCLUSTERED_CLUSTER_ID
                         feature_df["cluster_probability"] = np.nan
+                        clustering_successful = False
 
-                model_id = f"{key}_Cluster_{cluster_id}_{'_'.join(feature_combination)}_cov-tied"
+                if clustering_successful:
+                    model_id = (
+                        f"{key}_Cluster_{cluster_id}_{'_'.join(feature_combination)}_cov-tied"
+                    )
 
-                cluster_stats = {
-                    c: analyze_cluster(feature_df, c) for c in feature_df["cluster"].unique()
-                }
+                    cluster_stats = {
+                        c: analyze_cluster(feature_df, c) for c in feature_df["cluster"].unique()
+                    }
 
-                gmm_results[model_id] = {
-                    "merged_df": feature_df,
-                    "cluster_stats": cluster_stats,
-                    "original_cluster_id": cluster_id,
-                    "feature_set": feature_combination,
-                    "best_by": (
-                        "qtmscore"
-                        if alignment_type == "1"
-                        and set(feature_combination) == {"qtmscore", "alnlen"}
-                        else "neg_log_evalue"
-                    ),
-                    "total_unique_host_genes": len(unique_host_genes),
-                    "source_key": key,
-                    "alignment_type": alignment_type,
-                    "silhouette_score": sil_score,
-                }
+                    gmm_results[model_id] = {
+                        "merged_df": feature_df,
+                        "cluster_stats": cluster_stats,
+                        "original_cluster_id": cluster_id,
+                        "feature_set": feature_combination,
+                        "best_by": (
+                            "qtmscore"
+                            if alignment_type == "1"
+                            and set(feature_combination) == {"qtmscore", "alnlen"}
+                            else "neg_log_evalue"
+                        ),
+                        "total_unique_host_genes": len(unique_host_genes),
+                        "source_key": key,
+                        "alignment_type": alignment_type,
+                        "silhouette_score": sil_score,
+                    }
+                else:
+                    print(
+                        f"Skipping {key}, cluster {cluster_id}, features {feature_combination}"
+                        f"due to error."
+                    )
 
             for model_identifier, result in gmm_results.items():
                 cluster_df = result["merged_df"]
@@ -582,7 +608,7 @@ def main():
     # Step 6: Generate and save detailed per-row data for best clusters
     detailed_df = generate_detailed_csv(all_results, args.detailed_output)
 
-    # Save the results to the specified output file
+    # Step 7: Save the results to the specified output file
     combined_summary.to_csv(args.output, index=False)
     print(f"Combined summary saved to {args.output}")
 
