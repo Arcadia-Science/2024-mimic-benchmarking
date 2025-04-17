@@ -68,13 +68,36 @@ The [benchmarking snakefile](./control_benchmarking.snakefile) outputs files in 
 All outputs are contained in an outputs/human directory.
 This directory then contains the following subdirectories:
  
-* foldseek/: Contains Foldseek results from running the commands described in the previous section.
-    * <control>: one of bcl2, c1l, c1lpt1, c1lpt2, c4bp, ccr1, ccr2, cd47, chemokine, eif2a, helicase, ifngr, il10, il18bp, kinase, lfg4, nsp16 or nsp5. We named each folder after the human protein that the virus mimics when possible, and when not, we use protein family name or the viral protein name. We ran each Foldseek comparison separately on each set of controls (ex. we queried with all Bcl-2 viral mimics).
-        * raw/: Raw Foldseek results in TSV format.
-        * processed/: Processed Foldseek results in TSV format. These files include corrected alignment TM-scores and additional metadata for both viral (query) and human (target) proteins.
-* selected_mimics/: contains results from running Gaussian mixture modeling on the Foldseek results to predict viral structural mimicry.
+* `foldseek/`: Contains Foldseek results from running the commands described in the previous section.
+    * `{control}`: one of bcl2, c1l, c1lpt1, c1lpt2, c4bp, ccr1, ccr2, cd47, chemokine, eif2a, helicase, ifngr, il10, il18bp, kinase, lfg4, nsp16 or nsp5. We named each folder after the human protein that the virus mimics when possible, and when not, we use protein family name or the viral protein name. We ran each Foldseek comparison separately on each set of controls (ex. we queried with all Bcl-2 viral mimics).
+        * `raw/`: Raw Foldseek results in TSV format.
+        * `processed/`: Processed Foldseek results in TSV format. These files include corrected alignment TM-scores and additional metadata for both viral (query) and human (target) proteins.
+* `selected_mimics/`: contains results from running Gaussian mixture modeling on the Foldseek results to predict viral structural mimicry.
     * `gmmviro3d_benchmarking041725.csv`: Summary of results from statistical modeling. Columns include:
-        * source_key,original_cluster_id,alignment_type,feature_set,best_by,best_cluster,best_cluster_size,best_qtmscore,best_neg_log_evalue,qtmscore_difference_vs_nextbest,neg_log_evalue_difference_vs_nextbest,cluster_members_host_genes,cluster_members_host_functions,cluster_member_queries,genbank_names,total_unique_host_genes,best_cluster_unique_host_genes,evalue_min,evalue_max,evalue_mean,probability_min,probability_max,qtmscore_min,qtmscore_max
+        * `source_key`: The input processed Foldseek results file that Gaussian mixture modeling is based on.
+        * `original_cluster_id`: Viro3D database structure/sequence cluster identifier.
+        * `alignment_type`: Foldseek alignment type. Either 1 (TM-align mode) or 2 (3Di+AA mode).
+        * `feature_set`: Set of features used to perform Gaussian mixture modeling.
+        * `best_by`: The feature used to select the "best" cluster from Gaussian mixture modeling.
+        * `best_cluster`: The "best" cluster identifier from Gaussian mixture modeling, representing viral proteins that potentially mimic host proteins.
+        * `best_cluster_size`: The number of viral proteins in the best cluster.
+        * `best_qtmscore`: The highest query TM-score for a viral-host protein match in the best cluster.
+        * `best_neg_log_evalue`: The highest negative log E-value (corresponding to the lowest E-value) for a viral-host protein match in the best cluster.
+        * `qtmscore_difference_vs_nextbest`: 
+        * `neg_log_evalue_difference_vs_nextbest`:
+        * `cluster_members_host_genes`: 
+        * `cluster_members_host_functions`:
+        * `cluster_member_queries`:
+        * `genbank_names`:
+        * `total_unique_host_genes`:
+        * `best_cluster_unique_host_genes`:  
+        * `evalue_min`: 
+        * `evalue_max`:
+        * `evalue_mean`:
+        * `probability_min`: 
+        * `probability_max`: 
+        * `qtmscore_min`: 
+        * `qtmscore_max`:  
     * `gmmviro3d_benchmarking041725_detailed.csv`: Foldseek results for each viral protein selected by Gaussian mixture modeling, as well as Gaussian mixture modeling statistics and additional metadata.
 
 
