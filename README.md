@@ -83,21 +83,21 @@ This directory then contains the following subdirectories:
         * `best_cluster_size`: The number of viral proteins in the best cluster.
         * `best_qtmscore`: The highest query TM-score for a viral-host protein match in the best cluster.
         * `best_neg_log_evalue`: The highest negative log E-value (corresponding to the lowest E-value) for a viral-host protein match in the best cluster.
-        * `qtmscore_difference_vs_nextbest`: 
-        * `neg_log_evalue_difference_vs_nextbest`:
-        * `cluster_members_host_genes`: 
-        * `cluster_members_host_functions`:
-        * `cluster_member_queries`:
-        * `genbank_names`:
-        * `total_unique_host_genes`:
-        * `best_cluster_unique_host_genes`:  
-        * `evalue_min`: 
-        * `evalue_max`:
-        * `evalue_mean`:
-        * `probability_min`: 
-        * `probability_max`: 
-        * `qtmscore_min`: 
-        * `qtmscore_max`:  
+        * `qtmscore_difference_vs_nextbest`: The difference between the mean query TM-score in the best cluster and the mean query TM-score in the next best cluster. This column highlights how separation there is between the best cluster and other clusters.
+        * `neg_log_evalue_difference_vs_nextbest`: The difference between the mean negative log E-value in the best cluster and the mean negative log E-value in the next best cluster. This column highlights how separation there is between the best cluster and other clusters.
+        * `cluster_members_host_genes`: List of distinct host genes (proteins) that are matched by viral proteins in the best cluster.
+        * `cluster_members_host_functions`: List of distinct host gene (protein) functions for the proteins that are matched by the viral proteins in the best cluster.
+        * `cluster_member_queries`: List of viral protein Viro3D accessions for the viral proteins in the best cluster.
+        * `genbank_names`: List of GenBank names for the viral proteins in the best cluster.
+        * `total_unique_host_genes`: The total number of distinct host genes matched by any viral protein in the Viro3D cluster used for Gaussian mixture modeling.
+        * `best_cluster_unique_host_genes`: The total number of distinct host genes matched by viral proteins in the best cluster.
+        * `evalue_min`: The minimum E-value of a viral-host protein match in the best cluster.
+        * `evalue_max`: The maximum E-value of a viral-host protein match in the best cluster.
+        * `evalue_mean`: The mean E-value of all viral-host protein matches in the best cluster.
+        * `probability_min`: The minimum probability of a viral-host protein match in the best cluster.
+        * `probability_max`: The maximium probability of a viral-host protein match in the best cluster.
+        * `qtmscore_min`: The minimum query TM-score of a viral-host protein match in the best cluster.
+        * `qtmscore_max`: The maximum query TM-score of a viral-host protein match in the best cluster.
     * `gmmviro3d_benchmarking041725_detailed.csv`: Foldseek results for each viral protein selected by Gaussian mixture modeling, as well as Gaussian mixture modeling statistics and additional metadata.
 
 
