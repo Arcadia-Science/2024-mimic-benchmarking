@@ -318,23 +318,16 @@ def process_all_dataframes_with_gmm(processed_data):
                     try:
                         X_scaled = StandardScaler().fit_transform(X)
 
-                        with warnings.catch_warnings(record=True) as w:
-                            warnings.simplefilter("always")
-                            gmm = BayesianGaussianMixture(
-                                weight_concentration_prior_type="dirichlet_process",
-                                weight_concentration_prior=0.1,
-                                n_components=min(X.shape[0], 40),
-                                covariance_type="tied",
-                                max_iter=3000,
-                                tol=1e-5,
-                                random_state=42,
-                            )
-                            gmm.fit(X_scaled)
-
-                            if w:
-                                print(f"Warning(s) during clustering {key}, cluster {cluster_id}:")
-                                for warning in w:
-                                    print(f" - {warning.message}")
+                        gmm = BayesianGaussianMixture(
+                            weight_concentration_prior_type="dirichlet_process",
+                            weight_concentration_prior=0.1,
+                            n_components=min(X.shape[0], 40),
+                            covariance_type="tied",
+                            max_iter=3000,
+                            tol=1e-5,
+                            random_state=42,
+                        )
+                        gmm.fit(X_scaled)
 
                         clustering_successful = True
 
