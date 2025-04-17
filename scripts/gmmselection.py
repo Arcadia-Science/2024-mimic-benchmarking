@@ -384,7 +384,7 @@ def process_all_dataframes_with_gmm(processed_data):
                 else:
                     print(
                         f"Skipping {key}, cluster {cluster_id}, features {feature_combination}"
-                        f"due to warning or error."
+                        f"due to error."
                     )
 
             for model_identifier, result in gmm_results.items():
