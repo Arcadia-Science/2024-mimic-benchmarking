@@ -786,7 +786,7 @@ def parse_arguments():
 
     parser.add_argument(
         "--plot-dir",
-        default="/figures/3d_gmm_plots/",
+        default="figures/3d_gmm_plots/",
         help="Directory to save the 3D plot HTML files",
     )
 
