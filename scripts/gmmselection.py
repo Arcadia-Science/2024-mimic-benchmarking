@@ -699,7 +699,7 @@ def plot_3d_cluster_visualization(
                 # Construct hover text with the host gene info for this specific row
                 hover_text = (
                     f"<b>Query TM-score:</b> {row['qtmscore']:.3f}<br>"
-                    f"<b>Neg log evalue:</b> {row['neg_log_evalue']:.3f}<br>"
+                    f"<b>Neg log E-value:</b> {row['neg_log_evalue']:.3f}<br>"
                     f"<b>Alignment length:</b> {row['alnlen']:.1f}<br>"
                     f"<b>Cluster size:</b> {cluster_size}<br>"
                     f"<b>Mimic:</b> {grandparent_folder}<br>"
