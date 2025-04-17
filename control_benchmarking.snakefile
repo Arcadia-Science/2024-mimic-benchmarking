@@ -252,11 +252,11 @@ rule run_gmmselection:
         csv=OUTPUT_DIRPATH
         / "{host_organism}"
         / "selected_mimics"
-        / "gmmviro3d_benchmarking041425.csv",
+        / "gmmviro3d_benchmarking041725.csv",
         csv_detailed=OUTPUT_DIRPATH
         / "{host_organism}"
         / "selected_mimics"
-        / "gmmviro3d_benchmarking041425_detailed.csv",
+        / "gmmviro3d_benchmarking041725_detailed.csv",
     conda:
         "envs/scikitlearn.yml"
     shell:
@@ -266,6 +266,7 @@ rule run_gmmselection:
             --clusters-csv {input.csv} \
             --output {output.csv} \
             --detailed-output {output.csv_detailed}
+            --plot-dir figures/3d_gmm_plots
         """
 
 
