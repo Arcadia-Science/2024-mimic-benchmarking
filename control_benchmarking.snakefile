@@ -258,14 +258,14 @@ rule run_gmmselection:
         / "selected_mimics"
         / "gmmviro3d_benchmarking041725_detailed.csv",
     conda:
-        "envs/scikitlearn.yml"
+        "envs/gmm.yml"
     shell:
         """
         python scripts/gmmselection.py \
             --root-dir outputs/human/foldseek \
             --clusters-csv {input.csv} \
             --output {output.csv} \
-            --detailed-output {output.csv_detailed}
+            --detailed-output {output.csv_detailed} \
             --plot-dir figures/3d_gmm_plots
         """
 
