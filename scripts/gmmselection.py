@@ -2,8 +2,11 @@ import argparse
 import os
 import re
 
+import arcadia_pycolor as apc
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
+from sklearn.metrics import silhouette_score
 from sklearn.mixture import BayesianGaussianMixture
 from sklearn.preprocessing import StandardScaler
 
@@ -69,8 +72,8 @@ def extract_prefix(query):
     Returns:
         str or None: The matched ID or None if no match is found.
     """
-    match = re.search(r"(EF-|CF-)[\w.-]+_relaxed", str(query))
-    return match.group(0) if match else None
+    match = re.search(r"(EF-|CF-)([\w.-]+_relaxed)", str(query))
+    return match.group(2) if match else None
 
 
 def process_all_dfs(result_dict, viro3dclusters):
@@ -92,16 +95,27 @@ def process_all_dfs(result_dict, viro3dclusters):
         df_copy = df.copy()
 
         df_copy["extracted_id"] = df_copy["query"].astype(str).apply(extract_prefix)
+        viro3dclusters["match_id"] = (
+            viro3dclusters["cluster_member"].astype(str).apply(extract_prefix)
+        )
 
         merged_df = df_copy.merge(
-            viro3dclusters[["cluster_member", "cluster_id", "genbank_name"]],
+            viro3dclusters[["match_id", "cluster_id", "genbank_name"]],
             left_on="extracted_id",
-            right_on="cluster_member",
+            right_on="match_id",
             how="left",
         )
 
-        merged_df.drop(columns=["cluster_member"], inplace=True)
+        merged_df.drop(columns=["match_id"], inplace=True)
         processed_dict[key] = merged_df
+
+        before = len(df_copy)
+        after = len(merged_df)
+
+        if before != after:
+            print(f"⚠️ Row count changed during merge: before = {before}, after = {after}")
+        else:
+            print(f"✅ Row count unchanged: {before} rows")
 
     return processed_dict
 
@@ -109,8 +123,15 @@ def process_all_dfs(result_dict, viro3dclusters):
 def process_and_merge_df_pairs(processed_results):
     """
     Processes type1/type2 DataFrame pairs in a dictionary:
-    - For type2 entries: transform e-values to -log10 and filter.
-    - For type1 entries: merge e-value info from corresponding type2 DataFrames.
+    - For type2 entries (3di + AA mode): transform e-values to -log10 and filter.
+    The filter thresholds were chosen empirically based on our observation that
+    3di + AA mode returns many very short/low quality alignments that we do not
+    want to follow up with.
+    - E-value of zero (which in our data represents very low e-value) is replaced
+    with 1e-300 to avoid log calculation errors. 1e-300 is very small relative
+    to any other returned e-values in our data.
+    - For type1 entries (TMAlign mode): merge e-value info from corresponding type2 DataFrames.
+    - Every type1 entry will have a corresponding type2 entry.
 
     Args:
         processed_results (dict): Dictionary of DataFrames keyed by filename.
@@ -130,7 +151,7 @@ def process_and_merge_df_pairs(processed_results):
     for type1_key in [k for k in processed_results if "alignmenttype1" in k]:
         type2_key = type1_key.replace("alignmenttype1", "alignmenttype2")
         if type2_key not in processed_results:
-            continue  # Skip if no matching type2
+            raise ValueError(f"No matching type2 file found for: {type1_key}")
 
         df1 = result_dict[type1_key]
         df2 = result_dict[type2_key]
@@ -146,14 +167,13 @@ def process_and_merge_df_pairs(processed_results):
     return result_dict
 
 
-def analyze_cluster(cluster_df, cluster_num, selected_features):
+def analyze_cluster(cluster_df, cluster_num):
     """
     Analyze a specific cluster and return its statistics.
 
     Args:
         cluster_df (DataFrame): The full DataFrame with cluster annotations.
         cluster_num (int): Cluster number to analyze.
-        selected_features (list): List of feature names.
 
     Returns:
         dict: Dictionary of summary statistics for the cluster.
@@ -218,17 +238,19 @@ def analyze_cluster(cluster_df, cluster_num, selected_features):
     return stats
 
 
-def process_all_dataframes_with_gmm(
-    processed_data, viro3dclusters, min_cluster_size=2, feature_combinations=None
-):
+def process_all_dataframes_with_gmm(processed_data):
     """
     Run GMM clustering on all processed DataFrames and extract summary stats.
+    Our main goal is to use this gmm to help us select a distinct winning cluster of 'best' hits.
+    The maximum number of components was set to 40; we do not expect our known
+    mimic search results to have more than 40 meaningful clusters.
+    Weight_concentration_prior controls the model preference for many vs. few clusters.
+    We use 0.1, which will prioritize fewer clusters. These settings were in part
+    determined empirically in our initial testing of using the gmm framework and we
+    don't expect slightly changing them to dramatically impact the outcomes here.
 
     Args:
         processed_data (dict): Dictionary of processed DataFrames keyed by filename.
-        viro3dclusters (DataFrame): DataFrame containing virus cluster metadata.
-        min_cluster_size (int): Minimum size required to consider a cluster.
-        feature_combinations (list): List of feature combinations to cluster on.
 
     Returns:
         (DataFrame, dict): Combined summary DataFrame and full GMM results.
@@ -236,6 +258,8 @@ def process_all_dataframes_with_gmm(
 
     all_summary_data = []
     all_gmm_results = {}
+
+    UNCLUSTERED_CLUSTER_ID = 0
 
     for key, df in processed_data.items():
         print(f"\nProcessing: {key}")
@@ -253,11 +277,8 @@ def process_all_dataframes_with_gmm(
             if cluster_df.empty:
                 continue
 
-            if "neg_log_evalue" not in cluster_df.columns and "evalue" in cluster_df.columns:
-                cluster_df["neg_log_evalue"] = -np.log10(cluster_df["evalue"].replace(0, 1e-300))
-            elif "neg_log_evalue" not in cluster_df.columns:
+            if "neg_log_evalue" not in cluster_df.columns:
                 print(f"Warning: No evalue column found for {key}, cluster {cluster_id}")
-                cluster_df["neg_log_evalue"] = float("nan")
 
             unique_host_genes = (
                 cluster_df["host_gene_names_primary"].dropna().unique()
@@ -276,16 +297,25 @@ def process_all_dataframes_with_gmm(
                 feature_combinations = [["qtmscore", "neg_log_evalue", "alnlen"]]
 
             for feature_combination in feature_combinations:
-                selected_features = [f for f in feature_combination if f in cluster_df.columns]
-                if not selected_features:
+                if not all(f in cluster_df.columns for f in feature_combination):
+                    print(
+                        f"Skipping clustering for {key}, cluster {cluster_id} — "
+                        f"missing one or more features: {feature_combination}"
+                    )
                     continue
+
+                selected_features = feature_combination
 
                 feature_df = cluster_df.copy()
                 X = feature_df[selected_features].dropna()
 
-                if X.shape[0] < 2:
-                    feature_df["cluster"] = 0
-                    feature_df["cluster_probability"] = 1.0
+                clustering_successful = False
+
+                if X.shape[0] < 10:
+                    feature_df["cluster"] = UNCLUSTERED_CLUSTER_ID
+                    feature_df["cluster_probability"] = np.nan
+                    clustering_successful = True
+                    sil_score = np.nan
                 else:
                     try:
                         X_scaled = StandardScaler().fit_transform(X)
@@ -301,44 +331,61 @@ def process_all_dataframes_with_gmm(
                         )
                         gmm.fit(X_scaled)
 
+                        clustering_successful = True
+
                         cluster_labels = gmm.predict(X_scaled)
+
+                        if len(set(cluster_labels)) > 1:
+                            sil_score = silhouette_score(X_scaled, cluster_labels)
+                        else:
+                            sil_score = np.nan
+
                         cluster_probs = gmm.predict_proba(X_scaled)
 
                         feature_df.loc[X.index, "cluster"] = cluster_labels
                         feature_df.loc[X.index, "cluster_probability"] = [
-                            probs[label] for probs, label in zip(cluster_probs, cluster_labels)
+                            float(probs[label].item())
+                            if hasattr(probs[label], "item")
+                            else float(probs[label])
+                            for probs, label in zip(cluster_probs, cluster_labels)
                         ]
+
                     except Exception as e:
                         print(f"Error clustering {key}, cluster {cluster_id}: {e}")
-                        feature_df["cluster"] = 0
-                        feature_df["cluster_probability"] = 1.0
+                        feature_df["cluster"] = UNCLUSTERED_CLUSTER_ID
+                        feature_df["cluster_probability"] = np.nan
+                        clustering_successful = False
 
-                model_id = f"{key}_Cluster_{cluster_id}_{'_'.join(feature_combination)}_cov-tied"
+                if clustering_successful:
+                    model_id = (
+                        f"{key}_Cluster_{cluster_id}_" f"{'_'.join(feature_combination)}_cov-tied"
+                    )
 
-                cluster_stats = {
-                    c: analyze_cluster(feature_df, c, selected_features)
-                    for c in feature_df["cluster"].unique()
-                }
+                    cluster_stats = {
+                        c: analyze_cluster(feature_df, c) for c in feature_df["cluster"].unique()
+                    }
 
-                for cnum, stats in cluster_stats.items():
-                    if stats["size"] == 0:
-                        print(f"WARNING: Cluster {cnum} in {model_id} has 0 members!")
-
-                gmm_results[model_id] = {
-                    "merged_df": feature_df,
-                    "cluster_stats": cluster_stats,
-                    "original_cluster_id": cluster_id,
-                    "feature_set": feature_combination,
-                    "best_by": (
-                        "qtmscore"
-                        if alignment_type == "1"
-                        and set(feature_combination) == {"qtmscore", "alnlen"}
-                        else "neg_log_evalue"
-                    ),
-                    "total_unique_host_genes": len(unique_host_genes),
-                    "source_key": key,
-                    "alignment_type": alignment_type,
-                }
+                    gmm_results[model_id] = {
+                        "merged_df": feature_df,
+                        "cluster_stats": cluster_stats,
+                        "original_cluster_id": cluster_id,
+                        "feature_set": feature_combination,
+                        "best_by": (
+                            "qtmscore"
+                            if alignment_type == "1"
+                            and set(feature_combination) == {"qtmscore", "alnlen"}
+                            else "neg_log_evalue"
+                        ),
+                        "total_unique_host_genes": len(unique_host_genes),
+                        "source_key": key,
+                        "alignment_type": alignment_type,
+                        "silhouette_score": sil_score,
+                    }
+                else:
+                    print(
+                        f"Skipping {key}, cluster {cluster_id}, features {feature_combination}"
+                        f"due to error."
+                    )
 
             for model_identifier, result in gmm_results.items():
                 cluster_df = result["merged_df"]
@@ -363,8 +410,8 @@ def process_all_dataframes_with_gmm(
                 next_best_stats = (
                     cluster_stats.get(sorted_clusters[1][0]) if len(sorted_clusters) > 1 else None
                 )
-                qtmscore_diff = 0.0
-                neg_log_evalue_diff = 0.0
+                qtmscore_diff = None
+                neg_log_evalue_diff = None
 
                 if next_best_stats:
                     if (
@@ -410,6 +457,7 @@ def process_all_dataframes_with_gmm(
                     "probability_max": best_stats.get("probability_max"),
                     "qtmscore_min": best_stats.get("qtmscore_min"),
                     "qtmscore_max": best_stats.get("qtmscore_max"),
+                    "silhouette_score": result["silhouette_score"],
                 }
 
                 all_summary_data.append(summary_entry)
@@ -461,7 +509,7 @@ def generate_detailed_csv(all_gmm_results, output_path="cluster_analysis_detaile
 
         best_cluster = max(cluster_means, key=cluster_means.get)
         best_cluster_df = merged_df[merged_df["cluster"].astype(int) == int(best_cluster)].copy()
-        best_cluster_analysis = analyze_cluster(merged_df, best_cluster, result_dict["feature_set"])
+        best_cluster_analysis = analyze_cluster(merged_df, best_cluster)
 
         grandparent_folder = source_key.split("_")[0] if "_" in source_key else ""
 
@@ -507,6 +555,215 @@ def generate_detailed_csv(all_gmm_results, output_path="cluster_analysis_detaile
     return detailed_df
 
 
+def plot_3d_cluster_visualization(
+    all_gmm_results,
+    output_path="gmm_clusters_3d",
+    foldseek_dict=None,
+):
+    """
+    Create a 3D visualization of GMM clusters using Plotly.
+    Generates one plot per GMM result (maintaining the same combinations used for clustering).
+
+    Args:
+        all_gmm_results (dict): Dictionary containing all GMM results
+        output_path (str): Path for output files
+        foldseek_dict (dict, optional): Original TSV data for host gene lookup
+
+    Returns:
+        dict: Dictionary of figures keyed by model identifier
+    """
+    apc.plotly.setup()
+
+    # Create target-to-host-gene lookup from original TSV files
+    target_to_host_gene = {}
+    if foldseek_dict:
+        print("Building host gene lookup from original TSV files...")
+        for df in foldseek_dict.items():
+            if "host_gene_names_primary" in df.columns and "target" in df.columns:
+                for _, row in df.iterrows():
+                    target = row.get("target")
+                    host_gene = row.get("host_gene_names_primary")
+                    if pd.notna(target) and pd.notna(host_gene):
+                        target_to_host_gene[target] = host_gene
+
+        print(f"Created lookup with {len(target_to_host_gene)} host gene entries")
+        if target_to_host_gene:
+            sample_entries = list(target_to_host_gene.items())[:3]
+            print(f"Sample host gene entries: {sample_entries}")
+
+    # Create output directory if it doesn't exist
+    os.makedirs(output_path, exist_ok=True)
+
+    # Combine primary and secondary palettes
+    my_palette = apc.palettes.primary + apc.palettes.secondary
+
+    # Always use aegean for the best cluster
+    BEST_CLUSTER_COLOR = apc.aegean
+
+    # Get other colors, excluding aegean
+    OTHER_COLORS = [color for color in my_palette if color != BEST_CLUSTER_COLOR]
+
+    # Define a consistent marker size
+    MARKER_SIZE = 8  # Smaller size for individual points
+
+    # Dictionary to store figures
+    figures = {}
+
+    # Process each GMM result separately (keeping the same combinations as GMM)
+    print(f"Processing {len(all_gmm_results)} GMM results...")
+
+    for model_id, result_data in all_gmm_results.items():
+        # Extract key information
+        source_key = result_data["source_key"]
+        merged_df = result_data["merged_df"]
+        cluster_stats = result_data["cluster_stats"]
+        viro3d_cluster_id = result_data["original_cluster_id"]
+
+        # Extract grandparent folder for display
+        grandparent_folder = "Unknown"
+        if "_" in source_key:
+            grandparent_folder = source_key.split("_")[0]
+
+        # Create figure
+        fig = go.Figure()
+
+        # Identify the best cluster (highest neg_log_evalue or qtmscore based on the best_by field)
+        best_by = result_data.get("best_by", "neg_log_evalue")
+        metric_key = "qtmscore_mean" if best_by == "qtmscore" else "neg_log_evalue_mean"
+
+        cluster_means = {}
+        for cluster_num, stats in cluster_stats.items():
+            if metric_key in stats and stats[metric_key] is not None:
+                cluster_means[cluster_num] = stats[metric_key]
+
+        best_cluster = None
+        if cluster_means:
+            best_cluster = max(cluster_means.items(), key=lambda x: x[1])[0]
+
+        # Get unique clusters
+        unique_clusters = merged_df["cluster"].unique()
+
+        # Create a color map - best cluster gets aegean, others get from palette
+        color_idx = 0
+        cluster_colors = {}
+
+        # First assign the best cluster color
+        if best_cluster is not None and best_cluster in unique_clusters:
+            cluster_colors[best_cluster] = BEST_CLUSTER_COLOR
+
+        # Then assign other colors
+        for cluster_num in unique_clusters:
+            if cluster_num not in cluster_colors:
+                cluster_colors[cluster_num] = OTHER_COLORS[color_idx % len(OTHER_COLORS)]
+                color_idx += 1
+
+        # Plot each cluster
+        for cluster_num in unique_clusters:
+            # Get data for this cluster
+            cluster_df = merged_df[merged_df["cluster"] == cluster_num].copy()
+
+            # Skip if empty
+            if len(cluster_df) == 0:
+                continue
+
+            # Get the color for this cluster
+            color = cluster_colors[cluster_num]
+
+            # Get cluster stats for this cluster
+            cluster_stats_for_this = cluster_stats.get(cluster_num, {})
+            cluster_size = cluster_stats_for_this.get("size", len(cluster_df))
+
+            # Create hover text
+            hover_texts = []
+
+            for _, row in cluster_df.iterrows():
+                # Get query and target strings
+                query_str = str(row.get("query", "None"))
+                target_str = str(row.get("target", "None"))
+                viral_gene = str(row.get("genbank_name", "None"))
+
+                # Get host gene directly from the row if available
+                host_gene_str = "Unknown"  # Default value when no host gene is found
+
+                if "host_gene_names_primary" in row and pd.notna(row["host_gene_names_primary"]):
+                    host_gene_str = str(row["host_gene_names_primary"])
+
+                # Check if this is a best cluster
+                is_best = cluster_num == best_cluster
+                special_note = (
+                    f"<br><b>Best {best_by.replace('_', ' ').title()}" f"cluster</b>"
+                    if is_best
+                    else ""
+                )
+
+                # Construct hover text with the host gene info for this specific row
+                hover_text = (
+                    f"<b>Query TM-score:</b> {row['qtmscore']:.3f}<br>"
+                    f"<b>Neg log E-value:</b> {row['neg_log_evalue']:.3f}<br>"
+                    f"<b>Alignment length:</b> {row['alnlen']:.1f}<br>"
+                    f"<b>Cluster size:</b> {cluster_size}<br>"
+                    f"<b>Mimic:</b> {grandparent_folder}<br>"
+                    f"<b>Viral query accession:</b> {query_str}<br>"
+                    f"<b>Viral query gene:</b> {viral_gene}<br>"
+                    f"<b>Human target UniProt accession:</b> {target_str}<br>"
+                    f"<b>Human target gene:</b> {host_gene_str}{special_note}"
+                )
+
+                hover_texts.append(hover_text)
+
+            # Create the cluster label - mark the best cluster
+            is_best = cluster_num == best_cluster
+            best_metric = best_by.replace("_", " ").title()
+            cluster_label = f"Cluster {cluster_num}" + (f" (Best {best_metric})" if is_best else "")
+
+            # Add trace for this cluster
+            fig.add_trace(
+                go.Scatter3d(
+                    x=cluster_df["alnlen"],
+                    y=cluster_df["neg_log_evalue"],
+                    z=cluster_df["qtmscore"],
+                    mode="markers",
+                    marker=dict(
+                        size=MARKER_SIZE,
+                        color=color,
+                        opacity=0.7,
+                        symbol="circle",
+                        line=dict(width=1, color="DarkSlateGrey"),
+                    ),
+                    text=hover_texts,
+                    hoverinfo="text",
+                    name=cluster_label,
+                )
+            )
+
+        # Update layout with complete information in title
+        fig.update_layout(
+            title=f"Viro3D Cluster: {viro3d_cluster_id} : {grandparent_folder}",
+            scene=dict(
+                xaxis=dict(title="Alignment Length", range=[0, 650]),
+                yaxis=dict(title="Neg Log E-value", range=[0, 25]),
+                zaxis=dict(title="Query TM-Score", range=[0, 1]),
+            ),
+            height=800,
+            width=1000,
+            showlegend=False,  # Show legend for this version
+        )
+        apc.plotly.style_plot(fig, monospaced_axes="all")
+
+        # Store figure
+        figures[model_id] = fig
+
+        # Save as interactive HTML
+        # Create a sanitized filename from the model_id
+        sanitized_model_id = model_id.replace("/", "_").replace(" ", "_")
+        output_file = os.path.join(output_path, f"{sanitized_model_id}.html")
+        fig.write_html(output_file)
+
+    print(f"Created {len(figures)} visualizations")
+    # Return the figures dictionary
+    return figures
+
+
 def parse_arguments():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description="gmm selection workflow")
@@ -525,6 +782,12 @@ def parse_arguments():
         "--detailed-output",
         default="cluster_analysis_detailed.csv",
         help="Output file name for the detailed per-row results",
+    )
+
+    parser.add_argument(
+        "--plot-dir",
+        default="figures/3d_gmm_plots/",
+        help="Directory to save the 3D plot HTML files",
     )
 
     return parser.parse_args()
@@ -550,16 +813,21 @@ def main():
     processed_data = process_and_merge_df_pairs(processed_results)
 
     # Step 5: Apply GMM clustering and analyze results
-    combined_summary, all_results = process_all_dataframes_with_gmm(processed_data, viro3dclusters)
+    combined_summary, all_results = process_all_dataframes_with_gmm(processed_data)
 
     # Step 6: Generate and save detailed per-row data for best clusters
     detailed_df = generate_detailed_csv(all_results, args.detailed_output)
 
-    # Save the results to the specified output file
+    # Step 7: Generate 3D visualizations
+    os.makedirs(args.plot_dir, exist_ok=True)
+    print(f"Generating 3D visualizations in {args.plot_dir}...")
+    figures = plot_3d_cluster_visualization(all_results, output_path=args.plot_dir)
+
+    # Step 8: Save the results to the specified output file
     combined_summary.to_csv(args.output, index=False)
     print(f"Combined summary saved to {args.output}")
 
-    return combined_summary, detailed_df
+    return combined_summary, detailed_df, figures
 
 
 if __name__ == "__main__":

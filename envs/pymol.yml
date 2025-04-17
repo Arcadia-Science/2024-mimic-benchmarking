@@ -1,0 +1,9 @@
+name: pymol
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - conda-forge::pymol-open-source=3.1.0
+  - imagemagick=7.1.1_47
+  - ffmpeg=7.1.1

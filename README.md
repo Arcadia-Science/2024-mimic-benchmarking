@@ -4,15 +4,18 @@
 [![Snakemake](https://img.shields.io/badge/snakemake--green)](https://snakemake.readthedocs.io/en/stable/)
 
 ## Purpose
-This repository contains standardized datasets that we are using to evaluate protein structural alignment methods and how they impact our results. These datasets include the following:
-- Sets of structures for randomly selected human proteins (50, 100, 500, 1000)
-- Sets of random selected viral protein structures (50, 100, 500, 1000) predicted by [Viro3D](https://viro3d.cvr.gla.ac.uk)
-- 'Target' protein pdbs for proteins of interest from human, chimp, macaque, and mouse. Viruses have been shown to mimic these proteins.
-- Viral representative sequences for each of the 4 target proteins. At least one protein in each set is the exact viral protein that was confirmed via experimentation to mimic the human protein.
-  
+
+This repository contains a control dataset and a workflow for indentifying viral protein structural mimicry.
+The code and data in this repo are associated with the pub, "[How do we define and find viral protein structural mimicry?](https://doi.org/10.57844/arcadia-1eu9-gcsx)."
+
+We define this as a viral protein with one or more domains structurally resembling a host protein(s) and interacting with some of the same binding partners or substrates.
+This definition allows us to use structural similarity as a starting point for identifying viral proteins that may modulate host biology.
+In this repository, we sought to develop and assess a method to detect viral protein structural mimicry.
+
+
 ## Installation and Setup
 
-This repository uses Snakemake to run the pipeline and conda to manage software environments and installations. You can find operating system-specific instructions for installing miniconda [here](https://docs.conda.io/projects/miniconda/en/latest/). After installing conda and [mamba](https://mamba.readthedocs.io/en/latest/), run the following command to create the pipeline run environment.
+This repository uses Snakemake to run pipelines and conda to manage software environments and installations. You can find operating system-specific instructions for installing miniconda [here](https://docs.conda.io/projects/miniconda/en/latest/). After installing conda and [mamba](https://mamba.readthedocs.io/en/latest/), run the following command to create the pipeline run environment.
 
 ```{bash}
 mamba env create -n benchmark --file envs/dev.yml
@@ -27,48 +30,41 @@ To start the pipeline, run:
 snakemake --software-deployment-method conda -j 8
 ```
 
-
 ## Benchmarking data
 
-- We downloaded target protein pdbs directly from [Alphafold](https://alphafold.ebi.ac.uk/) using UniProt accessions.
-- We downloaded viral protein structures from human-infecting viruses from [Viro3D](https://viro3d.cvr.gla.ac.uk) by the running the [get_all_viral_structures.snakefile](get_all_viral_structures.snakefile).
-- We generated random viral protein datasets by running the [create_random_viral_sets.snakefile](create_random_viral_sets.snakefile).
-- We generated random human protein datasets by running the [create_random_human_sets.snakefile](create_random_human_sets.snakefile). Note that this file exists as documentation for how we generated these steps, but there is a non-deterministic step that produce different sets if the snakefile is re-run. As such, please **use the data in the [benchmarking_data](benchmarking_data) folder if you plan to use these datasets**.
+We curated a set of viral proteins to assess the method we developed to detect viral protein structural mimicry.
+These proteins either:
+1. Have experimental evidence for mimicry of a host protein. These proteins have a known correct match or matches to proteins in a host proteome.
+2. Share common folds with host proteins. These proteins do not have a known correct match to a protein in the host proteome.
 
-The [benchmarking_data](./benchmarking_data) folder contains the sets of viral and other species [positive control pdbs](./benchmarking_data/positive_controls) for the four target proteins as well as the sets of [random human and random viral protein structures](./benchmarking_data/random_protein_sets).
+We downloaded viral protein structures and metadata for relevant proteins from [Viro3D](https://viro3d.cvr.gla.ac.uk).
+We provide this data in [benchmarking_data](./benchmarking_data).
+We also provide host target structures for mimicked proteins.
+We downloaded these from [Alphafold](https://alphafold.ebi.ac.uk/).
 
 ## Benchmarking tests
 
-### Positive controls
+We designed the [control_benchmarking.snakefile](control_benchmarking.snakefile) to test which structural comparison tools maximized true positive hits while minimizing false positive hits.
+We used structures of viral proteins and compared each structure against all human proteins (UniProt proteome with single structures in AlphaFold database).
+See a list of all viral proteins we used [here](./benchmarking_data/controls/control_metadata.tsv).
 
-We designed the [positive_control_benchmarking.snakefile](positive_control_benchmarking.snakefile) to test which structural comparison tools maximized true positive hits while minimizing false positive hits.
-We used viral and Eukaryotic protein structures for four proteins (IL18BP, C4BP, IL10, EIF2A) and compared each structure against all human proteins (UniProt proteome with single structures in AlphaFold database).
-We used foldseek and gtalign to perform these comparisons.
-For gtalign, we tested speeds 0 (most sensitive, slowest) and 9 (default).
-For foldseek, we tested the all combinations of the parameters:
+We used Foldseek in 3Di+AA mode and TM-align mode to compare viral structures to human structures.
+We used the following parameters:
 * `--alignment-type`
-    * `1`: TMAlign mode. This parameter makes the biggest difference on speed and accuracy for foldseek results. It increases the accuracy and decreases the speed.
-    * `2`: 3di + AA mode. This is the default foldseek algorithm. It converts each structure into an alphabet, decomposes the alphabatized structure into k-mers, and then performs operations on those k-mers.
-* `--tmalign-fast`. This parameter makes the second biggest difference on speed and accuracy for foldseek results generated by TMAlign mode. Turning fast mode OFF increases the accuracy and decreases the speed. I think the accuracy gains are biggest for matches with a TM-score < 0.5. This parameter is only impactful for `--alignment-type 1` (TMAlign mode).
-    * `0`: Off. Don't use fast most.
-    * `1`: On. Use fast mode.
-* `--exact-tmscore`: This parameter makes the second biggest difference on speed and accuracy for foldseek results generated by TMAlign mode. Turning fast mode OFF increases the accuracy and decreases the speed. I think the accuracy gains are biggest for matches with a TM-score < 0.5
-    * `0`: Off. Don't calculate exact TM-scores.
-    * `1`: On. Calculate exact TM-scores.
-* `--tmscore-threshold`
-    * `0`: TM-score threshold is set to 0. This lowers the threshold for a match to be returned, but on it's own does not turn on exhaustive searching. 
-    * `0.25`: TM-score threshold is set of 0.25. When compared to an exhaustive search, not all hits with a 0.25 will actually be returned. Using a TM-score threshold of 0.25 allows us to better recover hits that have a real TM-score of > 0.5, which is the hits we care about for viruses. It's not actually clear which TM-score the thresholding is acting on (alignment, query, or target). In an unreleased version of foldseek, the user can set the mode and the default is alignment tm-score.
-* `--exhaustive-search`
-    * `0` (off): Do not perform an exhaustive search. Uses default pre-filtering instead.
-    * `1` (on): Perform an exhaustive search. However, exhaustive searching will be disabled when combined with tmscore-threshold 0.25.
+    * `1`: TM-align mode. TM-align mode uses a structural superposition approach based on backbone geometry to measure structure similarity.
+    * `2`: 3Di + AA mode.  3Di+AA uses a hybrid alignment approach that encodes 3D geometry and amino acid identity to measure structure similarity.
+* `--tmalign-fast 0`. This parameter only impacts TM-align mode. Turning fast mode OFF increases the accuracy of TM-score estimates.
+* `--exact-tmscore 1`: This parameter increases the accuracy of TM-score estimates.
+* `--tmscore-threshold`: Alignment TM-score at which to threshold.
+    * `0`: TM-score threshold is set to 0. When combined with `--exhaustive-search 1`, this returns all combinations of query vs. database. 
+    * `0.5`: TM-score threshold is set to 0.5. When combined with `--exhaustive-search 0`, only hits with an alignment TM-score above this threshold are returned. 
 
+We compare the performance of Foldseek in 3Di+AA and TM-align modes combined with downstream statistical modeling to determine the most accurate approach for detecing viral protein structural mimicry.
+ 
 ## Compute specifications
 
-We ran the [create_random_viral_sets.snakefile](create_random_viral_sets.snakefile) and the [create_random_human_sets.snakefile](create_random_human_sets.snakefile) on an MacBook computer.
-
-We ran the [positive_control_benchmarking.snakefile](positive_control_benchmarking.snakefile) on an AWS EC2 instance type g4dn.2xlarge running AMI Deep Learning Base OSS Nvidia Driver GPU AMI (Ubuntu 20.04) 20240122 (AMI ID ami-07eb000b3340966b0).
-The tool gtalign can use a GPU so compute times will be substantially faster on a GPU than a CPU.
-We did not test the pipeline on a CPU so there is a chance it will only work on a GPU.
+We ran the [control_benchmarking.snakefile](control_benchmarking.snakefile) on an AWS EC2 instance type m5a.4xlarge running Ubuntu (20.04) 20240122 (AMI ID ami-07eb000b3340966b0).
+The pipeline runs in about a 24 hours.
 
 ## Contributing
 
