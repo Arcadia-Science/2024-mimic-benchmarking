@@ -2,8 +2,10 @@ import argparse
 import os
 import re
 
+import arcadia_pycolor as apc
 import numpy as np
 import pandas as pd
+import plotly.graph_objects as go
 from sklearn.metrics import silhouette_score
 from sklearn.mixture import BayesianGaussianMixture
 from sklearn.preprocessing import StandardScaler
@@ -313,6 +315,7 @@ def process_all_dataframes_with_gmm(processed_data):
                     feature_df["cluster"] = UNCLUSTERED_CLUSTER_ID
                     feature_df["cluster_probability"] = np.nan
                     clustering_successful = True
+                    sil_score = np.nan
                 else:
                     try:
                         X_scaled = StandardScaler().fit_transform(X)
@@ -335,7 +338,7 @@ def process_all_dataframes_with_gmm(processed_data):
                         if len(set(cluster_labels)) > 1:
                             sil_score = silhouette_score(X_scaled, cluster_labels)
                         else:
-                            sil_score = None
+                            sil_score = np.nan
 
                         cluster_probs = gmm.predict_proba(X_scaled)
 
@@ -355,7 +358,7 @@ def process_all_dataframes_with_gmm(processed_data):
 
                 if clustering_successful:
                     model_id = (
-                        f"{key}_Cluster_{cluster_id}_{'_'.join(feature_combination)}_cov-tied"
+                        f"{key}_Cluster_{cluster_id}_" f"{'_'.join(feature_combination)}_cov-tied"
                     )
 
                     cluster_stats = {
@@ -552,6 +555,215 @@ def generate_detailed_csv(all_gmm_results, output_path="cluster_analysis_detaile
     return detailed_df
 
 
+def plot_3d_cluster_visualization(
+    all_gmm_results,
+    output_path="gmm_clusters_3d",
+    foldseek_dict=None,
+):
+    """
+    Create a 3D visualization of GMM clusters using Plotly.
+    Generates one plot per GMM result (maintaining the same combinations used for clustering).
+
+    Args:
+        all_gmm_results (dict): Dictionary containing all GMM results
+        output_path (str): Path for output files
+        foldseek_dict (dict, optional): Original TSV data for host gene lookup
+
+    Returns:
+        dict: Dictionary of figures keyed by model identifier
+    """
+    apc.plotly.setup()
+
+    # Create target-to-host-gene lookup from original TSV files
+    target_to_host_gene = {}
+    if foldseek_dict:
+        print("Building host gene lookup from original TSV files...")
+        for df in foldseek_dict.items():
+            if "host_gene_names_primary" in df.columns and "target" in df.columns:
+                for _, row in df.iterrows():
+                    target = row.get("target")
+                    host_gene = row.get("host_gene_names_primary")
+                    if pd.notna(target) and pd.notna(host_gene):
+                        target_to_host_gene[target] = host_gene
+
+        print(f"Created lookup with {len(target_to_host_gene)} host gene entries")
+        if target_to_host_gene:
+            sample_entries = list(target_to_host_gene.items())[:3]
+            print(f"Sample host gene entries: {sample_entries}")
+
+    # Create output directory if it doesn't exist
+    os.makedirs(output_path, exist_ok=True)
+
+    # Combine primary and secondary palettes
+    my_palette = apc.palettes.primary + apc.palettes.secondary
+
+    # Always use aegean for the best cluster
+    BEST_CLUSTER_COLOR = apc.aegean
+
+    # Get other colors, excluding aegean
+    OTHER_COLORS = [color for color in my_palette if color != BEST_CLUSTER_COLOR]
+
+    # Define a consistent marker size
+    MARKER_SIZE = 8  # Smaller size for individual points
+
+    # Dictionary to store figures
+    figures = {}
+
+    # Process each GMM result separately (keeping the same combinations as GMM)
+    print(f"Processing {len(all_gmm_results)} GMM results...")
+
+    for model_id, result_data in all_gmm_results.items():
+        # Extract key information
+        source_key = result_data["source_key"]
+        merged_df = result_data["merged_df"]
+        cluster_stats = result_data["cluster_stats"]
+        viro3d_cluster_id = result_data["original_cluster_id"]
+
+        # Extract grandparent folder for display
+        grandparent_folder = "Unknown"
+        if "_" in source_key:
+            grandparent_folder = source_key.split("_")[0]
+
+        # Create figure
+        fig = go.Figure()
+
+        # Identify the best cluster (highest neg_log_evalue or qtmscore based on the best_by field)
+        best_by = result_data.get("best_by", "neg_log_evalue")
+        metric_key = "qtmscore_mean" if best_by == "qtmscore" else "neg_log_evalue_mean"
+
+        cluster_means = {}
+        for cluster_num, stats in cluster_stats.items():
+            if metric_key in stats and stats[metric_key] is not None:
+                cluster_means[cluster_num] = stats[metric_key]
+
+        best_cluster = None
+        if cluster_means:
+            best_cluster = max(cluster_means.items(), key=lambda x: x[1])[0]
+
+        # Get unique clusters
+        unique_clusters = merged_df["cluster"].unique()
+
+        # Create a color map - best cluster gets aegean, others get from palette
+        color_idx = 0
+        cluster_colors = {}
+
+        # First assign the best cluster color
+        if best_cluster is not None and best_cluster in unique_clusters:
+            cluster_colors[best_cluster] = BEST_CLUSTER_COLOR
+
+        # Then assign other colors
+        for cluster_num in unique_clusters:
+            if cluster_num not in cluster_colors:
+                cluster_colors[cluster_num] = OTHER_COLORS[color_idx % len(OTHER_COLORS)]
+                color_idx += 1
+
+        # Plot each cluster
+        for cluster_num in unique_clusters:
+            # Get data for this cluster
+            cluster_df = merged_df[merged_df["cluster"] == cluster_num].copy()
+
+            # Skip if empty
+            if len(cluster_df) == 0:
+                continue
+
+            # Get the color for this cluster
+            color = cluster_colors[cluster_num]
+
+            # Get cluster stats for this cluster
+            cluster_stats_for_this = cluster_stats.get(cluster_num, {})
+            cluster_size = cluster_stats_for_this.get("size", len(cluster_df))
+
+            # Create hover text
+            hover_texts = []
+
+            for _, row in cluster_df.iterrows():
+                # Get query and target strings
+                query_str = str(row.get("query", "None"))
+                target_str = str(row.get("target", "None"))
+                viral_gene = str(row.get("genbank_name", "None"))
+
+                # Get host gene directly from the row if available
+                host_gene_str = "Unknown"  # Default value when no host gene is found
+
+                if "host_gene_names_primary" in row and pd.notna(row["host_gene_names_primary"]):
+                    host_gene_str = str(row["host_gene_names_primary"])
+
+                # Check if this is a best cluster
+                is_best = cluster_num == best_cluster
+                special_note = (
+                    f"<br><b>Best {best_by.replace('_', ' ').title()}" f"cluster</b>"
+                    if is_best
+                    else ""
+                )
+
+                # Construct hover text with the host gene info for this specific row
+                hover_text = (
+                    f"<b>Query TM-score:</b> {row['qtmscore']:.3f}<br>"
+                    f"<b>Neg log E-value:</b> {row['neg_log_evalue']:.3f}<br>"
+                    f"<b>Alignment length:</b> {row['alnlen']:.1f}<br>"
+                    f"<b>Cluster size:</b> {cluster_size}<br>"
+                    f"<b>Mimic:</b> {grandparent_folder}<br>"
+                    f"<b>Viral query accession:</b> {query_str}<br>"
+                    f"<b>Viral query gene:</b> {viral_gene}<br>"
+                    f"<b>Human target UniProt accession:</b> {target_str}<br>"
+                    f"<b>Human target gene:</b> {host_gene_str}{special_note}"
+                )
+
+                hover_texts.append(hover_text)
+
+            # Create the cluster label - mark the best cluster
+            is_best = cluster_num == best_cluster
+            best_metric = best_by.replace("_", " ").title()
+            cluster_label = f"Cluster {cluster_num}" + (f" (Best {best_metric})" if is_best else "")
+
+            # Add trace for this cluster
+            fig.add_trace(
+                go.Scatter3d(
+                    x=cluster_df["alnlen"],
+                    y=cluster_df["neg_log_evalue"],
+                    z=cluster_df["qtmscore"],
+                    mode="markers",
+                    marker=dict(
+                        size=MARKER_SIZE,
+                        color=color,
+                        opacity=0.7,
+                        symbol="circle",
+                        line=dict(width=1, color="DarkSlateGrey"),
+                    ),
+                    text=hover_texts,
+                    hoverinfo="text",
+                    name=cluster_label,
+                )
+            )
+
+        # Update layout with complete information in title
+        fig.update_layout(
+            title=f"Viro3D Cluster: {viro3d_cluster_id} : {grandparent_folder}",
+            scene=dict(
+                xaxis=dict(title="Alignment Length", range=[0, 650]),
+                yaxis=dict(title="Neg Log E-value", range=[0, 25]),
+                zaxis=dict(title="Query TM-Score", range=[0, 1]),
+            ),
+            height=800,
+            width=1000,
+            showlegend=False,  # Show legend for this version
+        )
+        apc.plotly.style_plot(fig, monospaced_axes="all")
+
+        # Store figure
+        figures[model_id] = fig
+
+        # Save as interactive HTML
+        # Create a sanitized filename from the model_id
+        sanitized_model_id = model_id.replace("/", "_").replace(" ", "_")
+        output_file = os.path.join(output_path, f"{sanitized_model_id}.html")
+        fig.write_html(output_file)
+
+    print(f"Created {len(figures)} visualizations")
+    # Return the figures dictionary
+    return figures
+
+
 def parse_arguments():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description="gmm selection workflow")
@@ -570,6 +782,12 @@ def parse_arguments():
         "--detailed-output",
         default="cluster_analysis_detailed.csv",
         help="Output file name for the detailed per-row results",
+    )
+
+    parser.add_argument(
+        "--plot-dir",
+        default="figures/3d_gmm_plots/",
+        help="Directory to save the 3D plot HTML files",
     )
 
     return parser.parse_args()
@@ -600,11 +818,16 @@ def main():
     # Step 6: Generate and save detailed per-row data for best clusters
     detailed_df = generate_detailed_csv(all_results, args.detailed_output)
 
-    # Step 7: Save the results to the specified output file
+    # Step 7: Generate 3D visualizations
+    os.makedirs(args.plot_dir, exist_ok=True)
+    print(f"Generating 3D visualizations in {args.plot_dir}...")
+    figures = plot_3d_cluster_visualization(all_results, output_path=args.plot_dir)
+
+    # Step 8: Save the results to the specified output file
     combined_summary.to_csv(args.output, index=False)
     print(f"Combined summary saved to {args.output}")
 
-    return combined_summary, detailed_df
+    return combined_summary, detailed_df, figures
 
 
 if __name__ == "__main__":
