@@ -1,0 +1,11 @@
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - pandas=2.2.3
+  - plotly=6.0.1
+  - numpy=2.2.4
+  - scikit-learn=1.6.1
+  - pip:
+      - git+https://github.com/Arcadia-Science/arcadia-pycolor.git@89e965efab9ae5d1732a3e29414107007969fdb0

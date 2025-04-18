@@ -90,3 +90,4 @@ benchmarks
 outputs
 ProteinCartography/
 scripts/ProteinCartography_scripts_downloaded.txt
+inputs/viral/foldseekCluster90_1E-5_meta.csv
