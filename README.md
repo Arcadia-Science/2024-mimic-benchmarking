@@ -65,7 +65,7 @@ For more information, see the pub, "[How do we define and find viral protein str
 ## Benchmarking outputs
 
 The [benchmarking snakefile](./control_benchmarking.snakefile) outputs files in the following directory structure.
-All outputs are contained in an outputs/human directory.
+If you run the snakefile, all outputs are contained in an outputs/human directory.
 This directory then contains the following subdirectories:
  
 * `foldseek/`: Contains Foldseek results from running the commands described in the previous section.
@@ -101,6 +101,7 @@ This directory then contains the following subdirectories:
         * `silhouette_score`: Measures how similar an object is to its own cluster compared to other clusters. It ranges from –1 to +1, where +1 indicates that points in the best cluster are well-matched to other points in their own cluster and far from those not in the cluster (good quality cluster). -1 indicates that points in the best cluster are better matched to points in another cluster (bad quality cluster).
     * `gmmviro3d_benchmarking041725_detailed.csv`: Foldseek results for each viral protein selected by Gaussian mixture modeling, as well as Gaussian mixture modeling statistics and additional metadata.
 
+The contents of the `foldseek` and `selected_mimics` are available for download on Zenodo: [10.5281/zenodo.15242980](https://doi.org/10.5281/zenodo.15242980).
 
 ## Repository folder structure
 
