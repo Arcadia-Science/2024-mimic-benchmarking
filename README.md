@@ -98,6 +98,7 @@ This directory then contains the following subdirectories:
         * `probability_max`: The maximium probability of a viral-host protein match in the best cluster.
         * `qtmscore_min`: The minimum query TM-score of a viral-host protein match in the best cluster.
         * `qtmscore_max`: The maximum query TM-score of a viral-host protein match in the best cluster.
+        * `silhouette_score`: Measures how similar an object is to its own cluster compared to other clusters. It ranges from –1 to +1, where +1 indicates that points in the best cluster are well-matched to other points in their own cluster and far from those not in the cluster (good quality cluster). -1 indicates that points in the best cluster are better matched to points in another cluster (bad quality cluster).
     * `gmmviro3d_benchmarking041725_detailed.csv`: Foldseek results for each viral protein selected by Gaussian mixture modeling, as well as Gaussian mixture modeling statistics and additional metadata.
 
 
