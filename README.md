@@ -79,10 +79,10 @@ This directory then contains the following subdirectories:
         * `alignment_type`: Foldseek alignment type. Either 1 (TM-align mode) or 2 (3Di+AA mode).
         * `feature_set`: Set of features used to perform Gaussian mixture modeling.
         * `best_by`: The feature used to select the "best" cluster from Gaussian mixture modeling.
-        * `best_cluster`: The "best" cluster identifier from Gaussian mixture modeling, representing viral proteins that potentially mimic host proteins.
+        * `best_cluster`: The "best" cluster identifier from Gaussian mixture modeling, representing viral proteins that potentially mimic host proteins. This is solely an identifier; the number itself has no significance.
         * `best_cluster_size`: The number of viral proteins in the best cluster.
-        * `best_qtmscore`: The highest query TM-score for a viral-host protein match in the best cluster.
-        * `best_neg_log_evalue`: The highest negative log E-value (corresponding to the lowest E-value) for a viral-host protein match in the best cluster.
+        * `best_qtmscore`: The average query TM-score for viral-host protein matches in the best cluster.
+        * `best_neg_log_evalue`: The average negative log E-value for viral-host protein matches in the best cluster.
         * `qtmscore_difference_vs_nextbest`: The difference between the mean query TM-score in the best cluster and the mean query TM-score in the next best cluster. This column highlights how separation there is between the best cluster and other clusters.
         * `neg_log_evalue_difference_vs_nextbest`: The difference between the mean negative log E-value in the best cluster and the mean negative log E-value in the next best cluster. This column highlights how separation there is between the best cluster and other clusters.
         * `cluster_members_host_genes`: List of distinct host genes (proteins) matched by viral proteins in the best cluster.
@@ -94,8 +94,8 @@ This directory then contains the following subdirectories:
         * `evalue_min`: The minimum E-value of a viral-host protein match in the best cluster.
         * `evalue_max`: The maximum E-value of a viral-host protein match in the best cluster.
         * `evalue_mean`: The mean E-value of all viral-host protein matches in the best cluster.
-        * `probability_min`: The minimum probability of a viral-host protein match in the best cluster.
-        * `probability_max`: The maximum probability of a viral-host protein match in the best cluster.
+        * `probability_min`: The posterior probability, from the fitted GMM model, of the viral-host protein match least confidently assigned to the best cluster (i.e., the lowest membership probability among points in that cluster).
+        * `probability_max`: The posterior probability, from the fitted GMM model, of the viral-host protein match most confidently assigned to the best cluster (i.e., the highest membership probability among points in that cluster).
         * `qtmscore_min`: The minimum query TM-score of a viral-host protein match in the best cluster.
         * `qtmscore_max`: The maximum query TM-score of a viral-host protein match in the best cluster.
         * `silhouette_score`: Measures how similar an object is to its own cluster compared to others. It ranges from -1 to +1, where +1 indicates that points in the best cluster are well-matched to other points in their own cluster and far from those not in the cluster (good quality cluster). -1 indicates that points in the best cluster are better matched to points in another cluster (bad quality cluster).
