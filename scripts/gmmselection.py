@@ -691,7 +691,7 @@ def plot_3d_cluster_visualization(
                 # Check if this is a best cluster
                 is_best = cluster_num == best_cluster
                 special_note = (
-                    f"<br><b>Best {best_by.replace('_', ' ').title()}" f"cluster</b>"
+                    f"<br><b>Best {best_by.replace('_', ' ').title()}" f" cluster</b>"
                     if is_best
                     else ""
                 )
@@ -702,6 +702,7 @@ def plot_3d_cluster_visualization(
                     f"<b>Neg log E-value:</b> {row['neg_log_evalue']:.3f}<br>"
                     f"<b>Alignment length:</b> {row['alnlen']:.1f}<br>"
                     f"<b>Cluster size:</b> {cluster_size}<br>"
+                    f"<b>Probability of Cluster Membership:</b> {row['cluster_probability']:.3f}<br>"
                     f"<b>Mimic:</b> {grandparent_folder}<br>"
                     f"<b>Viral query accession:</b> {query_str}<br>"
                     f"<b>Viral query gene:</b> {viral_gene}<br>"
