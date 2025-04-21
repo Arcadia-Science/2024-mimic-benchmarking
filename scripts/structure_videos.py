@@ -76,7 +76,7 @@ structure_pairs = {
 }
 
 # Define custom colors
-custom_colors = {"seaweed": [0.2314, 0.5961, 0.5255], "rose": [0.9725, 0.5961, 0.6824]}
+custom_colors = {"seaweed": [0.314, 0.533, 0.773], "rose": [0.9725, 0.5961, 0.6824]}
 
 # Toggle for high-quality rendering
 high_quality = False  # Set to True for ray-traced final renders
