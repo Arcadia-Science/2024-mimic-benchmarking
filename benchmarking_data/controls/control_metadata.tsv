@@ -1,4 +1,4 @@
-structure_file	viro3d_filename	structure_species	target_gene	target_uniprot	experimental_doc	mimic_type	mimic_and_cluster_id+[control_plddt.tsv]control_plddt!$A$1:$H$38	viral_gene_name
+structure_file	viro3d_filename	structure_species	target_gene	target_uniprot	experimental_doc	mimic_type	mimic_and_cluster_id	viral_gene_name
 EF-CAD53396.1_127_relaxed.pdb	EF-CAD53396.1_127_relaxed	ebv	BCL2	P10415	https://doi.org/10.1016/j.jmb.2003.08.007	single_mimic	Bcl-2 1	BHRF1
 EF-CAD53468.1_127_relaxed.pdb	EF-CAD53468.1_127_relaxed	ebv	BCL2	P10415	https://doi.org/10.1128/jvi.73.6.5181-5185.1999	single_mimic	Bcl-2 2	BALF1
 CF-AAL40480.1_12009_relaxed.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3; P10415		dual_mimic	C1L	D19L
