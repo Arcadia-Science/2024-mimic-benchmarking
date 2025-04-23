@@ -8,4 +8,4 @@ dependencies:
   - numpy=2.2.4
   - scikit-learn=1.6.1
   - pip:
-      - git+https://github.com/Arcadia-Science/arcadia-pycolor.git@89e965efab9ae5d1732a3e29414107007969fdb0
+      - git+https://github.com/Arcadia-Science/arcadia-pycolor.git@f9907b299aed66cd75fbe5f977e4ed81d06b696c
