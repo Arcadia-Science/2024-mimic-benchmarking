@@ -745,7 +745,6 @@ def plot_3d_cluster_visualization(
 
         # Update layout with complete information in title
         fig.update_layout(
-            title=f"Viro3D Cluster: {viro3d_cluster_id} : {grandparent_folder}",
             scene=dict(
                 xaxis=dict(title="Alignment Length", range=[0, 650]),
                 yaxis=dict(title="Neg Log E-value", range=[0, 25]),
