@@ -1,40 +1,40 @@
-structure_file	viro3d_filename	structure_species	target_gene	target_uniprot	experimental_doc	mimic_type	mimic_and_cluster_id	viral_gene_name
-EF-CAD53396.1_127_relaxed.pdb	EF-CAD53396.1_127_relaxed	ebv	BCL2	P10415	https://doi.org/10.1016/j.jmb.2003.08.007	single_mimic	BCL2 1	BHRF1
-EF-CAD53468.1_127_relaxed.pdb	EF-CAD53468.1_127_relaxed	ebv	BCL2	P10415	https://doi.org/10.1128/jvi.73.6.5181-5185.1999	single_mimic	BCL2 2	BALF1
-CF-AAL40480.1_12009_relaxed.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3; P10415		dual_mimic	C1L	D19L
-CF-AAL40480.1_12009_relaxed_pt1.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3		single_mimic	C1L pt1	D19L_pt1
-CF-AAL40480.1_12009_relaxed_pt2.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	P10415		single_mimic	C1L pt2	D19L_pt2
-CF-AAM13483.1_12007_relaxed.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3; P10415		dual_mimic	C1L	CPXV036
-CF-AAM13483.1_12007_relaxed_pt1.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3		single_mimic	C1L pt1	CPXV036_pt1
-CF-AAM13483.1_12007_relaxed_pt2.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	P10415		single_mimic	C1L pt2	CPXV036_pt2
-CF-AAO89306.1_12013_relaxed.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3; P10415	https://doi.org/10.1016/j.celrep.2023.112878	dual_mimic	C1L	VACWR027
-CF-AAO89306.1_12013_relaxed_pt1.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3	https://doi.org/10.1016/j.celrep.2023.112878	single_mimic	C1L pt1	VACWR027_pt1
-CF-AAO89306.1_12013_relaxed_pt2.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	P10415	https://doi.org/10.1016/j.celrep.2023.112878	single_mimic	C1L pt2	VACWR027_pt2
-EF-AAM13481.1_12007_relaxed.pdb	EF-AAM13481.1_12007_relaxed	cowpox	C4BP	P04003		single_mimic	C4BP	CPXV034
-EF-AAO89304.1_12013_relaxed.pdb	EF-AAO89304.1_12013_relaxed	vaccinia	C4BP	P04003	https://doi.org/10.1073/pnas.89.2.628	single_mimic	C4BP	VACWR025
-EF-CAA48953.1_12014_relaxed.pdb	EF-CAA48953.1_12014_relaxed	variola	C4BP	P04003		single_mimic	C4BP	D12L
-EF-AAR31716.1_100_relaxed.pdb	EF-AAR31716.1_100_relaxed	hcmv	CCR1	P32246	https://doi.org/10.3390/v4112448	general_mimic	CCR1	US28
-EF-AAD46503.1_158_relaxed.pdb	EF-AAD46503.1_158_relaxed	kshv	CCR2	P41597	https://doi.org/10.1073/pnas.2403217121	general_mimic	CCR2	ORF74
-CF-AAO89441.1_12013_relaxed.pdb	CF-AAO89441.1_12013_relaxed	vaccinia	CD47	Q08722	https://doi.org/10.1128/jvi.70.2.905-914.1996; https://doi.org/10.1006/viro.1995.9942	single_mimic	CD47	VACWR162
-CF-AAR07485.1_12029_relaxed.pdb	CF-AAR07485.1_12029_relaxed	yaba	CD47	Q08722		single_mimic	CD47	128L
-CF-AST09350.1_11992_relaxed.pdb	CF-AST09350.1_11992_relaxed	murmansk	CD47	Q08722		single_mimic	CD47	integral membrane protein (murmansk-155)
-EF-AAC55276.1_12002_relaxed.pdb	EF-AAC55276.1_12002_relaxed	molluscum_contagiosum	chemokine	NA	https://doi.org/10.1073/pnas.95.11.6403	general_mimic	chemokine	MC148R
-CF-AAO89313.1_12013_relaxed_vaccinia.pdb	CF-AAO89313.1_12013_relaxed	vaccinia	EIF2A	P05198	https://doi.org/10.1128/jvi.66.4.1943-1950.1992	single_mimic	EIF2a 1	VACWR034
-CF-AAR07371.1_12029_relaxed_yaba.pdb	CF-AAR07371.1_12029_relaxed	yaba	EIF2A	P05198		single_mimic	EIF2a 2	12L
-CF-AAO42519.1.1.4_7222_relaxed.pdb	CF-AAO42519.1.1.4_7222_relaxed	pegivirus	helicase	NA		common_domain	helicase	N-terminal helicase domian of the DEAD-box helicase superfamily
-CF-AAL40628.1_12009_relaxed.pdb	CF-AAL40628.1_12009_relaxed	monkeypox	IFNgR	P15260		single_mimic	IFNgR	B9R
-CF-AAO89469.1_12013_relaxed.pdb	CF-AAO89469.1_12013_relaxed	vaccinia	IFNgR	P15260	https://doi.org/10.1128/jvi.69.8.4633-4639.1995	single_mimic	IFNgR	VACWR190
-CF-AXN74982.1_12005_relaxed.pdb	CF-AXN74982.1_12005_relaxed	akhmeta	IFNgR	P15260		single_mimic	IFNgR	interferon-gamma receptor (AKMV-88-197)
-EF-AAR31656.1_100_relaxed.pdb	EF-AAR31656.1_100_relaxed	hhv5	IL10	P22301		single_mimic	IL10 1	UL111A
-CF-AEV80459.1_99_relaxed_GMCMV.pdb	CF-AEV80459.1_99_relaxed	gmcmv	IL10	P22301		single_mimic	IL10 2	UL111A
-CF-CAD53385.1_127_relaxed_ebv.pdb	CF-CAD53385.1_127_relaxed	ebv	IL10	P22301	https://doi.org/10.1006/jmbi.1997.0990;https://doi.org/10.1016/j.str.2005.01.016	single_mimic	IL10 2	BCRF1
-EF-AAC55182.1_12002_relaxed.pdb	EF-AAC55182.1_12002_relaxed	molluscum_contagiosum	IL18BP	O95998	https://doi.org/10.1073/pnas.96.20.11537	single_mimic	IL18BP 1	MC054L
-CF-AAR07373.1_12029_relaxed_yaba.pdb	CF-AAR07373.1_12029_relaxed	yaba	IL18BP	O95998		single_mimic	IL18BP 2	14L
-CF-CAA48946.1_12014_relaxed_variola.pdb	CF-CAA48946.1_12014_relaxed	variola	IL18BP	O95998		single_mimic	IL18BP 3	D5L
-CF-CAD53438.2_127_relaxed.pdb	CF-CAD53438.2_127_relaxed	ebv	kinase	NA	https://doi.org/10.1128/jvi.01099-08	common_domain	kinase	BGLF4
-EF-AAL73713.1_12006_relaxed.pdb	EF-AAL73713.1_12006_relaxed	camelpox	LFG4	Q9HC24	https://doi.org/10.1371/journal.ppat.0030017	single_mimic	LFG4	NMDA receptor-like protein (CMLV006)
-EF-AAR31710.1_100_relaxed.pdb	EF-AAR31710.1_100_relaxed	cmv	LFG4	Q9HC24		single_mimic	LFG4	US21
-CF-AAT98578.1.15_10182_relaxed.pdb	CF-AAT98578.1.15_10182_relaxed	hku1	NSP16	NA		common_domain	NSP16	NSP16
-CF-QHD43415.1.1.36_10195_relaxed.pdb	CF-QHD43415.1.1.36_10195_relaxed	sarscov2	NSP16	NA		common_domain	NSP16	NSP16
-CF-AAT98578.1.1.21_10182_relaxed.pdb	CF-AAT98578.1.1.21_10182_relaxed	hku1	NSP5	NA		common_domain	NSP5	NSP5
-CF-QHD43415.1.1.21_10195_relaxed.pdb	CF-QHD43415.1.1.21_10195_relaxed	sarscov2	NSP5	NA		common_domain	NSP5	NSP5
+structure_file	viro3d_filename	structure_species	target_gene	target_uniprot	experimental_doc	mimic_type	mimic_and_cluster_id	plot_names	viral_gene_name
+EF-CAD53396.1_127_relaxed.pdb	EF-CAD53396.1_127_relaxed	ebv	BCL2	P10415	https://doi.org/10.1016/j.jmb.2003.08.007	single_mimic	Bcl-2 1	Bcl-2	BHRF1
+EF-CAD53468.1_127_relaxed.pdb	EF-CAD53468.1_127_relaxed	ebv	BCL2	P10415	https://doi.org/10.1128/jvi.73.6.5181-5185.1999	single_mimic	Bcl-2 2	Bcl-2	BALF1
+CF-AAL40480.1_12009_relaxed.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3; P10415		dual_mimic	C1L	C1L	D19L
+CF-AAL40480.1_12009_relaxed_pt1.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	Q8WXC3		single_mimic	C1L pt1	C1L pt1	D19L_pt1
+CF-AAL40480.1_12009_relaxed_pt2.pdb	CF-AAL40480.1_12009_relaxed	vaccinia	C1L	P10415		single_mimic	C1L pt2	C1L pt2	D19L_pt2
+CF-AAM13483.1_12007_relaxed.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3; P10415		dual_mimic	C1L	C1L	CPXV036
+CF-AAM13483.1_12007_relaxed_pt1.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	Q8WXC3		single_mimic	C1L pt1	C1L pt1	CPXV036_pt1
+CF-AAM13483.1_12007_relaxed_pt2.pdb	CF-AAM13483.1_12007_relaxed	cowpox	C1L	P10415		single_mimic	C1L pt2	C1L pt2	CPXV036_pt2
+CF-AAO89306.1_12013_relaxed.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3; P10415	https://doi.org/10.1016/j.celrep.2023.112878	dual_mimic	C1L	C1L	VACWR027
+CF-AAO89306.1_12013_relaxed_pt1.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	Q8WXC3	https://doi.org/10.1016/j.celrep.2023.112878	single_mimic	C1L pt1	C1L pt1	VACWR027_pt1
+CF-AAO89306.1_12013_relaxed_pt2.pdb	CF-AAO89306.1_12013_relaxed	vaccinia	C1L	P10415	https://doi.org/10.1016/j.celrep.2023.112878	single_mimic	C1L pt2	C1L pt2	VACWR027_pt2
+EF-AAM13481.1_12007_relaxed.pdb	EF-AAM13481.1_12007_relaxed	cowpox	C4BP	P04003		single_mimic	C4BP	C4BP	CPXV034
+EF-AAO89304.1_12013_relaxed.pdb	EF-AAO89304.1_12013_relaxed	vaccinia	C4BP	P04003	https://doi.org/10.1073/pnas.89.2.628	single_mimic	C4BP	C4BP	VACWR025
+EF-CAA48953.1_12014_relaxed.pdb	EF-CAA48953.1_12014_relaxed	variola	C4BP	P04003		single_mimic	C4BP	C4BP	D12L
+EF-AAR31716.1_100_relaxed.pdb	EF-AAR31716.1_100_relaxed	hcmv	CCR1	P32246	https://doi.org/10.3390/v4112448	general_mimic	CCR1	CCR1	US28
+EF-AAD46503.1_158_relaxed.pdb	EF-AAD46503.1_158_relaxed	kshv	CCR2	P41597	https://doi.org/10.1073/pnas.2403217121	general_mimic	CCR2	CCR2	ORF74
+CF-AAO89441.1_12013_relaxed.pdb	CF-AAO89441.1_12013_relaxed	vaccinia	CD47	Q08722	https://doi.org/10.1128/jvi.70.2.905-914.1996; https://doi.org/10.1006/viro.1995.9942	single_mimic	CD47	CD47	VACWR162
+CF-AAR07485.1_12029_relaxed.pdb	CF-AAR07485.1_12029_relaxed	yaba	CD47	Q08722		single_mimic	CD47	CD47	128L
+CF-AST09350.1_11992_relaxed.pdb	CF-AST09350.1_11992_relaxed	murmansk	CD47	Q08722		single_mimic	CD47	CD47	integral membrane protein (murmansk-155)
+EF-AAC55276.1_12002_relaxed.pdb	EF-AAC55276.1_12002_relaxed	molluscum_contagiosum	chemokine	NA	https://doi.org/10.1073/pnas.95.11.6403	general_mimic	Chemokine	Chemokine	MC148R
+CF-AAO89313.1_12013_relaxed_vaccinia.pdb	CF-AAO89313.1_12013_relaxed	vaccinia	EIF2A	P05198	https://doi.org/10.1128/jvi.66.4.1943-1950.1992	single_mimic	eIF2a 1	eIF2a	VACWR034
+CF-AAR07371.1_12029_relaxed_yaba.pdb	CF-AAR07371.1_12029_relaxed	yaba	EIF2A	P05198		single_mimic	eIF2a 2	eIF2a	12L
+CF-AAO42519.1.1.4_7222_relaxed.pdb	CF-AAO42519.1.1.4_7222_relaxed	pegivirus	helicase	NA		common_domain	Helicase	Helicase	N-terminal helicase domian of the DEAD-box helicase superfamily
+CF-AAL40628.1_12009_relaxed.pdb	CF-AAL40628.1_12009_relaxed	monkeypox	IFNgR1	P15260		single_mimic	IFNgR1	IFNgR1	B9R
+CF-AAO89469.1_12013_relaxed.pdb	CF-AAO89469.1_12013_relaxed	vaccinia	IFNgR1	P15260	https://doi.org/10.1128/jvi.69.8.4633-4639.1995	single_mimic	IFNgR1	IFNgR1	VACWR190
+CF-AXN74982.1_12005_relaxed.pdb	CF-AXN74982.1_12005_relaxed	akhmeta	IFNgR1	P15260		single_mimic	IFNgR1	IFNgR1	interferon-gamma receptor (AKMV-88-197)
+EF-AAR31656.1_100_relaxed.pdb	EF-AAR31656.1_100_relaxed	hhv5	IL10	P22301		single_mimic	IL-10 1	IL-10	UL111A
+CF-AEV80459.1_99_relaxed_GMCMV.pdb	CF-AEV80459.1_99_relaxed	gmcmv	IL10	P22301		single_mimic	IL-10 2	IL-10	UL111A
+CF-CAD53385.1_127_relaxed_ebv.pdb	CF-CAD53385.1_127_relaxed	ebv	IL10	P22301	https://doi.org/10.1006/jmbi.1997.0990;https://doi.org/10.1016/j.str.2005.01.016	single_mimic	IL-10 2	IL-10	BCRF1
+EF-AAC55182.1_12002_relaxed.pdb	EF-AAC55182.1_12002_relaxed	molluscum_contagiosum	IL18BP	O95998	https://doi.org/10.1073/pnas.96.20.11537	single_mimic	IL-18BP 1	IL-18BP	MC054L
+CF-AAR07373.1_12029_relaxed_yaba.pdb	CF-AAR07373.1_12029_relaxed	yaba	IL18BP	O95998		single_mimic	IL-18BP 2	IL-18BP	14L
+CF-CAA48946.1_12014_relaxed_variola.pdb	CF-CAA48946.1_12014_relaxed	variola	IL18BP	O95998		single_mimic	IL-18BP 3	IL-18BP	D5L
+CF-CAD53438.2_127_relaxed.pdb	CF-CAD53438.2_127_relaxed	ebv	kinase	NA	https://doi.org/10.1128/jvi.01099-08	common_domain	Kinase	Kinase	BGLF4
+EF-AAL73713.1_12006_relaxed.pdb	EF-AAL73713.1_12006_relaxed	camelpox	LFG4	Q9HC24	https://doi.org/10.1371/journal.ppat.0030017	single_mimic	TMBIM4	TMBIM4	NMDA receptor-like protein (CMLV006)
+EF-AAR31710.1_100_relaxed.pdb	EF-AAR31710.1_100_relaxed	cmv	LFG4	Q9HC24		single_mimic	TMBIM4	TMBIM4	US21
+CF-AAT98578.1.15_10182_relaxed.pdb	CF-AAT98578.1.15_10182_relaxed	hku1	NSP16	NA		common_domain	NSP16	RNA methylase	NSP16
+CF-QHD43415.1.1.36_10195_relaxed.pdb	CF-QHD43415.1.1.36_10195_relaxed	sarscov2	NSP16	NA		common_domain	NSP16	RNA methylase	NSP16
+CF-AAT98578.1.1.21_10182_relaxed.pdb	CF-AAT98578.1.1.21_10182_relaxed	hku1	NSP5	NA		common_domain	NSP5	Protease	NSP5
+CF-QHD43415.1.1.21_10195_relaxed.pdb	CF-QHD43415.1.1.21_10195_relaxed	sarscov2	NSP5	NA		common_domain	NSP5	Protease	NSP5
