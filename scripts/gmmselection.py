@@ -595,10 +595,16 @@ def plot_3d_cluster_visualization(
     os.makedirs(output_path, exist_ok=True)
 
     # Combine primary and secondary palettes
-    my_palette = apc.palettes.primary + apc.palettes.secondary
+    my_palette = [
+        apc.aster,
+        apc.tangerine,
+        apc.lime,
+        apc.dragon,
+        apc.wish,
+    ] + list(apc.palettes.secondary)
 
-    # Always use aegean for the best cluster
-    BEST_CLUSTER_COLOR = apc.aegean
+    # Always use amber for the best cluster
+    BEST_CLUSTER_COLOR = apc.amber
 
     # Get other colors, excluding aegean
     OTHER_COLORS = [color for color in my_palette if color != BEST_CLUSTER_COLOR]
