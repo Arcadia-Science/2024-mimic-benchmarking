@@ -750,8 +750,7 @@ def plot_3d_cluster_visualization(
                 yaxis=dict(title="Neg Log E-value", range=[0, 25]),
                 zaxis=dict(title="Query TM-Score", range=[0, 1]),
             ),
-            height=800,
-            width=1000,
+            autosize=True,
             showlegend=False,  # Show legend for this version
         )
         apc.plotly.style_plot(fig, monospaced_axes="all")
