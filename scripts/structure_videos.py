@@ -155,27 +155,13 @@ with pymol2.PyMOL() as pymol:
                 cmd.refresh()
                 out_file = os.path.join(frame_folder, f"{pair_name}_frame{i:04d}.png")
                 if high_quality:
-                    cmd.png(out_file, width=1920, height=1080, dpi=300, ray=1)
+                    cmd.png(out_file, width=2100, height=1900, dpi=300, ray=1)
                 else:
-                    cmd.png(out_file, width=1920, height=1080, dpi=150)
+                    cmd.png(out_file, width=2100, height=1900, dpi=150)
             except Exception as e:
                 print(f"Error at frame {i}: {e}")
                 break
-
-        # Create GIF using ImageMagick
-        gif_name = f"{pair_name}_cealignment.gif"
-        subprocess.run(
-            [
-                "convert",
-                "-delay",
-                "8",
-                "-loop",
-                "0",
-                f"{frame_folder}/{pair_name}_frame*.png",
-                gif_name,
-            ]
-        )
-
+                
         # Create MP4 using ffmpeg
         mp4_name = f"{pair_name}_cealignment.mp4"
         subprocess.run(
@@ -185,6 +171,8 @@ with pymol2.PyMOL() as pymol:
                 "15",
                 "-i",
                 f"{frame_folder}/{pair_name}_frame%04d.png",
+                "-vf",
+                "crop=1800:800:0:150", #crops width:height:x_offset:y_offset
                 "-c:v",
                 "libx264",
                 "-pix_fmt",
