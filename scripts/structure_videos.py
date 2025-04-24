@@ -15,7 +15,7 @@ structure_pairs = {
     ),
     "c1lpt2": (
         "./benchmarking_data/controls/c1lpt2/viral/CF-AAO89306.1_12013_relaxed_pt2.pdb",
-        "./benchmarking_data/human_structures/AF-Q5TBC7-F1-model_v4.pdb",
+        "./benchmarking_data/human_structures/AF-P10415-F1-model_v4.pdb",
     ),
     "c4bp": (
         "./benchmarking_data/controls/c4bp/viral/EF-AAO89304.1_12013_relaxed.pdb",
