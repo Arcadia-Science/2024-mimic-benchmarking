@@ -35,7 +35,7 @@ structure_pairs = {
     ),
     "chemokine": (
         "./benchmarking_data/controls/chemokine/viral/EF-AAC55276.1_12002_relaxed.pdb",
-        "./benchmarking_data/human_structures/AF-Q9Y4X3-F1-model_v4.pdb",
+        "./benchmarking_data/human_structures/AF-Q9NRJ3-F1-model_v4.pdb",
     ),
     "eif2a": (
         "./benchmarking_data/controls/eif2a/viral/CF-AAO89313.1_12013_relaxed_vaccinia.pdb",
@@ -79,7 +79,7 @@ structure_pairs = {
 custom_colors = {"seaweed": [0.314, 0.533, 0.773], "rose": [0.9725, 0.5961, 0.6824]}
 
 # Toggle for high-quality rendering
-high_quality = False  # Set to True for ray-traced final renders
+high_quality = True  # Set to True for ray-traced final renders
 
 # Start PyMOL session
 with pymol2.PyMOL() as pymol:
