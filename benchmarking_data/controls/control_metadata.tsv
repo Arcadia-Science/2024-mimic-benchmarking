@@ -14,7 +14,7 @@ EF-AAM13481.1_12007_relaxed.pdb	EF-AAM13481.1_12007_relaxed	cowpox	C4BP	P04003		
 EF-AAO89304.1_12013_relaxed.pdb	EF-AAO89304.1_12013_relaxed	vaccinia	C4BP	P04003	https://doi.org/10.1073/pnas.89.2.628	single_mimic	C4BP	C4BP	VACWR025
 EF-CAA48953.1_12014_relaxed.pdb	EF-CAA48953.1_12014_relaxed	variola	C4BP	P04003		single_mimic	C4BP	C4BP	D12L
 EF-AAR31716.1_100_relaxed.pdb	EF-AAR31716.1_100_relaxed	hcmv	CCR1	P32246	https://doi.org/10.3390/v4112448	general_mimic	CCR1	CCR1	US28
-EF-AAD46503.1_158_relaxed.pdb	EF-AAD46503.1_158_relaxed	kshv	CCR2	P41597	https://doi.org/10.1073/pnas.2403217121	general_mimic	CCR2	CCR2	ORF74
+EF-AAD46503.1_158_relaxed.pdb	EF-AAD46503.1_158_relaxed	kshv	CXCR2	P25025	https://doi.org/10.1073/pnas.2403217121	general_mimic	CXCR2	CXCR2	ORF74
 CF-AAO89441.1_12013_relaxed.pdb	CF-AAO89441.1_12013_relaxed	vaccinia	CD47	Q08722	https://doi.org/10.1128/jvi.70.2.905-914.1996; https://doi.org/10.1006/viro.1995.9942	single_mimic	CD47	CD47	VACWR162
 CF-AAR07485.1_12029_relaxed.pdb	CF-AAR07485.1_12029_relaxed	yaba	CD47	Q08722		single_mimic	CD47	CD47	128L
 CF-AST09350.1_11992_relaxed.pdb	CF-AST09350.1_11992_relaxed	murmansk	CD47	Q08722		single_mimic	CD47	CD47	integral membrane protein (murmansk-155)

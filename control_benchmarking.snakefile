@@ -28,7 +28,7 @@ CONTROLS = [
     "nsp16",
     "nsp5",
     "ccr1",
-    "ccr2",
+    "cxcr2",
     "helicase",
     "c1l",
     "c1lpt1",
