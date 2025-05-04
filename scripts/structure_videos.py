@@ -161,7 +161,7 @@ with pymol2.PyMOL() as pymol:
             except Exception as e:
                 print(f"Error at frame {i}: {e}")
                 break
-                
+
         # Create MP4 using ffmpeg
         mp4_name = f"{pair_name}_cealignment.mp4"
         subprocess.run(
@@ -172,7 +172,7 @@ with pymol2.PyMOL() as pymol:
                 "-i",
                 f"{frame_folder}/{pair_name}_frame%04d.png",
                 "-vf",
-                "crop=1800:800:0:150", #crops width:height:x_offset:y_offset
+                "crop=1800:800:0:150",  # crops width:height:x_offset:y_offset
                 "-c:v",
                 "libx264",
                 "-pix_fmt",

@@ -619,15 +619,8 @@ def plot_3d_cluster_visualization(
 
     for model_id, result_data in all_gmm_results.items():
         # Extract key information
-        source_key = result_data["source_key"]
         merged_df = result_data["merged_df"]
         cluster_stats = result_data["cluster_stats"]
-        viro3d_cluster_id = result_data["original_cluster_id"]
-
-        # Extract grandparent folder for display
-        grandparent_folder = "Unknown"
-        if "_" in source_key:
-            grandparent_folder = source_key.split("_")[0]
 
         # Create figure
         fig = go.Figure()
@@ -674,17 +667,12 @@ def plot_3d_cluster_visualization(
             # Get the color for this cluster
             color = cluster_colors[cluster_num]
 
-            # Get cluster stats for this cluster
-            cluster_stats_for_this = cluster_stats.get(cluster_num, {})
-            cluster_size = cluster_stats_for_this.get("size", len(cluster_df))
-
             # Create hover text
             hover_texts = []
 
             for _, row in cluster_df.iterrows():
                 # Get query and target strings
                 query_str = str(row.get("query", "None"))
-                target_str = str(row.get("target", "None"))
                 viral_gene = str(row.get("genbank_name", "None"))
 
                 # Get host gene directly from the row if available
@@ -742,26 +730,26 @@ def plot_3d_cluster_visualization(
         fig.update_layout(
             scene=dict(
                 xaxis=dict(
-                    title="Alignment length",font=dict(size=15)),
+                    title="Alignment length",
+                    font=dict(size=15),
                     range=[0, 650],
-                    tickfont=dict(size=13)
+                    tickfont=dict(size=13),
                 ),
                 yaxis=dict(
-                    title="Neg log E-value", font=dict(size=15)),
+                    title="Neg log E-value",
+                    font=dict(size=15),
                     range=[0, 25],
-                    tickfont=dict(size=13)
+                    tickfont=dict(size=13),
                 ),
                 zaxis=dict(
-                    title=dict(text="Query TM-score", font=dict(size=15)),
-                    range=[0, 1],
-                    tickfont=dict(size=13)
+                    title="Query TM-score", font=dict(size=15), range=[0, 1], tickfont=dict(size=13)
                 ),
-                aspectmode='manual', 
-                aspectratio=dict(x=0.7, y=0.7, z=0.7)
+                aspectmode="manual",
+                aspectratio=dict(x=0.7, y=0.7, z=0.7),
             ),
             autosize=True,
             showlegend=False,
-            hoverlabel=dict(font=dict(size=12,color="black")),
+            hoverlabel=dict(font=dict(size=12, color="black")),
         )
         apc.plotly.style_plot(fig, monospaced_axes="all")
 
@@ -776,7 +764,7 @@ def plot_3d_cluster_visualization(
 
         # Save as static PNG
         png_file = os.path.join(output_path, f"{sanitized_model_id}.png")
-        fig.write_image(png_file, width=600, height=600,scale=4)
+        fig.write_image(png_file, width=600, height=600, scale=4)
 
     print(f"Created {len(figures)} visualizations")
     # Return the figures dictionary
