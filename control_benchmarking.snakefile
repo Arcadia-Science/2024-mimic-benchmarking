@@ -28,7 +28,7 @@ CONTROLS = [
     "nsp16",
     "nsp5",
     "ccr1",
-    "ccr2",
+    "cxcr2",
     "helicase",
     "c1l",
     "c1lpt1",
@@ -252,11 +252,11 @@ rule run_gmmselection:
         csv=OUTPUT_DIRPATH
         / "{host_organism}"
         / "selected_mimics"
-        / "gmmviro3d_benchmarking041725.csv",
+        / "gmmviro3d_benchmarking042925.csv",
         csv_detailed=OUTPUT_DIRPATH
         / "{host_organism}"
         / "selected_mimics"
-        / "gmmviro3d_benchmarking041725_detailed.csv",
+        / "gmmviro3d_benchmarking042925_detailed.csv",
     conda:
         "envs/gmm.yml"
     shell:
