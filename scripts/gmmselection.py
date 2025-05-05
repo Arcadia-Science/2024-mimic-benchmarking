@@ -595,16 +595,21 @@ def plot_3d_cluster_visualization(
     os.makedirs(output_path, exist_ok=True)
 
     # Combine primary and secondary palettes
-    my_palette = apc.palettes.primary + apc.palettes.secondary
+    my_palette = [
+        apc.aster,
+        apc.lime,
+        apc.dragon,
+        apc.wish,
+    ] + list(apc.palettes.secondary)
 
-    # Always use aegean for the best cluster
-    BEST_CLUSTER_COLOR = apc.aegean
+    # Always use amber for the best cluster
+    BEST_CLUSTER_COLOR = apc.amber
 
     # Get other colors, excluding aegean
     OTHER_COLORS = [color for color in my_palette if color != BEST_CLUSTER_COLOR]
 
     # Define a consistent marker size
-    MARKER_SIZE = 8  # Smaller size for individual points
+    MARKER_SIZE = 8  # size 6 better for smaller plot versions
 
     # Dictionary to store figures
     figures = {}
@@ -614,15 +619,8 @@ def plot_3d_cluster_visualization(
 
     for model_id, result_data in all_gmm_results.items():
         # Extract key information
-        source_key = result_data["source_key"]
         merged_df = result_data["merged_df"]
         cluster_stats = result_data["cluster_stats"]
-        viro3d_cluster_id = result_data["original_cluster_id"]
-
-        # Extract grandparent folder for display
-        grandparent_folder = "Unknown"
-        if "_" in source_key:
-            grandparent_folder = source_key.split("_")[0]
 
         # Create figure
         fig = go.Figure()
@@ -669,17 +667,12 @@ def plot_3d_cluster_visualization(
             # Get the color for this cluster
             color = cluster_colors[cluster_num]
 
-            # Get cluster stats for this cluster
-            cluster_stats_for_this = cluster_stats.get(cluster_num, {})
-            cluster_size = cluster_stats_for_this.get("size", len(cluster_df))
-
             # Create hover text
             hover_texts = []
 
             for _, row in cluster_df.iterrows():
                 # Get query and target strings
                 query_str = str(row.get("query", "None"))
-                target_str = str(row.get("target", "None"))
                 viral_gene = str(row.get("genbank_name", "None"))
 
                 # Get host gene directly from the row if available
@@ -691,7 +684,7 @@ def plot_3d_cluster_visualization(
                 # Check if this is a best cluster
                 is_best = cluster_num == best_cluster
                 special_note = (
-                    f"<br><b>Best {best_by.replace('_', ' ').title()}" f"cluster</b>"
+                    f"<br><b>Best {best_by.replace('_', ' ').title()}" f" cluster</b>"
                     if is_best
                     else ""
                 )
@@ -701,11 +694,8 @@ def plot_3d_cluster_visualization(
                     f"<b>Query TM-score:</b> {row['qtmscore']:.3f}<br>"
                     f"<b>Neg log E-value:</b> {row['neg_log_evalue']:.3f}<br>"
                     f"<b>Alignment length:</b> {row['alnlen']:.1f}<br>"
-                    f"<b>Cluster size:</b> {cluster_size}<br>"
-                    f"<b>Mimic:</b> {grandparent_folder}<br>"
                     f"<b>Viral query accession:</b> {query_str}<br>"
                     f"<b>Viral query gene:</b> {viral_gene}<br>"
-                    f"<b>Human target UniProt accession:</b> {target_str}<br>"
                     f"<b>Human target gene:</b> {host_gene_str}{special_note}"
                 )
 
@@ -738,15 +728,28 @@ def plot_3d_cluster_visualization(
 
         # Update layout with complete information in title
         fig.update_layout(
-            title=f"Viro3D Cluster: {viro3d_cluster_id} : {grandparent_folder}",
             scene=dict(
-                xaxis=dict(title="Alignment Length", range=[0, 650]),
-                yaxis=dict(title="Neg Log E-value", range=[0, 25]),
-                zaxis=dict(title="Query TM-Score", range=[0, 1]),
+                xaxis=dict(
+                    title="Alignment length",
+                    font=dict(size=15),
+                    range=[0, 650],
+                    tickfont=dict(size=13),
+                ),
+                yaxis=dict(
+                    title="Neg log E-value",
+                    font=dict(size=15),
+                    range=[0, 25],
+                    tickfont=dict(size=13),
+                ),
+                zaxis=dict(
+                    title="Query TM-score", font=dict(size=15), range=[0, 1], tickfont=dict(size=13)
+                ),
+                aspectmode="manual",
+                aspectratio=dict(x=0.7, y=0.7, z=0.7),
             ),
-            height=800,
-            width=1000,
-            showlegend=False,  # Show legend for this version
+            autosize=True,
+            showlegend=False,
+            hoverlabel=dict(font=dict(size=12, color="black")),
         )
         apc.plotly.style_plot(fig, monospaced_axes="all")
 
@@ -757,7 +760,11 @@ def plot_3d_cluster_visualization(
         # Create a sanitized filename from the model_id
         sanitized_model_id = model_id.replace("/", "_").replace(" ", "_")
         output_file = os.path.join(output_path, f"{sanitized_model_id}.html")
-        fig.write_html(output_file)
+        fig.write_html(output_file, full_html=True, include_plotlyjs="cdn")
+
+        # Save as static PNG
+        png_file = os.path.join(output_path, f"{sanitized_model_id}.png")
+        fig.write_image(png_file, width=600, height=600, scale=4)
 
     print(f"Created {len(figures)} visualizations")
     # Return the figures dictionary

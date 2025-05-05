@@ -15,7 +15,7 @@ structure_pairs = {
     ),
     "c1lpt2": (
         "./benchmarking_data/controls/c1lpt2/viral/CF-AAO89306.1_12013_relaxed_pt2.pdb",
-        "./benchmarking_data/human_structures/AF-Q5TBC7-F1-model_v4.pdb",
+        "./benchmarking_data/human_structures/AF-P10415-F1-model_v4.pdb",
     ),
     "c4bp": (
         "./benchmarking_data/controls/c4bp/viral/EF-AAO89304.1_12013_relaxed.pdb",
@@ -25,9 +25,9 @@ structure_pairs = {
         "./benchmarking_data/controls/ccr1/viral/EF-AAR31716.1_100_relaxed.pdb",
         "./benchmarking_data/human_structures/AF-P32246-F1-model_v4.pdb",
     ),
-    "ccr2": (
-        "./benchmarking_data/controls/ccr2/viral/EF-AAD46503.1_158_relaxed.pdb",
-        "./benchmarking_data/human_structures/AF-P41597-F1-model_v4.pdb",
+    "cxcr2": (
+        "./benchmarking_data/controls/cxcr2/viral/EF-AAD46503.1_158_relaxed.pdb",
+        "./benchmarking_data/human_structures/AF-P25025-F1-model_v4.pdb",
     ),
     "cd47": (
         "./benchmarking_data/controls/cd47/viral/CF-AAO89441.1_12013_relaxed.pdb",
@@ -35,7 +35,7 @@ structure_pairs = {
     ),
     "chemokine": (
         "./benchmarking_data/controls/chemokine/viral/EF-AAC55276.1_12002_relaxed.pdb",
-        "./benchmarking_data/human_structures/AF-Q9Y4X3-F1-model_v4.pdb",
+        "./benchmarking_data/human_structures/AF-Q9NRJ3-F1-model_v4.pdb",
     ),
     "eif2a": (
         "./benchmarking_data/controls/eif2a/viral/CF-AAO89313.1_12013_relaxed_vaccinia.pdb",
@@ -61,7 +61,7 @@ structure_pairs = {
         "./benchmarking_data/controls/kinase/viral/CF-CAD53438.2_127_relaxed.pdb",
         "./benchmarking_data/human_structures/AF-Q00535-F1-model_v4.pdb",
     ),
-    "lfg4": (
+    "tmbim4": (
         "./benchmarking_data/controls/lfg4/viral/EF-AAL73713.1_12006_relaxed.pdb",
         "./benchmarking_data/human_structures/AF-Q9HC24-F1-model_v4.pdb",
     ),
@@ -76,10 +76,10 @@ structure_pairs = {
 }
 
 # Define custom colors
-custom_colors = {"seaweed": [0.2314, 0.5961, 0.5255], "rose": [0.9725, 0.5961, 0.6824]}
+custom_colors = {"aegean": [0.314, 0.533, 0.773], "rose": [0.9725, 0.5961, 0.6824]}
 
 # Toggle for high-quality rendering
-high_quality = False  # Set to True for ray-traced final renders
+high_quality = True  # Set to True for ray-traced final renders
 
 # Start PyMOL session
 with pymol2.PyMOL() as pymol:
@@ -128,7 +128,7 @@ with pymol2.PyMOL() as pymol:
 
         # Apply coloring
         cmd.color("rose", mol1)
-        cmd.color("seaweed", mol2)
+        cmd.color("aegean", mol2)
 
         # Center and orient view
         cmd.orient()
@@ -155,26 +155,12 @@ with pymol2.PyMOL() as pymol:
                 cmd.refresh()
                 out_file = os.path.join(frame_folder, f"{pair_name}_frame{i:04d}.png")
                 if high_quality:
-                    cmd.png(out_file, width=1920, height=1080, dpi=300, ray=1)
+                    cmd.png(out_file, width=2100, height=1900, dpi=300, ray=1)
                 else:
-                    cmd.png(out_file, width=1920, height=1080, dpi=150)
+                    cmd.png(out_file, width=2100, height=1900, dpi=150)
             except Exception as e:
                 print(f"Error at frame {i}: {e}")
                 break
-
-        # Create GIF using ImageMagick
-        gif_name = f"{pair_name}_cealignment.gif"
-        subprocess.run(
-            [
-                "convert",
-                "-delay",
-                "8",
-                "-loop",
-                "0",
-                f"{frame_folder}/{pair_name}_frame*.png",
-                gif_name,
-            ]
-        )
 
         # Create MP4 using ffmpeg
         mp4_name = f"{pair_name}_cealignment.mp4"
@@ -185,6 +171,8 @@ with pymol2.PyMOL() as pymol:
                 "15",
                 "-i",
                 f"{frame_folder}/{pair_name}_frame%04d.png",
+                "-vf",
+                "crop=1800:800:0:150",  # crops width:height:x_offset:y_offset
                 "-c:v",
                 "libx264",
                 "-pix_fmt",
