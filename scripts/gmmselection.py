@@ -766,17 +766,23 @@ def plot_3d_cluster_visualization(
         fig.update_layout(
             scene=dict(
                 xaxis=dict(
-                    title=dict(text="Alignment length", font=dict(size=15)),
+                    title=dict(
+                        text="Alignment length", font=dict(size=15)
+                    ),
                     range=[0, 650],
                     tickfont=dict(size=13),
                 ),
                 yaxis=dict(
-                    title=dict(text="Neg log E-value", font=dict(size=15)),
+                    title=dict(
+                        text="Neg log E-value", font=dict(size=15)
+                    ),
                     range=[0, 25],
                     tickfont=dict(size=13),
                 ),
                 zaxis=dict(
-                    title=dict(text="Query TM-score", font=dict(size=15)),
+                    title=dict(
+                        text="Query TM-score", font=dict(size=15)
+                    ),
                     range=[0, 1],
                     tickfont=dict(size=13),
                 ),
