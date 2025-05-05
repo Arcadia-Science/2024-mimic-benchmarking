@@ -684,7 +684,7 @@ def plot_3d_cluster_visualization(
                 # Check if this is a best cluster
                 is_best = cluster_num == best_cluster
                 special_note = (
-                    f"<br><b>Best {best_by.replace('_', ' ').title()}" f" cluster</b>"
+                    f"<br><b>Best {best_by.replace('_' , ' ').title()}" f" cluster</b>"
                     if is_best
                     else ""
                 )
@@ -696,7 +696,7 @@ def plot_3d_cluster_visualization(
                     f"<b>Alignment length:</b> {row['alnlen']:.1f}<br>"
                     f"<b>Viral query accession:</b> {query_str}<br>"
                     f"<b>Viral query gene:</b> {viral_gene}<br>"
-                    f"<b>Human target gene:</b> {host_gene_str}{special_note}"
+                    f"<b>Human target gene:</b> {host_gene_str} {special_note}"
                 )
 
                 hover_texts.append(hover_text)
@@ -730,19 +730,19 @@ def plot_3d_cluster_visualization(
         fig.update_layout(
             scene=dict(
                 xaxis=dict(
-                    title="Alignment length",
-                    font=dict(size=15),
+                    title=dict(text="Alignment length", font=dict(size=15)),
                     range=[0, 650],
                     tickfont=dict(size=13),
                 ),
                 yaxis=dict(
-                    title="Neg log E-value",
-                    font=dict(size=15),
+                    title=dict(text="Neg log E-value", font=dict(size=15)),
                     range=[0, 25],
                     tickfont=dict(size=13),
                 ),
                 zaxis=dict(
-                    title="Query TM-score", font=dict(size=15), range=[0, 1], tickfont=dict(size=13)
+                    title=dict(text="Query TM-score", font=dict(size=15)),
+                    range=[0, 1],
+                    tickfont=dict(size=13),
                 ),
                 aspectmode="manual",
                 aspectratio=dict(x=0.7, y=0.7, z=0.7),
