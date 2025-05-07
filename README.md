@@ -6,7 +6,7 @@
 ## Purpose
 
 This repository contains a control dataset and a workflow for identifying viral protein structural mimicry.
-The code and data in this repo are associated with the pub, "[How do we define and find viral protein structural mimicry?](https://doi.org/10.57844/arcadia-1eu9-gcsx)."
+The code and data in this repo are associated with the pub, "[Tuning thresholds to find high-confidence structural mimics of human proteins](https://doi.org/10.57844/arcadia-1eu9-gcsx)."
 
 We define this as a viral protein with one or more domains structurally resembling a host protein(s) and interacting with some of the same binding partners or substrates.
 This definition allows us to use structural similarity to identify viral proteins that may modulate host biology.
