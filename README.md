@@ -69,7 +69,7 @@ If you run the snakefile, all outputs are contained in an outputs/human director
 This directory then contains the following subdirectories:
  
 * `foldseek/`: Contains Foldseek results from running the commands described in the previous section.
-    * `{control}`: one of bcl2, c1l, c1lpt1, c1lpt2, c4bp, ccr1, ccr2, cd47, chemokine, eif2a, helicase, ifngr, il10, il18bp, kinase, lfg4, nsp16 or nsp5. We named each folder after the human protein that the virus mimics when possible, and when not, we use protein family name or the viral protein name. We ran each Foldseek comparison separately on each set of controls (ex. we queried with all Bcl-2 viral mimics).
+    * `{control}`: one of bcl2, c1l, c1lpt1, c1lpt2, c4bp, ccr1, ccr2, cd47, chemokine, eif2a, helicase, ifngr, il10, il18bp, kinase, lfg4, nsp16 or nsp5. We named each folder after the human protein that the virus mimics when possible, and when not, we use protein family name or the viral protein name. We ran each Foldseek comparison separately on each set of controls (ex., we queried with all Bcl-2 viral mimics).
         * `raw/`: Raw Foldseek results in TSV format.
         * `processed/`: Processed Foldseek results in TSV format. These files include corrected alignment TM-scores and additional metadata for both viral (query) and human (target) proteins.
 * `selected_mimics/`: contains results from running Gaussian mixture modeling on the Foldseek results to predict viral structural mimicry.
@@ -99,7 +99,7 @@ This directory then contains the following subdirectories:
         * `qtmscore_min`: The minimum query TM-score of a viral-host protein match in the best cluster.
         * `qtmscore_max`: The maximum query TM-score of a viral-host protein match in the best cluster.
         * `silhouette_score`: Measures how similar an object is to its own cluster compared to others. It ranges from -1 to +1, where +1 indicates that points in the best cluster are well-matched to other points in their own cluster and far from those not in the cluster (good quality cluster). -1 indicates that points in the best cluster are better matched to points in another cluster (bad quality cluster).
-    * `gmmviro3d_benchmarking041725_detailed.csv`: Foldseek results for each viral protein selected by Gaussian mixture modeling, as well as Gaussian mixture modeling statistics and additional metadata.
+    * `gmmviro3d_benchmarking042925_detailed.csv`: Foldseek results for each viral protein selected by Gaussian mixture modeling, as well as Gaussian mixture modeling statistics and additional metadata.
 
 The contents of the `foldseek` and `selected_mimics` are available for download on Zenodo: [10.5281/zenodo.15242980](https://doi.org/10.5281/zenodo.15242980).
 
